@@ -1,0 +1,2 @@
+export const UPDATE_SCORE = "UPDATE_SCORE";
+export const LOAD_STORED_STATE = "LOAD_STORED_STATE";
