@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { Flex, Heading, Spacer } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
-import HighScore from "components/Highscore/Highscore";
+import { HighScore } from "features/Highscore";
 import { HiArrowRight } from "react-icons/hi";
 import Link from "next/link";
 export default function Home() {
