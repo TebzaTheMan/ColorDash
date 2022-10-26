@@ -5,7 +5,7 @@ import { IInfobarAction, IInfobarState } from "../types";
 
 const defaultInfobar: IInfobarState = {
   score: 0,
-  timeLeft: { minutes: 0, seconds: 0 },
+  timeUp: false,
   triesLeft: 3,
   correctColors: 0,
 };

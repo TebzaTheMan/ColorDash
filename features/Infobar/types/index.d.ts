@@ -3,17 +3,12 @@ export interface IAction<T> {
   storedState?: T;
 }
 export interface IInfobarAction extends IAction<IInfobarState> {
-  score?: number;
   storedState?: T;
-}
-
-interface time {
-  minutes: number;
-  seconds: number;
+  score?: number;
 }
 export interface IInfobarState {
   score: number;
-  timeLeft: time;
   triesLeft: number;
   correctColors: number;
+  timeUp: boolean;
 }
