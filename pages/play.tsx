@@ -1,3 +1,4 @@
+import { Colorblocks } from "features/colorblocks";
 import { Infobar } from "features/Infobar";
 import Head from "next/head";
 export default function Play() {
@@ -13,6 +14,7 @@ export default function Play() {
       </Head>
       <main>
         <Infobar />
+        <Colorblocks />
       </main>
     </>
   );
