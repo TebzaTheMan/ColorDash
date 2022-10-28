@@ -7,10 +7,10 @@ import Link from "next/link";
 import { useMediaQuery } from "@chakra-ui/react";
 
 export function Infobar() {
-  const [isMobile] = useMediaQuery("(max-width: 768px)");
+  const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   return (
     <>
-      {isMobile && (
+      {!isLargerThan768 && (
         <Box marginTop="8" marginLeft="8">
           <Link href="/" passHref>
             <Button size="sm" variant="outline">

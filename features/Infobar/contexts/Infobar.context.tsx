@@ -1,9 +1,9 @@
 import { createContext, ReactNode, Dispatch } from "react";
 import InfobarReducer from "../reducers/Infobar.reducer";
-import useLocalStorageReducer from "hooks/useLocalStorageReducer";
+import { useReducer } from "react";
 import { IInfobarAction, IInfobarState } from "../types";
 
-const defaultInfobar: IInfobarState = {
+export const defaultInfobar: IInfobarState = {
   score: 0,
   timeUp: false,
   triesLeft: 3,
@@ -14,11 +14,7 @@ export const InfobarContext = createContext<
 >([defaultInfobar, () => {}]);
 
 export function InfobarProvider({ children }: { children: ReactNode }) {
-  const { state, dispatch } = useLocalStorageReducer<IInfobarState>(
-    "Infobar",
-    InfobarReducer,
-    defaultInfobar
-  );
+  const [state, dispatch] = useReducer(InfobarReducer, defaultInfobar);
   return (
     <InfobarContext.Provider value={[state, dispatch]}>
       {children}
