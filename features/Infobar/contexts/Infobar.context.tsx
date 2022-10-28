@@ -3,7 +3,7 @@ import InfobarReducer from "../reducers/Infobar.reducer";
 import { useReducer } from "react";
 import { IInfobarAction, IInfobarState } from "../types";
 
-const defaultInfobar: IInfobarState = {
+export const defaultInfobar: IInfobarState = {
   score: 0,
   timeUp: false,
   triesLeft: 3,

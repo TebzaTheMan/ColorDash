@@ -1,7 +1,9 @@
 import { Box, Button, Grid, Heading } from "@chakra-ui/react";
 import { useMediaQuery } from "@chakra-ui/react";
-import Link from "next/dist/client/link";
+import { useRouter } from "next/router";
 import { Colorblock } from "./Colorblock";
+import { InfobarContext } from "features/Infobar";
+import { useContext, useState } from "react";
 
 const NUM_COLORS = 6;
 // generate a random rgb color value
@@ -20,12 +22,38 @@ const getRGBcolors = () => {
   }
   return colors;
 };
+let colors = getRGBcolors();
+let correctColor = colors[Math.floor(Math.random() * NUM_COLORS)]; // assign correct color to one random color
+
+const generateNewColors = () => {
+  colors = getRGBcolors();
+  correctColor = colors[Math.floor(Math.random() * NUM_COLORS)];
+};
 
 export function Colorblocks() {
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
-  const colors = getRGBcolors();
-  // assign correct color to one random color
-  const correctColor = colors[Math.floor(Math.random() * NUM_COLORS)];
+  const [colorsClicked, setColorsClicked] = useState(new Array(NUM_COLORS));
+  const router = useRouter();
+  const [infobarData, infobarDispatch] = useContext(InfobarContext);
+
+  const handleColorClick = (index: number, isCorrect: boolean) => {
+    if (isCorrect) {
+      infobarDispatch({ type: "CORRECT_COLOR", score: 10 });
+      setColorsClicked(new Array(NUM_COLORS)); // reset colors from being clicked!
+      generateNewColors();
+    } else {
+      if (infobarData.triesLeft == 1) {
+        infobarDispatch({ type: "RESET_TRIES" });
+        setColorsClicked(new Array(NUM_COLORS)); // reset colors from being clicked!
+        generateNewColors();
+      } else {
+        const c = colorsClicked;
+        c[index] = true;
+        setColorsClicked(c);
+        infobarDispatch({ type: "DECREMENT_TRIES" });
+      }
+    }
+  };
   return (
     <Box>
       <Grid
@@ -36,11 +64,16 @@ export function Colorblocks() {
       >
         {isLargerThan768 && (
           <Box justifySelf={"flex-start"}>
-            <Link href="/" passHref>
-              <Button size="lg" variant="outline">
-                CANCEL
-              </Button>
-            </Link>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => {
+                infobarDispatch({ type: "RESET" });
+                router.push("/");
+              }}
+            >
+              CANCEL
+            </Button>
           </Box>
         )}
         <Heading size="lg" as="h1" color="gray.600" justifySelf={"center"}>
@@ -59,7 +92,10 @@ export function Colorblocks() {
             <Colorblock
               color={color}
               key={index}
+              index={index}
               isCorrect={color == correctColor ? true : false}
+              isClicked={colorsClicked[index]}
+              handleColorClick={handleColorClick}
             />
           );
         })}

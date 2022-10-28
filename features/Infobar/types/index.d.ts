@@ -1,9 +1,7 @@
-export interface IAction<T> {
+export interface IAction {
   type: string;
-  storedState?: T;
 }
-export interface IInfobarAction extends IAction<IInfobarState> {
-  storedState?: T;
+export interface IInfobarAction extends IAction {
   score?: number;
 }
 export interface IInfobarState {

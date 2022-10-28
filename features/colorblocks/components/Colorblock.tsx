@@ -1,11 +1,18 @@
-import { useState } from "react";
 import { GridItem } from "@chakra-ui/react";
 interface Props {
+  index: number;
   color: string;
   isCorrect: boolean;
+  handleColorClick: Function;
+  isClicked: boolean;
 }
-export function Colorblock({ color, isCorrect }: Props) {
-  const [isClicked, setisClicked] = useState(false);
+export function Colorblock({
+  index,
+  color,
+  isCorrect,
+  handleColorClick,
+  isClicked,
+}: Props) {
   return (
     <GridItem
       w="100%"
@@ -14,9 +21,9 @@ export function Colorblock({ color, isCorrect }: Props) {
       borderRadius="3xl"
       boxShadow="lg"
       onClick={() => {
-        setisClicked(true);
+        handleColorClick(index, isCorrect);
       }}
-      visibility={isClicked && !isCorrect ? "hidden" : "inherit"}
+      visibility={isClicked && !isCorrect ? "hidden" : "visible"}
     />
   );
 }
