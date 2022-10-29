@@ -13,6 +13,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { CancelButton } from "components/CancelButton";
 
 export function GameoverModal() {
   const router = useRouter();
@@ -51,17 +52,8 @@ export function GameoverModal() {
             </Text>
           </ModalBody>
           <ModalFooter>
-            <Button
-              variant="outline"
-              mr={3}
-              onClick={() => {
-                infobarDispatch({ type: "RESET" });
-                router.push("/");
-              }}
-            >
-              Cancel
-            </Button>
-            <Button colorScheme="teal" onClick={onClose}>
+            <CancelButton />
+            <Button colorScheme="teal" onClick={onClose} ml={3}>
               Play Again
             </Button>
           </ModalFooter>

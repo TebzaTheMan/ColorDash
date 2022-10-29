@@ -2,9 +2,8 @@ import { Box, Flex } from "@chakra-ui/react";
 import { Score } from "./Score";
 import { Timer } from "./Timer";
 import { Tries } from "./Tries";
-import { Button } from "@chakra-ui/react";
-import Link from "next/link";
 import { useMediaQuery } from "@chakra-ui/react";
+import { CancelButton } from "components/CancelButton";
 
 export function Infobar() {
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
@@ -12,11 +11,7 @@ export function Infobar() {
     <>
       {!isLargerThan768 && (
         <Box marginTop="8" marginLeft="8">
-          <Link href="/" passHref>
-            <Button size="sm" variant="outline">
-              CANCEL
-            </Button>
-          </Link>
+          <CancelButton />
         </Box>
       )}
 

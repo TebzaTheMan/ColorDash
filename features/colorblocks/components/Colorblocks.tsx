@@ -1,9 +1,9 @@
-import { Box, Button, Grid, Heading } from "@chakra-ui/react";
+import { Box, Grid, Heading } from "@chakra-ui/react";
 import { useMediaQuery } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { Colorblock } from "./Colorblock";
 import { InfobarContext } from "features/Infobar";
 import { useContext, useEffect, useState } from "react";
+import { CancelButton } from "components/CancelButton";
 
 const NUM_COLORS = 6;
 // generate a random rgb color value
@@ -29,8 +29,6 @@ export function Colorblocks() {
   const [colorsClicked, setColorsClicked] = useState(new Array(NUM_COLORS));
   const [correctColor, setCorrectColor] = useState("");
   const [infobarData, infobarDispatch] = useContext(InfobarContext);
-
-  const router = useRouter();
 
   useEffect(() => {
     setCorrectColor(colors[Math.floor(Math.random() * NUM_COLORS)]);
@@ -69,16 +67,7 @@ export function Colorblocks() {
       >
         {isLargerThan768 && (
           <Box justifySelf={"flex-start"}>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => {
-                infobarDispatch({ type: "RESET" });
-                router.push("/");
-              }}
-            >
-              CANCEL
-            </Button>
+            <CancelButton />
           </Box>
         )}
         <Heading size="lg" as="h1" color="gray.600" justifySelf={"center"}>
