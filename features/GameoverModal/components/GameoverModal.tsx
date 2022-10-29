@@ -11,18 +11,22 @@ import {
   ModalBody,
   ModalFooter,
   Text,
+  Badge,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { CancelButton } from "components/CancelButton";
+import { HighscoreContext } from "features/Highscore";
 
 export function GameoverModal() {
   const router = useRouter();
   const [infobarData, infobarDispatch] = useContext(InfobarContext);
+  const [highscoreData] = useContext(HighscoreContext);
   const isOpen = infobarData.timeUp;
   const onClose = () => {
     infobarDispatch({ type: "RESET" });
     router.reload();
   };
+
   return (
     <>
       <Modal
@@ -42,11 +46,21 @@ export function GameoverModal() {
                 color="green.500"
                 mr={4}
               />
-              <Text> Game Over</Text>
+              <Text>Game Over</Text>
             </Flex>
           </ModalHeader>
           <ModalBody>
-            <Text fontSize="lg">Score: {infobarData.score}</Text>
+            <Text fontSize="lg">
+              Score: {infobarData.score}
+              {/** The previous highscore refers to the previous highscore stored since the current highscore will be
+               * updated as soon as time is up!
+               */}
+              {infobarData.score > highscoreData.previous && (
+                <Badge colorScheme="green" variant="solid" ml="3">
+                  New
+                </Badge>
+              )}
+            </Text>
             <Text fontSize="lg">
               Correct colors: {infobarData.correctColors}
             </Text>

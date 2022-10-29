@@ -1,11 +1,13 @@
 import { Flex, Heading } from "@chakra-ui/react";
 import { InfobarContext } from "features/Infobar";
+import { HighscoreContext } from "features/Highscore";
 import { useContext } from "react";
 import { useTimer } from "react-timer-hook";
 import { Text } from "@chakra-ui/react";
 
 export function Timer() {
-  const [, inforbarDispatch] = useContext(InfobarContext);
+  const [infobarData, inforbarDispatch] = useContext(InfobarContext);
+  const [highscoreData, highscoreDispatch] = useContext(HighscoreContext);
   const ALLOWED_SECONDS = 30;
   const expiryTimestamp = new Date();
   expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + ALLOWED_SECONDS);
@@ -13,6 +15,12 @@ export function Timer() {
     expiryTimestamp,
     onExpire: () => {
       inforbarDispatch({ type: "TIME_UP" });
+      if (infobarData.score > highscoreData.current) {
+        highscoreDispatch({
+          type: "UPDATE_SCORE",
+          score: infobarData.score,
+        });
+      }
     },
   });
   return (

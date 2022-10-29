@@ -5,6 +5,7 @@ export interface IAction<T> {
 
 export interface IHighscoreState {
   current: number;
+  previous: number;
 }
 export interface IHighscoreAction extends IAction<IHighscoreState> {
   score?: number;
