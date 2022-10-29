@@ -1,9 +1,9 @@
-import { Box, Button, Grid, Heading } from "@chakra-ui/react";
+import { Box, Grid, Heading } from "@chakra-ui/react";
 import { useMediaQuery } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { Colorblock } from "./Colorblock";
 import { InfobarContext } from "features/Infobar";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { CancelButton } from "components/CancelButton";
 
 const NUM_COLORS = 6;
 // generate a random rgb color value
@@ -14,7 +14,7 @@ const getRgbColor = () => {
   const value = `rgb(${red}, ${green}, ${blue})`;
   return value;
 };
-// generaate an array of colors
+// generate an array of colors
 const getRGBcolors = () => {
   const colors = [];
   for (let i = 0; i < NUM_COLORS; i++) {
@@ -23,18 +23,21 @@ const getRGBcolors = () => {
   return colors;
 };
 let colors = getRGBcolors();
-let correctColor = colors[Math.floor(Math.random() * NUM_COLORS)]; // assign correct color to one random color
-
-const generateNewColors = () => {
-  colors = getRGBcolors();
-  correctColor = colors[Math.floor(Math.random() * NUM_COLORS)];
-};
 
 export function Colorblocks() {
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   const [colorsClicked, setColorsClicked] = useState(new Array(NUM_COLORS));
-  const router = useRouter();
+  const [correctColor, setCorrectColor] = useState("");
   const [infobarData, infobarDispatch] = useContext(InfobarContext);
+
+  useEffect(() => {
+    setCorrectColor(colors[Math.floor(Math.random() * NUM_COLORS)]);
+  }, [colors]);
+
+  const generateNewColors = () => {
+    colors = getRGBcolors();
+    setCorrectColor(colors[Math.floor(Math.random() * NUM_COLORS)]);
+  };
 
   const handleColorClick = (index: number, isCorrect: boolean) => {
     if (isCorrect) {
@@ -64,16 +67,7 @@ export function Colorblocks() {
       >
         {isLargerThan768 && (
           <Box justifySelf={"flex-start"}>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => {
-                infobarDispatch({ type: "RESET" });
-                router.push("/");
-              }}
-            >
-              CANCEL
-            </Button>
+            <CancelButton />
           </Box>
         )}
         <Heading size="lg" as="h1" color="gray.600" justifySelf={"center"}>
@@ -87,18 +81,19 @@ export function Colorblocks() {
         ml={["10", "32", "32", "72"]}
         mr={["10", "32", "32", "72"]}
       >
-        {colors.map((color, index) => {
-          return (
-            <Colorblock
-              color={color}
-              key={index}
-              index={index}
-              isCorrect={color == correctColor ? true : false}
-              isClicked={colorsClicked[index]}
-              handleColorClick={handleColorClick}
-            />
-          );
-        })}
+        {correctColor !== "" &&
+          colors.map((color, index) => {
+            return (
+              <Colorblock
+                color={color}
+                key={index}
+                index={index}
+                isCorrect={color == correctColor ? true : false}
+                isClicked={colorsClicked[index]}
+                handleColorClick={handleColorClick}
+              />
+            );
+          })}
       </Grid>
     </Box>
   );

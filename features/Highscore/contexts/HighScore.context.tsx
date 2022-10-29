@@ -5,6 +5,7 @@ import { IHighscoreAction, IHighscoreState } from "../types";
 
 const defaultHighscore: IHighscoreState = {
   current: 0,
+  previous: 0,
 };
 export const HighscoreContext = createContext<
   [IHighscoreState, Dispatch<IHighscoreAction>]
