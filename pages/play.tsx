@@ -1,5 +1,6 @@
 import { Colorblocks } from "features/colorblocks";
 import { Infobar } from "features/Infobar";
+import { GameoverModal } from "features/GameoverModal";
 import Head from "next/head";
 export default function Play() {
   return (
@@ -15,6 +16,7 @@ export default function Play() {
       <main>
         <Infobar />
         <Colorblocks />
+        <GameoverModal />
       </main>
     </>
   );
