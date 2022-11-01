@@ -1,5 +1,5 @@
 export interface IAction<T> {
-  type: string;
+  type: "UPDATE_SCORE" | "LOAD_STORED_STATE";
   storedState?: T;
 }
 
