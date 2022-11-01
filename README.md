@@ -3,20 +3,14 @@
 ![License](https://img.shields.io/github/license/TebzaTheMan/nextjs-starter-pack?color=green&label=LICENSE&style=for-the-badge)
 ![Issues](https://img.shields.io/github/issues/TebzaTheMan/nextjs-starter-pack?color=yellow&label=ISSUES&style=for-the-badge)
 
-A TypeScript starter for Next.js that includes all you need to build your next 🦄 project.
+# GuessTheColor
 
-## Technologies Used
+A nextJS game with its objective of identifying as many colors as you can in a given amount of time using RGB color codes.
 
-- [Nextjs](https://nextjs.org/)
-- [Typescript](https://www.typescriptlang.org/)
-- [Eslint](https://eslint.org/)
-- [Prettier](https://prettier.io/)
-- [Husky](https://typicode.github.io/husky/#/)
+![screenshot of play page](/screenshot_playpage.jpg)
 
-Also includes:
-
-- [Absolute imports](https://nextjs.org/docs/advanced-features/module-path-aliases)
-- [Google Style Guides for React](https://github.com/google/eslint-config-google)
+- demo : https://tebza/dev/guessthecolor
+- An article on my thoughts while making this game : https://tebza.dev/the-making-of-guessthecolor-game
 
 # Getting started
 
@@ -51,9 +45,3 @@ You can view the development server at `localhost:3000`.
 2. Create your branch: `git checkout -b my-new-feature`
 3. Commit your changes: `git commit -m 'Add some feature'`
 4. Push to the branch: `git push origin my-new-feature`
-
-## Acknowlegments
-
-I basically wanted to use this [nextjs-starter-pack](https://github.com/miami78/nextjs-starter-pack) but it didnt have typescript support.
-
-So I made this starter-pack from following an awesome [tutorial](https://blog.jarrodwatts.com/nextjs-eslint-prettier-husky) written by [Jarrod Watts](https://github.com/jarrodwatts/).
