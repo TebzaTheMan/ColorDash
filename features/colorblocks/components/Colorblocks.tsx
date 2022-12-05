@@ -1,4 +1,4 @@
-import { Box, Grid, Heading } from "@chakra-ui/react";
+import { Box, Grid, Heading, useToast } from "@chakra-ui/react";
 import { useMediaQuery } from "@chakra-ui/react";
 import { Colorblock } from "./Colorblock";
 import { InfobarContext } from "features/Infobar";
@@ -29,6 +29,7 @@ export function Colorblocks() {
   const [colorsClicked, setColorsClicked] = useState(new Array(NUM_COLORS));
   const [correctColor, setCorrectColor] = useState("");
   const [infobarData, infobarDispatch] = useContext(InfobarContext);
+  const toast = useToast();
 
   useEffect(() => {
     setCorrectColor(colors[Math.floor(Math.random() * NUM_COLORS)]);
@@ -41,10 +42,23 @@ export function Colorblocks() {
 
   const handleColorClick = (index: number, isCorrect: boolean) => {
     if (isCorrect) {
+      // show correct color toast!
+      toast({
+        title: "Correct color",
+        status: "success",
+        duration: 600,
+        position: "top",
+      });
       infobarDispatch({ type: "CORRECT_COLOR", score: 10 });
       setColorsClicked(new Array(NUM_COLORS)); // reset colors from being clicked!
       generateNewColors();
     } else {
+      toast({
+        title: "Incorrect color",
+        status: "error",
+        duration: 600,
+        position: "top",
+      });
       if (infobarData.triesLeft == 1) {
         infobarDispatch({ type: "RESET_TRIES" });
         setColorsClicked(new Array(NUM_COLORS)); // reset colors from being clicked!
