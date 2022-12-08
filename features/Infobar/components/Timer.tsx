@@ -14,11 +14,16 @@ export function Timer() {
   const { seconds, minutes, isRunning } = useTimer({
     expiryTimestamp,
     onExpire: () => {
-      inforbarDispatch({ type: "TIME_UP" });
-      if (infobarData.score > highscoreData.current) {
+      const score = infobarData.score;
+      const isNewHighscore = score > highscoreData.current;
+      inforbarDispatch({
+        type: "TIME_UP",
+        isNewHighscore,
+      });
+      if (isNewHighscore) {
         highscoreDispatch({
           type: "UPDATE_SCORE",
-          score: infobarData.score,
+          score,
         });
       }
     },
