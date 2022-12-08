@@ -1,13 +1,11 @@
-import { Box, Grid, Heading, useToast } from "@chakra-ui/react";
-import { useMediaQuery } from "@chakra-ui/react";
+import { Box, Grid, useToast } from "@chakra-ui/react";
 import { Colorblock } from "./Colorblock";
 import { InfobarContext } from "features/Infobar";
 import { useContext, useState } from "react";
-import { CancelButton } from "components/CancelButton";
 import { useColors } from "features/colorblocks";
+import Header from "./Header";
 
 export function Colorblocks() {
-  const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   const { colors, correctColor, generateNewColors } = useColors();
   const emptyColorsClickedArr = new Array(colors.length);
   const [colorsClicked, setColorsClicked] = useState(emptyColorsClickedArr);
@@ -48,22 +46,7 @@ export function Colorblocks() {
 
   return (
     <Box>
-      <Grid
-        templateColumns={["repeat(1, 1fr)", "repeat(1, 1fr)", "repeat(3, 1fr)"]}
-        mt="16"
-        mb="8"
-        ml={["0", "8"]}
-      >
-        {isLargerThan768 && (
-          <Box justifySelf={"flex-start"}>
-            <CancelButton />
-          </Box>
-        )}
-        <Heading size="lg" as="h1" color="gray.600" justifySelf={"center"}>
-          {correctColor}
-        </Heading>
-      </Grid>
-
+      <Header correctColor={correctColor} />
       <Grid
         templateColumns={["repeat(2, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]}
         gap={6}
