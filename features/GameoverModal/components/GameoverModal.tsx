@@ -15,12 +15,10 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { CancelButton } from "components/CancelButton";
-import { HighscoreContext } from "features/Highscore";
 
 export function GameoverModal() {
   const router = useRouter();
   const [infobarData, infobarDispatch] = useContext(InfobarContext);
-  const [highscoreData] = useContext(HighscoreContext);
   const isOpen = infobarData.timeUp;
   const onClose = () => {
     infobarDispatch({ type: "RESET" });
@@ -52,10 +50,7 @@ export function GameoverModal() {
           <ModalBody>
             <Text fontSize="lg">
               Score: {infobarData.score}
-              {/** The previous highscore refers to the previous highscore stored since the current highscore will be
-               * updated as soon as time is up!
-               */}
-              {infobarData.score > highscoreData.previous && (
+              {infobarData.isNewHighscore && (
                 <Badge colorScheme="green" variant="solid" ml="3">
                   New
                 </Badge>

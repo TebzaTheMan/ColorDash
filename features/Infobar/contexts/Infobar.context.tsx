@@ -8,6 +8,7 @@ export const defaultInfobar: IInfobarState = {
   timeUp: false,
   triesLeft: 3,
   correctColors: 0,
+  isNewHighscore: false,
 };
 export const InfobarContext = createContext<
   [IInfobarState, Dispatch<IInfobarAction>]

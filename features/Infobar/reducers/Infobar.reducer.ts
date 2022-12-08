@@ -6,7 +6,7 @@ const reducer = (state: IInfobarState, action: IInfobarAction) => {
     case "RESET":
       return defaultInfobar;
     case "TIME_UP":
-      return { ...state, timeUp: true };
+      return { ...state, timeUp: true, isNewHighscore: action.isNewHighscore };
     case "DECREMENT_TRIES":
       return { ...state, triesLeft: state.triesLeft - 1 };
     case "CORRECT_COLOR":
