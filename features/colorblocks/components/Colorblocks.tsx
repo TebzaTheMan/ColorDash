@@ -2,43 +2,17 @@ import { Box, Grid, Heading, useToast } from "@chakra-ui/react";
 import { useMediaQuery } from "@chakra-ui/react";
 import { Colorblock } from "./Colorblock";
 import { InfobarContext } from "features/Infobar";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { CancelButton } from "components/CancelButton";
-
-const NUM_COLORS = 6;
-// generate a random rgb color value
-const getRgbColor = () => {
-  const red = Math.floor(Math.random() * 256);
-  const green = Math.floor(Math.random() * 256);
-  const blue = Math.floor(Math.random() * 256);
-  const value = `rgb(${red}, ${green}, ${blue})`;
-  return value;
-};
-// generate an array of colors
-const getRGBcolors = () => {
-  const colors = [];
-  for (let i = 0; i < NUM_COLORS; i++) {
-    colors.push(getRgbColor());
-  }
-  return colors;
-};
-let colors = getRGBcolors();
+import { useColors } from "features/colorblocks";
 
 export function Colorblocks() {
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
-  const [colorsClicked, setColorsClicked] = useState(new Array(NUM_COLORS));
-  const [correctColor, setCorrectColor] = useState("");
+  const { colors, correctColor, generateNewColors } = useColors();
+  const emptyColorsClickedArr = new Array(colors.length);
+  const [colorsClicked, setColorsClicked] = useState(emptyColorsClickedArr);
   const [infobarData, infobarDispatch] = useContext(InfobarContext);
   const toast = useToast();
-
-  useEffect(() => {
-    setCorrectColor(colors[Math.floor(Math.random() * NUM_COLORS)]);
-  }, [colors]);
-
-  const generateNewColors = () => {
-    colors = getRGBcolors();
-    setCorrectColor(colors[Math.floor(Math.random() * NUM_COLORS)]);
-  };
 
   const handleColorClick = (index: number, isCorrect: boolean) => {
     if (isCorrect) {
@@ -50,7 +24,7 @@ export function Colorblocks() {
         position: "top",
       });
       infobarDispatch({ type: "CORRECT_COLOR", score: 10 });
-      setColorsClicked(new Array(NUM_COLORS)); // reset colors from being clicked!
+      setColorsClicked(emptyColorsClickedArr); // reset colors from being clicked!
       generateNewColors();
     } else {
       toast({
@@ -61,7 +35,7 @@ export function Colorblocks() {
       });
       if (infobarData.triesLeft == 1) {
         infobarDispatch({ type: "RESET_TRIES" });
-        setColorsClicked(new Array(NUM_COLORS)); // reset colors from being clicked!
+        setColorsClicked(emptyColorsClickedArr); // reset colors from being clicked!
         generateNewColors();
       } else {
         const c = colorsClicked;
@@ -71,6 +45,7 @@ export function Colorblocks() {
       }
     }
   };
+
   return (
     <Box>
       <Grid
