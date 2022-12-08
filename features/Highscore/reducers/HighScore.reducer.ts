@@ -6,7 +6,6 @@ const reducer = (state: IHighscoreState, action: IHighscoreAction) => {
       return action.storedState;
     case "UPDATE_SCORE":
       return {
-        previous: state.current,
         current: action.score!,
       };
     default:
