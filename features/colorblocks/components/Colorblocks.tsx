@@ -53,19 +53,18 @@ export function Colorblocks() {
         ml={["10", "32", "32", "72"]}
         mr={["10", "32", "32", "72"]}
       >
-        {correctColor !== "" &&
-          colors.map((color, index) => {
-            return (
-              <Colorblock
-                color={color}
-                key={index}
-                index={index}
-                isCorrect={color == correctColor ? true : false}
-                isClicked={colorsClicked[index]}
-                handleColorClick={handleColorClick}
-              />
-            );
-          })}
+        {colors.map((color, index) => {
+          return (
+            <Colorblock
+              color={color}
+              key={index}
+              index={index}
+              isCorrect={color == correctColor ? true : false}
+              isClicked={colorsClicked[index]}
+              handleColorClick={handleColorClick}
+            />
+          );
+        })}
       </Grid>
     </Box>
   );
