@@ -5,6 +5,18 @@ import { useContext, useState } from "react";
 import { useColors } from "features/colorblocks";
 import Header from "./Header";
 
+const calculateScore = (numTriesLeft: number) => {
+  switch (numTriesLeft) {
+    case 3:
+      return 10;
+    case 2:
+      return 5;
+    case 1:
+      return 2;
+    default:
+      return 0;
+  }
+};
 export function Colorblocks() {
   const { colors, correctColor, generateNewColors } = useColors();
   const emptyColorsClickedArr = new Array(colors.length);
@@ -21,7 +33,10 @@ export function Colorblocks() {
         duration: 600,
         position: "top",
       });
-      infobarDispatch({ type: "CORRECT_COLOR", score: 10 });
+      infobarDispatch({
+        type: "CORRECT_COLOR",
+        score: calculateScore(infobarData.triesLeft),
+      });
       setColorsClicked(emptyColorsClickedArr); // reset colors from being clicked!
       generateNewColors();
     } else {
