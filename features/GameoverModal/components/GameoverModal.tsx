@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { InfobarContext } from "features/Infobar";
 import { Flex, Icon } from "@chakra-ui/react";
 import { BsCheckCircleFill } from "react-icons/bs";
@@ -20,6 +21,8 @@ export function GameoverModal() {
   const router = useRouter();
   const [infobarData, infobarDispatch] = useContext(InfobarContext);
   const isOpen = infobarData.timeUp;
+  const initialRef = useRef(null);
+
   const onClose = () => {
     infobarDispatch({ type: "RESET" });
     router.reload();
@@ -31,6 +34,7 @@ export function GameoverModal() {
         isOpen={isOpen}
         onClose={onClose}
         closeOnOverlayClick={false}
+        initialFocusRef={initialRef}
         isCentered
       >
         <ModalOverlay />
@@ -62,7 +66,12 @@ export function GameoverModal() {
           </ModalBody>
           <ModalFooter>
             <CancelButton />
-            <Button colorScheme="teal" onClick={onClose} ml={3}>
+            <Button
+              colorScheme="teal"
+              onClick={onClose}
+              ml={3}
+              ref={initialRef}
+            >
               Play Again
             </Button>
           </ModalFooter>
