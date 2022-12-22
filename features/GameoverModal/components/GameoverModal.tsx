@@ -71,8 +71,9 @@ export function GameoverModal() {
               onClick={onClose}
               ml={3}
               ref={initialRef}
+              size={["md", "lg"]}
             >
-              Play Again
+              Replay
             </Button>
           </ModalFooter>
         </ModalContent>
