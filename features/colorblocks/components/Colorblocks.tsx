@@ -1,8 +1,8 @@
 import { Box, Grid, useToast } from "@chakra-ui/react";
 import { Colorblock } from "./Colorblock";
 import { InfobarContext } from "features/Infobar";
-import { useContext, useState } from "react";
-import { useColors } from "features/colorblocks";
+import { useContext } from "react";
+import { useColors, useColorsClicked } from "features/colorblocks";
 import Header from "./Header";
 
 const calculateScore = (numTriesLeft: number) => {
@@ -19,8 +19,8 @@ const calculateScore = (numTriesLeft: number) => {
 };
 export function Colorblocks() {
   const { colors, correctColor, generateNewColors } = useColors();
-  const emptyColorsClickedArr = new Array(colors.length);
-  const [colorsClicked, setColorsClicked] = useState(emptyColorsClickedArr);
+  const { resetClickedColors, isColorClicked, setColorClicked } =
+    useColorsClicked(colors.length);
   const [infobarData, infobarDispatch] = useContext(InfobarContext);
   const toast = useToast();
 
@@ -37,7 +37,7 @@ export function Colorblocks() {
         type: "CORRECT_COLOR",
         score: calculateScore(infobarData.triesLeft),
       });
-      setColorsClicked(emptyColorsClickedArr); // reset colors from being clicked!
+      resetClickedColors();
       generateNewColors();
     } else {
       toast({
@@ -48,12 +48,10 @@ export function Colorblocks() {
       });
       if (infobarData.triesLeft == 1) {
         infobarDispatch({ type: "RESET_TRIES" });
-        setColorsClicked(emptyColorsClickedArr); // reset colors from being clicked!
+        resetClickedColors();
         generateNewColors();
       } else {
-        const c = colorsClicked;
-        c[index] = true;
-        setColorsClicked(c);
+        setColorClicked(index);
         infobarDispatch({ type: "DECREMENT_TRIES" });
       }
     }
@@ -75,7 +73,7 @@ export function Colorblocks() {
               key={index}
               index={index}
               isCorrect={color == correctColor ? true : false}
-              isClicked={colorsClicked[index]}
+              isClicked={isColorClicked(index)}
               handleColorClick={handleColorClick}
             />
           );
