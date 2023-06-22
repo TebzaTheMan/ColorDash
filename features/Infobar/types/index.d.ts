@@ -1,3 +1,5 @@
+import { IScore } from "types";
+
 export interface IInfobarAction {
   type:
     | "RESET"
@@ -5,11 +7,11 @@ export interface IInfobarAction {
     | "CORRECT_COLOR"
     | "RESET_TRIES"
     | "TIME_UP";
-  score?: number;
+  score?: IScore;
   isNewHighscore?: boolean;
 }
 export interface IInfobarState {
-  score: number;
+  score: IScore;
   triesLeft: number;
   correctColors: number;
   timeUp: boolean;

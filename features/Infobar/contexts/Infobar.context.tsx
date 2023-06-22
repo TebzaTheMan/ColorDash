@@ -4,7 +4,10 @@ import { useReducer } from "react";
 import { IInfobarAction, IInfobarState } from "../types";
 
 export const defaultInfobar: IInfobarState = {
-  score: 0,
+  score: {
+    points: 0,
+    total: 0,
+  },
   timeUp: false,
   triesLeft: 3,
   correctColors: 0,

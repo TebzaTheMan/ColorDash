@@ -53,7 +53,7 @@ export function GameoverModal() {
           </ModalHeader>
           <ModalBody>
             <Text fontSize="lg">
-              Score: {infobarData.score}
+              Score: {infobarData.score.points} / {infobarData.score.total}
               {infobarData.isNewHighscore && (
                 <Badge colorScheme="green" variant="solid" ml="3">
                   New

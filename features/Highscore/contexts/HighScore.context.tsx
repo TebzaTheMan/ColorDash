@@ -4,7 +4,10 @@ import useLocalStorageReducer from "hooks/useLocalStorageReducer";
 import { IHighscoreAction, IHighscoreState } from "../types";
 
 const defaultHighscore: IHighscoreState = {
-  current: 0,
+  current: {
+    points: 0,
+    total: 0,
+  },
 };
 export const HighscoreContext = createContext<
   [IHighscoreState, Dispatch<IHighscoreAction>]
