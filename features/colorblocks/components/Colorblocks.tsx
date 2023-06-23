@@ -1,6 +1,6 @@
 import { Box, Grid, useToast } from "@chakra-ui/react";
 import { Colorblock } from "./Colorblock";
-import { InfobarContext } from "features/Infobar";
+import { InfobarContext } from "contexts";
 import { useContext } from "react";
 import { useColors, useColorsClicked } from "features/colorblocks";
 import Header from "./Header";

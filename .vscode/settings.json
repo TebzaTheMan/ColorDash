@@ -8,5 +8,27 @@
   },
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.exclude": {
+    "screenshot_playpage.jpg": true,
+    "yarn.lock": true,
+    "tsconfig.tsbuildinfo": true,
+    "tsconfig.json": true,
+    "README.md": true,
+    "next.config.js": true,
+    "next-env.d.ts": true,
+    "LICENSE": true,
+    ".prettierrc": true,
+    ".gitignore": true,
+    ".eslintrc.js": true,
+    ".eslintignore": true,
+    ".prettierignore": true,
+    ".swc/plugins/v2": true,
+    ".swc/plugins": true,
+    ".swc": true,
+    ".next": true,
+    ".husky": true,
+    "public": true,
+    "node_modules": true
   }
 }

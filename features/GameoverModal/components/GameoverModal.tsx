@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { InfobarContext } from "features/Infobar";
+import { InfobarContext } from "contexts";
 import { Flex, Icon, List, ListItem } from "@chakra-ui/react";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { useContext } from "react";

@@ -1,7 +1,10 @@
-import { defaultInfobar } from "../contexts/Infobar.context";
-import { IInfobarAction, IInfobarState } from "../types";
+import { defaultInfobar } from "contexts/Infobar.context";
+import { IInfobarAction, IInfobarState } from "types";
 
-const reducer = (state: IInfobarState, action: IInfobarAction) => {
+export const InfobarReducer = (
+  state: IInfobarState,
+  action: IInfobarAction
+) => {
   switch (action.type) {
     case "RESET":
       return defaultInfobar;
@@ -28,4 +31,3 @@ const reducer = (state: IInfobarState, action: IInfobarAction) => {
       return state;
   }
 };
-export default reducer;

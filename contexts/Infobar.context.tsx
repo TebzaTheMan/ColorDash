@@ -1,7 +1,7 @@
 import { createContext, ReactNode, Dispatch } from "react";
-import InfobarReducer from "../reducers/Infobar.reducer";
+import { InfobarReducer } from "reducers";
 import { useReducer } from "react";
-import { IInfobarAction, IInfobarState } from "../types";
+import { IInfobarAction, IInfobarState } from "types";
 
 export const defaultInfobar: IInfobarState = {
   score: {

@@ -1,5 +1,5 @@
 import { Flex, Heading } from "@chakra-ui/react";
-import { InfobarContext } from "features/Infobar";
+import { InfobarContext } from "contexts";
 import { useContext } from "react";
 import { Text } from "@chakra-ui/react";
 

@@ -1,5 +1,6 @@
 import { Colorblocks } from "features/colorblocks";
-import { Infobar, InfobarContext } from "features/Infobar";
+import { Infobar } from "features/Infobar";
+import { InfobarContext } from "contexts";
 import { GameoverModal } from "features/GameoverModal";
 import Head from "next/head";
 import { useContext } from "react";

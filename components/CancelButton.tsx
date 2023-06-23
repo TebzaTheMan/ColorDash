@@ -1,6 +1,6 @@
 import { Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { InfobarContext } from "features/Infobar";
+import { InfobarContext } from "contexts";
 import { useContext } from "react";
 
 export function CancelButton() {
