@@ -35,7 +35,10 @@ export function Colorblocks() {
       });
       infobarDispatch({
         type: "CORRECT_COLOR",
-        score: calculateScore(infobarData.triesLeft),
+        score: {
+          points: calculateScore(infobarData.triesLeft),
+          total: 10, // adding 10
+        },
       });
       resetClickedColors();
       generateNewColors();

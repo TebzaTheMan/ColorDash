@@ -4,6 +4,7 @@ import { HighscoreContext } from "features/Highscore";
 import { useContext } from "react";
 import { useTimer } from "react-timer-hook";
 import { Text } from "@chakra-ui/react";
+import { IScore } from "types";
 
 export function Timer() {
   const [infobarData, inforbarDispatch] = useContext(InfobarContext);
@@ -11,11 +12,22 @@ export function Timer() {
   const ALLOWED_SECONDS = 30;
   const expiryTimestamp = new Date();
   expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + ALLOWED_SECONDS);
+
+  const isNewHighScore = (currentScore: IScore, highScore: IScore) => {
+    if (currentScore.total === highScore.total) {
+      if (currentScore.points > highScore.points) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return currentScore.total > highScore.total;
+  };
   const { seconds, minutes, isRunning } = useTimer({
     expiryTimestamp,
     onExpire: () => {
       const score = infobarData.score;
-      const isNewHighscore = score > highscoreData.current;
+      const isNewHighscore = isNewHighScore(score, highscoreData.current);
       inforbarDispatch({
         type: "TIME_UP",
         isNewHighscore,

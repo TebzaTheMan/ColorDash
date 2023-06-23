@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { InfobarContext } from "features/Infobar";
-import { Flex, Icon } from "@chakra-ui/react";
+import { Flex, Icon, List, ListItem } from "@chakra-ui/react";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { useContext } from "react";
 import {
@@ -53,15 +53,39 @@ export function GameoverModal() {
           </ModalHeader>
           <ModalBody>
             <Text fontSize="lg">
-              Score: {infobarData.score}
+              You got{" "}
+              <Text color={"black"} fontWeight={"semibold"} display={"inline"}>
+                {infobarData.correctColors}
+              </Text>{" "}
+              correct color{infobarData.correctColors > 0 ? "s" : ""} with a
+              score of <br />
+              <Text
+                fontSize={"3xl"}
+                color={"black"}
+                fontWeight={"semibold"}
+                display={"inline"}
+              >
+                {" "}
+                {infobarData.score.points}
+              </Text>{" "}
+              / {infobarData.score.total}
               {infobarData.isNewHighscore && (
                 <Badge colorScheme="green" variant="solid" ml="3">
                   New
                 </Badge>
               )}
-            </Text>
-            <Text fontSize="lg">
-              Correct colors: {infobarData.correctColors}
+              <br />
+              <br />
+              Remember, each correct guess earns points based on the number of
+              tries taken:
+              <List>
+                <ListItem>First try: 10 points</ListItem>
+                <ListItem>Second try: 5 points</ListItem>
+                <ListItem> Third try: 2 points</ListItem>
+              </List>
+              <br />
+              The score is calculated by dividing the total points earned by the
+              maximum possible points.
             </Text>
           </ModalBody>
           <ModalFooter>

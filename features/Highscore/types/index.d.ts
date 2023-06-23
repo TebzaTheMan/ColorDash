@@ -1,12 +1,14 @@
+import { IScore } from "types";
+
 export interface IAction<T> {
   type: "UPDATE_SCORE" | "LOAD_STORED_STATE";
   storedState?: T;
 }
 
 export interface IHighscoreState {
-  current: number;
+  current: IScore;
 }
 export interface IHighscoreAction extends IAction<IHighscoreState> {
-  score?: number;
+  score?: IScore;
   storedState?: T;
 }

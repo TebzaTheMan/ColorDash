@@ -9,7 +9,7 @@ export function Score() {
     <Flex direction={"column"} alignItems="center">
       <Text fontSize="lg">Score</Text>
       <Heading size="lg" as="h1">
-        {data.score}
+        {data.score.points} / {data.score.total}
       </Heading>
     </Flex>
   );

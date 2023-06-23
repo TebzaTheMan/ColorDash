@@ -9,7 +9,7 @@ export function HighScore() {
     <>
       <Text fontSize="lg">High Score</Text>
       <Heading size="lg" as="h1">
-        {highscore.current}
+        {highscore.current.points} / {highscore.current.total}
       </Heading>
     </>
   );

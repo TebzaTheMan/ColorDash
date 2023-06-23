@@ -12,7 +12,10 @@ const reducer = (state: IInfobarState, action: IInfobarAction) => {
     case "CORRECT_COLOR":
       return {
         ...state,
-        score: state.score + action.score!,
+        score: {
+          points: state.score.points + action.score!.points,
+          total: state.score.total + action.score!.total,
+        },
         correctColors: state.correctColors + 1,
         triesLeft: defaultInfobar.triesLeft,
       };
