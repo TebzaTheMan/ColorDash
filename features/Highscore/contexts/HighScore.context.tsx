@@ -4,7 +4,11 @@ import useLocalStorageReducer from "hooks/useLocalStorageReducer";
 import { IHighscoreAction, IHighscoreState } from "../types";
 
 const defaultHighscore: IHighscoreState = {
-  current: {
+  rgb: {
+    points: 0,
+    total: 0,
+  },
+  hsl: {
     points: 0,
     total: 0,
   },

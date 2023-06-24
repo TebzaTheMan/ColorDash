@@ -1,3 +1,5 @@
+export type TMode = "rgb" | "hsl";
+
 export interface IGameAction {
   type:
     | "RESET"
