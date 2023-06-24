@@ -1,5 +1,5 @@
 import { Flex, Heading } from "@chakra-ui/react";
-import { InfobarContext } from "contexts";
+import { GameContext } from "contexts";
 import { HighscoreContext } from "features/Highscore";
 import { useContext } from "react";
 import { useTimer } from "react-timer-hook";
@@ -7,7 +7,7 @@ import { Text } from "@chakra-ui/react";
 import { IScore } from "types";
 
 export function Timer() {
-  const [infobarData, inforbarDispatch] = useContext(InfobarContext);
+  const [gameData, gameDispatch] = useContext(GameContext);
   const [highscoreData, highscoreDispatch] = useContext(HighscoreContext);
   const ALLOWED_SECONDS = 30;
   const expiryTimestamp = new Date();
@@ -26,9 +26,9 @@ export function Timer() {
   const { seconds, minutes, isRunning } = useTimer({
     expiryTimestamp,
     onExpire: () => {
-      const score = infobarData.score;
+      const score = gameData.score;
       const isNewHighscore = isNewHighScore(score, highscoreData.current);
-      inforbarDispatch({
+      gameDispatch({
         type: "TIME_UP",
         isNewHighscore,
       });

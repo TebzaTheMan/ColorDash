@@ -1,11 +1,11 @@
 import { Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { InfobarContext } from "contexts";
+import { GameContext } from "contexts";
 import { useContext } from "react";
 
 export function CancelButton() {
   const router = useRouter();
-  const [, infobarDispatch] = useContext(InfobarContext);
+  const [, infobarDispatch] = useContext(GameContext);
   return (
     <Button
       variant="outline"

@@ -1,4 +1,4 @@
-export interface IInfobarAction {
+export interface IGameAction {
   type:
     | "RESET"
     | "DECREMENT_TRIES"
@@ -8,7 +8,7 @@ export interface IInfobarAction {
   score?: IScore;
   isNewHighscore?: boolean;
 }
-export interface IInfobarState {
+export interface IGameState {
   score: IScore;
   triesLeft: number;
   correctColors: number;

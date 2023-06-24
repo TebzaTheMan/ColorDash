@@ -1,1 +1,1 @@
-export * from "./Infobar.reducer";
+export * from "./game.reducer";

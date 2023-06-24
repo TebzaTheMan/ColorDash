@@ -1,9 +1,11 @@
 import { useMediaQuery } from "@chakra-ui/react";
 import { Box, Grid, Heading } from "@chakra-ui/react";
 import { CancelButton } from "components/CancelButton";
+
 interface Props {
   correctColor: string;
 }
+
 export default function Header({ correctColor }: Props) {
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   return (

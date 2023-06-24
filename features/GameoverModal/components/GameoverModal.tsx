@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { InfobarContext } from "contexts";
+import { GameContext } from "contexts";
 import { Flex, Icon, List, ListItem } from "@chakra-ui/react";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { useContext } from "react";
@@ -19,12 +19,12 @@ import { CancelButton } from "components/CancelButton";
 
 export function GameoverModal() {
   const router = useRouter();
-  const [infobarData, infobarDispatch] = useContext(InfobarContext);
-  const isOpen = infobarData.timeUp;
+  const [gameData, gameDispatch] = useContext(GameContext);
+  const isOpen = gameData.timeUp;
   const initialRef = useRef(null);
 
   const onClose = () => {
-    infobarDispatch({ type: "RESET" });
+    gameDispatch({ type: "RESET" });
     router.reload();
   };
 
@@ -55,10 +55,10 @@ export function GameoverModal() {
             <Text fontSize="lg">
               You got{" "}
               <Text color={"black"} fontWeight={"semibold"} display={"inline"}>
-                {infobarData.correctColors}
+                {gameData.correctColors}
               </Text>{" "}
-              correct color{infobarData.correctColors > 0 ? "s" : ""} with a
-              score of <br />
+              correct color{gameData.correctColors > 0 ? "s" : ""} with a score
+              of <br />
               <Text
                 fontSize={"3xl"}
                 color={"black"}
@@ -66,10 +66,10 @@ export function GameoverModal() {
                 display={"inline"}
               >
                 {" "}
-                {infobarData.score.points}
+                {gameData.score.points}
               </Text>{" "}
-              / {infobarData.score.total}
-              {infobarData.isNewHighscore && (
+              / {gameData.score.total}
+              {gameData.isNewHighscore && (
                 <Badge colorScheme="green" variant="solid" ml="3">
                   New
                 </Badge>
