@@ -1,10 +1,10 @@
-import { defaultInfobar } from "../contexts/Infobar.context";
-import { IInfobarAction, IInfobarState } from "../types";
+import { defaultGame } from "contexts/game.context";
+import { IGameAction, IGameState } from "types";
 
-const reducer = (state: IInfobarState, action: IInfobarAction) => {
+export const GameReducer = (state: IGameState, action: IGameAction) => {
   switch (action.type) {
     case "RESET":
-      return defaultInfobar;
+      return defaultGame;
     case "TIME_UP":
       return { ...state, timeUp: true, isNewHighscore: action.isNewHighscore };
     case "DECREMENT_TRIES":
@@ -17,15 +17,14 @@ const reducer = (state: IInfobarState, action: IInfobarAction) => {
           total: state.score.total + action.score!.total,
         },
         correctColors: state.correctColors + 1,
-        triesLeft: defaultInfobar.triesLeft,
+        triesLeft: defaultGame.triesLeft,
       };
     case "RESET_TRIES":
       return {
         ...state,
-        triesLeft: defaultInfobar.triesLeft,
+        triesLeft: defaultGame.triesLeft,
       };
     default:
       return state;
   }
 };
-export default reducer;

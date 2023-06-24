@@ -1,6 +1,6 @@
 import { Box, Grid, useToast } from "@chakra-ui/react";
 import { Colorblock } from "./Colorblock";
-import { InfobarContext } from "features/Infobar";
+import { GameContext } from "contexts";
 import { useContext } from "react";
 import { useColors, useColorsClicked } from "features/colorblocks";
 import Header from "./Header";
@@ -21,7 +21,7 @@ export function Colorblocks() {
   const { colors, correctColor, generateNewColors } = useColors();
   const { resetClickedColors, isColorClicked, setColorClicked } =
     useColorsClicked(colors.length);
-  const [infobarData, infobarDispatch] = useContext(InfobarContext);
+  const [gameData, gameDispatch] = useContext(GameContext);
   const toast = useToast();
 
   const handleColorClick = (index: number, isCorrect: boolean) => {
@@ -33,10 +33,10 @@ export function Colorblocks() {
         duration: 600,
         position: "top",
       });
-      infobarDispatch({
+      gameDispatch({
         type: "CORRECT_COLOR",
         score: {
-          points: calculateScore(infobarData.triesLeft),
+          points: calculateScore(gameData.triesLeft),
           total: 10, // adding 10
         },
       });
@@ -49,13 +49,13 @@ export function Colorblocks() {
         duration: 600,
         position: "top",
       });
-      if (infobarData.triesLeft == 1) {
-        infobarDispatch({ type: "RESET_TRIES" });
+      if (gameData.triesLeft == 1) {
+        gameDispatch({ type: "RESET_TRIES" });
         resetClickedColors();
         generateNewColors();
       } else {
         setColorClicked(index);
-        infobarDispatch({ type: "DECREMENT_TRIES" });
+        gameDispatch({ type: "DECREMENT_TRIES" });
       }
     }
   };

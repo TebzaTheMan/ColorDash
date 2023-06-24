@@ -4,12 +4,12 @@ import { HighscoreContext } from "features/Highscore";
 import { useContext } from "react";
 
 export function HighScore() {
-  const [highscore] = useContext(HighscoreContext);
+  const [highscoreData] = useContext(HighscoreContext);
   return (
     <>
       <Text fontSize="lg">High Score</Text>
       <Heading size="lg" as="h1">
-        {highscore.current.points} / {highscore.current.total}
+        {highscoreData.current.points} / {highscoreData.current.total}
       </Heading>
     </>
   );

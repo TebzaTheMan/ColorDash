@@ -1,11 +1,12 @@
 import { Colorblocks } from "features/colorblocks";
-import { Infobar, InfobarContext } from "features/Infobar";
+import { Infobar } from "features/Infobar";
+import { GameContext } from "contexts";
 import { GameoverModal } from "features/GameoverModal";
 import Head from "next/head";
 import { useContext } from "react";
 export default function Play() {
-  const [infobarData] = useContext(InfobarContext);
-  const isTimeUp = infobarData.timeUp;
+  const [GameData] = useContext(GameContext);
+  const isTimeUp = GameData.timeUp;
 
   return (
     <>
