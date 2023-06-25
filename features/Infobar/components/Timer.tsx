@@ -27,7 +27,10 @@ export function Timer() {
     expiryTimestamp,
     onExpire: () => {
       const score = gameData.score;
-      const isNewHighscore = isNewHighScore(score, highscoreData.current);
+      const isNewHighscore = isNewHighScore(
+        score,
+        highscoreData[gameData.mode!]
+      ); // the mode will not be null here because on play/[mode].tsx we only render the page when mode has been set
       gameDispatch({
         type: "TIME_UP",
         isNewHighscore,
@@ -36,6 +39,7 @@ export function Timer() {
         highscoreDispatch({
           type: "UPDATE_SCORE",
           score,
+          mode: gameData.mode,
         });
       }
     },

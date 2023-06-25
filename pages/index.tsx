@@ -26,9 +26,15 @@ export default function Home() {
           <Spacer />
           <Heading size="lg">Guess The Color</Heading>
           <Spacer />
-          <Link href="/play" passHref>
+          <Link href="/play/rgb" passHref>
             <Button size="lg" colorScheme={"teal"} rightIcon={<HiArrowRight />}>
-              PLAY
+              PLAY RGB MODE
+            </Button>
+          </Link>
+          <Spacer />
+          <Link href="/play/hsl" passHref>
+            <Button size="lg" colorScheme={"teal"} rightIcon={<HiArrowRight />}>
+              PLAY HSL MODE
             </Button>
           </Link>
         </Flex>

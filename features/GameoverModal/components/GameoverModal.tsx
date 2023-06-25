@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { GameContext } from "contexts";
-import { Flex, Icon, List, ListItem } from "@chakra-ui/react";
+import { Box, Flex, Icon, List, ListItem } from "@chakra-ui/react";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { useContext } from "react";
 import {
@@ -54,12 +54,18 @@ export function GameoverModal() {
           <ModalBody>
             <Text fontSize="lg">
               You got{" "}
-              <Text color={"black"} fontWeight={"semibold"} display={"inline"}>
+              <Box
+                as="span"
+                color={"black"}
+                fontWeight={"semibold"}
+                display={"inline"}
+              >
                 {gameData.correctColors}
-              </Text>{" "}
-              correct color{gameData.correctColors > 0 ? "s" : ""} with a score
+              </Box>{" "}
+              correct color{gameData.correctColors > 1 ? "s" : ""} with a score
               of <br />
-              <Text
+              <Box
+                as="span"
                 fontSize={"3xl"}
                 color={"black"}
                 fontWeight={"semibold"}
@@ -67,23 +73,26 @@ export function GameoverModal() {
               >
                 {" "}
                 {gameData.score.points}
-              </Text>{" "}
+              </Box>{" "}
               / {gameData.score.total}
               {gameData.isNewHighscore && (
                 <Badge colorScheme="green" variant="solid" ml="3">
                   New
                 </Badge>
               )}
-              <br />
-              <br />
+            </Text>
+            <br />
+            <Text fontSize="lg">
               Remember, each correct guess earns points based on the number of
               tries taken:
-              <List>
-                <ListItem>First try: 10 points</ListItem>
-                <ListItem>Second try: 5 points</ListItem>
-                <ListItem> Third try: 2 points</ListItem>
-              </List>
-              <br />
+            </Text>
+            <List fontSize={"lg"}>
+              <ListItem>First try: 10 points</ListItem>
+              <ListItem>Second try: 5 points</ListItem>
+              <ListItem> Third try: 2 points</ListItem>
+            </List>
+            <br />
+            <Text fontSize="lg">
               The score is calculated by dividing the total points earned by the
               maximum possible points.
             </Text>

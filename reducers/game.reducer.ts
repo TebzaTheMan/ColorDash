@@ -24,6 +24,11 @@ export const GameReducer = (state: IGameState, action: IGameAction) => {
         ...state,
         triesLeft: defaultGame.triesLeft,
       };
+    case "CHANGE_MODE":
+      return {
+        ...state,
+        mode: action.mode!,
+      };
     default:
       return state;
   }
