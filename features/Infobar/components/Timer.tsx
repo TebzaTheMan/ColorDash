@@ -1,27 +1,14 @@
 import { Flex, Heading } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { GameContext } from "contexts";
 import { HighscoreContext } from "features/Highscore";
 import { useContext } from "react";
 import { useTimer } from "react-timer-hook";
 import { Text } from "@chakra-ui/react";
-import { IScore, TMode } from "types";
+import { IScore } from "types";
 
-const processModeQuery = (mode: string | string[] | undefined): TMode => {
-  if (undefined) {
-    return "rgb";
-  }
-  if (mode === "rgb" || mode == "hsl") {
-    return mode;
-  }
-  return "rgb";
-};
 export function Timer() {
   const [gameData, gameDispatch] = useContext(GameContext);
   const [highscoreData, highscoreDispatch] = useContext(HighscoreContext);
-  const router = useRouter();
-  const { mode } = router.query;
-  const modeQuery = processModeQuery(mode);
   const ALLOWED_SECONDS = 30;
   const expiryTimestamp = new Date();
   expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + ALLOWED_SECONDS);
@@ -40,7 +27,10 @@ export function Timer() {
     expiryTimestamp,
     onExpire: () => {
       const score = gameData.score;
-      const isNewHighscore = isNewHighScore(score, highscoreData[modeQuery]);
+      const isNewHighscore = isNewHighScore(
+        score,
+        highscoreData[gameData.mode!]
+      ); // the mode will not be null here because on play/[mode].tsx we only render the page when mode has been set
       gameDispatch({
         type: "TIME_UP",
         isNewHighscore,
@@ -49,7 +39,7 @@ export function Timer() {
         highscoreDispatch({
           type: "UPDATE_SCORE",
           score,
-          mode: modeQuery,
+          mode: gameData.mode,
         });
       }
     },

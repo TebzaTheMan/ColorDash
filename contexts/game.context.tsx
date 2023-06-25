@@ -12,6 +12,7 @@ export const defaultGame: IGameState = {
   triesLeft: 3,
   correctColors: 0,
   isNewHighscore: false,
+  mode: null,
 };
 export const GameContext = createContext<[IGameState, Dispatch<IGameAction>]>([
   defaultGame,

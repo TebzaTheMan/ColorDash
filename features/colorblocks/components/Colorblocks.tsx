@@ -18,10 +18,10 @@ const calculateScore = (numTriesLeft: number) => {
   }
 };
 export function Colorblocks() {
-  const { colors, correctColor, generateNewColors } = useColors();
+  const [gameData, gameDispatch] = useContext(GameContext);
+  const { colors, correctColor, generateNewColors } = useColors(gameData.mode);
   const { resetClickedColors, isColorClicked, setColorClicked } =
     useColorsClicked(colors.length);
-  const [gameData, gameDispatch] = useContext(GameContext);
   const toast = useToast();
 
   const handleColorClick = (index: number, isCorrect: boolean) => {
