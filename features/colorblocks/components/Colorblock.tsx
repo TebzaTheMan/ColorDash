@@ -19,6 +19,8 @@ export function Colorblock({
       h={["130", "178"]}
       bg={color}
       borderRadius="3xl"
+      borderWidth={"2px"}
+      borderColor={"black"}
       boxShadow="lg"
       onClick={() => {
         handleColorClick(index, isCorrect);
