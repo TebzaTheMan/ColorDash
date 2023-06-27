@@ -1,4 +1,4 @@
-import { IScore } from "types";
+import { IScore, TMode } from "types";
 
 export interface IAction<T> {
   type: "UPDATE_SCORE" | "LOAD_STORED_STATE";
@@ -6,9 +6,11 @@ export interface IAction<T> {
 }
 
 export interface IHighscoreState {
-  current: IScore;
+  rgb: IScore;
+  hsl: IScore;
 }
 export interface IHighscoreAction extends IAction<IHighscoreState> {
   score?: IScore;
   storedState?: T;
+  mode?: TMode;
 }
