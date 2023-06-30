@@ -1,10 +1,12 @@
 import Head from "next/head";
-import { Flex, Heading, Spacer } from "@chakra-ui/react";
+import { Flex, Heading, Select, Spacer } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { HighScore } from "features/Highscore";
 import { HiArrowRight } from "react-icons/hi";
 import Link from "next/link";
+import { useState } from "react";
 export default function Home() {
+  const [gameMode, setGameMode] = useState("rgb");
   return (
     <>
       <Head>
@@ -26,17 +28,25 @@ export default function Home() {
           <Spacer />
           <Heading size="lg">Color Dash</Heading>
           <Spacer />
-          <Link href="/play/rgb" passHref>
+          <Select
+            size={["md", "lg"]}
+            width={"320px"}
+            borderColor={"black"}
+            onChange={(e) => {
+              setGameMode(e.currentTarget.value);
+            }}
+            name="game modes"
+          >
+            <option value="rgb">RGB Mode</option>
+            <option value="hsl">HSL Mode</option>
+          </Select>
+          <Spacer />
+          <Link href={`/play/${gameMode}`} passHref>
             <Button size="lg" colorScheme={"teal"} rightIcon={<HiArrowRight />}>
-              PLAY RGB MODE
+              PLAY
             </Button>
           </Link>
           <Spacer />
-          <Link href="/play/hsl" passHref>
-            <Button size="lg" colorScheme={"teal"} rightIcon={<HiArrowRight />}>
-              PLAY HSL MODE
-            </Button>
-          </Link>
         </Flex>
       </main>
     </>
