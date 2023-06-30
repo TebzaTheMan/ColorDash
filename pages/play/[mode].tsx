@@ -27,10 +27,14 @@ export default function Play({ mode }: Props) {
   return (
     <>
       <Head>
-        <title>{isTimeUp ? "Game Over" : "Guessing Colors Now"}</title>
+        <title>
+          {isTimeUp
+            ? `Game Over - ${GameData.mode.toUpperCase()} Mode | Color Dash`
+            : `${GameData.mode.toUpperCase()} Mode | Color Dash`}
+        </title>
         <meta
           name="description"
-          content="Guess the color react game, objective of identifying as much colors as you can in the given time"
+          content={`Engage in the ${GameData.mode} mode of Color Dash and put your color perception to the test. Guess the correct colors based on RGB codes within the time limit. Challenge yourself and earn high scores.`}
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
