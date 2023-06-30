@@ -1,25 +1,25 @@
-![Stargazers](https://img.shields.io/github/stars/TebzaTheMan/nextjs-starter-pack?style=for-the-badge)
-![Forks](https://img.shields.io/github/forks/TebzaTheMan/nextjs-starter-pack?label=FORKS&style=for-the-badge)
-![License](https://img.shields.io/github/license/TebzaTheMan/nextjs-starter-pack?color=green&label=LICENSE&style=for-the-badge)
-![Issues](https://img.shields.io/github/issues/TebzaTheMan/nextjs-starter-pack?color=yellow&label=ISSUES&style=for-the-badge)
+![Stargazers](https://img.shields.io/github/stars/TebzaTheMan/colordash?style=for-the-badge)
+![Forks](https://img.shields.io/github/forks/TebzaTheMan/colordash?label=FORKS&style=for-the-badge)
+![License](https://img.shields.io/github/license/TebzaTheMan/colordash?color=green&label=LICENSE&style=for-the-badge)
+![Issues](https://img.shields.io/github/issues/TebzaTheMan/colordash?color=yellow&label=ISSUES&style=for-the-badge)
 
-# GuessTheColor
+# Color Dash
 
-A nextJS game with its objective of identifying as many colors as you can in a given amount of time using RGB color codes.
+Immerse yourself in the thrilling world of Color Dash, the ultimate RGB and HSL color matching game. Start playing now and experience the exhilaration of Color Dash!
 
-![screenshot of play page](/screenshot_playpage.jpg)
+![screenshot of RGB play page](/screen%20rgb.png)
 
-- demo : https://tebza/dev/guessthecolor
+- demo : https://tebza/dev/colordash
 - An article on my thoughts while making this game : https://tebza.dev/the-making-of-guessthecolor-game
 
 # Getting started
 
 ```
-1. git clone https://github.com/TebzaTheMan/nextjs-starter-pack.git
+1. git clone https://github.com/TebzaTheMan/colordash.git
 
-2. cd nextjs-starter-pack
+2. cd colordash
 
-3. yarn && yarn dev or npm install && npm run dev if you prefer not to use yarn.
+3. yarn && yarn dev
 
 ```
 
@@ -28,7 +28,7 @@ A nextJS game with its objective of identifying as many colors as you can in a g
 ### Development server
 
 ```bash
-yarn start / npm start
+yarn start
 ```
 
 You can view the development server at `localhost:3000`.
@@ -36,7 +36,7 @@ You can view the development server at `localhost:3000`.
 ### Production build
 
 ```bash
- yarn build / npm run build
+ yarn build
 ```
 
 ## Contributing
