@@ -8,10 +8,10 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Guess The Color</title>
+        <title>Color Dash - Engaging RGB and HSL Color Matching Game</title>
         <meta
           name="description"
-          content="Guess the color react game, objective of identifying as much colors as you can in the given time"
+          content="Immerse yourself in the thrilling world of Color Dash, the ultimate RGB and HSL color matching game. Start playing now and experience the exhilaration of Color Dash!"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -24,7 +24,7 @@ export default function Home() {
         >
           <HighScore />
           <Spacer />
-          <Heading size="lg">Guess The Color</Heading>
+          <Heading size="lg">Color Dash</Heading>
           <Spacer />
           <Link href="/play/rgb" passHref>
             <Button size="lg" colorScheme={"teal"} rightIcon={<HiArrowRight />}>
