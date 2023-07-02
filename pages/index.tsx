@@ -5,7 +5,10 @@ import { HighScore } from "features/Highscore";
 import { HiArrowRight } from "react-icons/hi";
 import Link from "next/link";
 import { useState } from "react";
+import Logo from "images/logo.png";
+
 import { TMode } from "types";
+import Image from "next/image";
 export default function Home() {
   const [gameMode, setGameMode] = useState("rgb");
   return (
@@ -22,12 +25,15 @@ export default function Home() {
         <Flex
           direction="column"
           alignItems="center"
-          height="50vh"
+          height={["60vh", "80vh"]}
           marginTop="8"
         >
           <HighScore mode={gameMode as TMode} />
           <Spacer />
-          <Heading size="lg">Color Dash</Heading>
+          <Flex alignItems={"center"}>
+            <Image src={Logo} />
+            <Heading size={["2xl", "4xl"]}>Color Dash</Heading>
+          </Flex>
           <Spacer />
           <Select
             size={["md", "lg"]}
