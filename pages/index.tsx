@@ -6,9 +6,9 @@ import { HiArrowRight } from "react-icons/hi";
 import Link from "next/link";
 import { useState } from "react";
 import Logo from "images/logo.png";
-
 import { TMode } from "types";
 import Image from "next/image";
+import Footer from "components/Footer";
 export default function Home() {
   const [gameMode, setGameMode] = useState("rgb");
   return (
@@ -56,6 +56,7 @@ export default function Home() {
           <Spacer />
         </Flex>
       </main>
+      <Footer />
     </>
   );
 }
