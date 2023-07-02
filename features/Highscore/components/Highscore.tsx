@@ -2,24 +2,20 @@ import { Box, Center, Heading } from "@chakra-ui/react";
 import { Text } from "@chakra-ui/react";
 import { HighscoreContext } from "features/Highscore";
 import { useContext } from "react";
+import { TMode } from "types";
 
-export function HighScore() {
+interface IProps {
+  mode: TMode;
+}
+export function HighScore({ mode }: IProps) {
   const [highscoreData] = useContext(HighscoreContext);
   return (
     <>
       <Box>
-        <Text fontSize="lg">RGB High Score</Text>
+        <Text fontSize="lg">{mode?.toUpperCase()} High Score</Text>
         <Center>
           <Heading size="lg" as="h1">
-            {highscoreData.rgb.points} / {highscoreData.rgb.total}
-          </Heading>
-        </Center>
-      </Box>
-      <Box>
-        <Text fontSize="lg">HSL High Score</Text>
-        <Center>
-          <Heading size="lg" as="h1">
-            {highscoreData.hsl.points} / {highscoreData.hsl.total}
+            {highscoreData[mode!].points} / {highscoreData[mode!].total}
           </Heading>
         </Center>
       </Box>

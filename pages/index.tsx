@@ -5,6 +5,7 @@ import { HighScore } from "features/Highscore";
 import { HiArrowRight } from "react-icons/hi";
 import Link from "next/link";
 import { useState } from "react";
+import { TMode } from "types";
 export default function Home() {
   const [gameMode, setGameMode] = useState("rgb");
   return (
@@ -24,7 +25,7 @@ export default function Home() {
           height="50vh"
           marginTop="8"
         >
-          <HighScore />
+          <HighScore mode={gameMode as TMode} />
           <Spacer />
           <Heading size="lg">Color Dash</Heading>
           <Spacer />
