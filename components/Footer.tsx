@@ -35,6 +35,9 @@ export function Footer() {
               fontSize="lg"
               color={"gray.600"}
               key={index}
+              _hover={{
+                color: "gray.900",
+              }}
             >
               <Link href={link}>{name}</Link>
             </Text>

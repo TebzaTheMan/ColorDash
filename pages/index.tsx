@@ -2,7 +2,6 @@ import Head from "next/head";
 import { Flex, Heading, Select, Spacer } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { HighScore } from "features/Highscore";
-import { HiArrowRight } from "react-icons/hi";
 import Link from "next/link";
 import { useState } from "react";
 import Logo from "images/logo.png";
@@ -49,7 +48,7 @@ export default function Home() {
           </Select>
           <Spacer />
           <Link href={`/play/${gameMode}`} passHref>
-            <Button size="lg" colorScheme={"teal"} rightIcon={<HiArrowRight />}>
+            <Button size="lg" colorScheme={"brand"}>
               PLAY
             </Button>
           </Link>
