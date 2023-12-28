@@ -11,7 +11,7 @@ export function HighScore({ mode }: IProps) {
   const [highscoreData] = useContext(HighscoreContext);
   return (
     <>
-      <Box>
+      <Box mt={"8"}>
         <Text fontSize="lg">{mode?.toUpperCase()} High Score</Text>
         <Center>
           <Heading size="lg" as="h1">
