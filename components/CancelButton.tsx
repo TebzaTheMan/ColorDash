@@ -8,7 +8,7 @@ export function CancelButton() {
   const [, infobarDispatch] = useContext(GameContext);
   return (
     <Button
-      variant="outline"
+      variant="solid"
       size={["md", "lg"]}
       onClick={() => {
         infobarDispatch({ type: "RESET" });

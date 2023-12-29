@@ -27,16 +27,16 @@ const links: ILink[] = [
 export function Footer() {
   return (
     <footer>
-      <Flex direction={["column", "row"]} gap={6} mx={12} mt={30}>
+      <Flex direction={["column", "row"]} gap={6} mx={12}>
         {links.map(({ name, link }, index) => {
           return (
             <Text
               decoration={"underline"}
               fontSize="lg"
-              color={"gray.600"}
+              color={"gray.700"}
               key={index}
               _hover={{
-                color: "gray.900",
+                color: "accent.main",
               }}
             >
               <Link href={link}>{name}</Link>
