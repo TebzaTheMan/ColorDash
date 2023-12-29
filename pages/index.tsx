@@ -1,10 +1,15 @@
 import Head from "next/head";
-import { Flex, Heading, Spacer } from "@chakra-ui/react";
+import { Flex, Heading, Select, Spacer } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { HighScore } from "features/Highscore";
-import { HiArrowRight } from "react-icons/hi";
 import Link from "next/link";
+import { useState } from "react";
+import Logo from "images/logo.png";
+import { TMode } from "types";
+import Image from "next/image";
+// import Footer from "components/Footer";
 export default function Home() {
+  const [gameMode, setGameMode] = useState("rgb");
   return (
     <>
       <Head>
@@ -19,26 +24,38 @@ export default function Home() {
         <Flex
           direction="column"
           alignItems="center"
-          height="50vh"
+          height={["60vh", "80vh"]}
           marginTop="8"
         >
-          <HighScore />
+          <HighScore mode={gameMode as TMode} />
           <Spacer />
-          <Heading size="lg">Color Dash</Heading>
+          <Flex alignItems={"center"}>
+            <Image src={Logo} />
+            <Heading size={["2xl", "4xl"]}>Color Dash</Heading>
+          </Flex>
           <Spacer />
-          <Link href="/play/rgb" passHref>
-            <Button size="lg" colorScheme={"teal"} rightIcon={<HiArrowRight />}>
-              PLAY RGB MODE
+          <Select
+            size={["md", "lg"]}
+            width={"320px"}
+            borderColor={"black"}
+            onChange={(e) => {
+              setGameMode(e.currentTarget.value);
+            }}
+            name="game modes"
+          >
+            <option value="rgb">RGB Mode</option>
+            <option value="hsl">HSL Mode</option>
+          </Select>
+          <Spacer />
+          <Link href={`/play/${gameMode}`} passHref>
+            <Button size="lg" colorScheme={"brand"}>
+              PLAY
             </Button>
           </Link>
           <Spacer />
-          <Link href="/play/hsl" passHref>
-            <Button size="lg" colorScheme={"teal"} rightIcon={<HiArrowRight />}>
-              PLAY HSL MODE
-            </Button>
-          </Link>
         </Flex>
       </main>
+      {/* <Footer />*/}
     </>
   );
 }
