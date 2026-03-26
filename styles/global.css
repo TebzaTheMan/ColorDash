@@ -1,0 +1,9 @@
+html,
+body,
+footer,
+main {
+  background-image: linear-gradient(#eeeded 2px, transparent 2px),
+    linear-gradient(to right, #eeeded 2px, transparent 2px);
+  background-size: 48px 48px;
+  background-color: #f5f6f7;
+}

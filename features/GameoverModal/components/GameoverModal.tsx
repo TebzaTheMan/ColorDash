@@ -97,7 +97,7 @@ export function GameoverModal() {
               maximum possible points.
             </Text>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter bgColor={"white"} bgImg={"none"}>
             <CancelButton />
             <Button
               colorScheme="teal"
