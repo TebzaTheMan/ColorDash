@@ -30,7 +30,7 @@ export default function Home() {
           <HighScore mode={gameMode as TMode} />
           <Spacer />
           <Flex alignItems={"center"}>
-            <Image src={Logo} />
+            <Image src={Logo} alt="color dash logo" />
             <Heading size={["2xl", "4xl"]}>Color Dash</Heading>
           </Flex>
           <Spacer />
