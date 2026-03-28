@@ -1,10 +1,10 @@
-import { defaultGame } from "contexts/game.context";
 import { IGameAction, IGameState } from "types";
+import { DEFAULT_GAME_STATE } from "game/constants";
 
 export const GameReducer = (state: IGameState, action: IGameAction) => {
   switch (action.type) {
     case "RESET":
-      return defaultGame;
+      return DEFAULT_GAME_STATE;
     case "TIME_UP":
       return { ...state, timeUp: true, isNewHighscore: action.isNewHighscore };
     case "DECREMENT_TRIES":
@@ -17,12 +17,12 @@ export const GameReducer = (state: IGameState, action: IGameAction) => {
           total: state.score.total + action.score!.total,
         },
         correctColors: state.correctColors + 1,
-        triesLeft: defaultGame.triesLeft,
+        triesLeft: DEFAULT_GAME_STATE.triesLeft,
       };
     case "RESET_TRIES":
       return {
         ...state,
-        triesLeft: defaultGame.triesLeft,
+        triesLeft: DEFAULT_GAME_STATE.triesLeft,
       };
     case "CHANGE_MODE":
       return {
