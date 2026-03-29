@@ -4,38 +4,28 @@ import { HighscoreContext } from "features/Highscore";
 import { useContext } from "react";
 import { useTimer } from "react-timer-hook";
 import { Text } from "@chakra-ui/react";
-import { IScore } from "types";
+import { isNewHighscore } from "game/scoring";
+import { GAME_DURATION_SECONDS } from "game/constants";
 
 export function Timer() {
   const [gameData, gameDispatch] = useContext(GameContext);
   const [highscoreData, highscoreDispatch] = useContext(HighscoreContext);
-  const ALLOWED_SECONDS = 30;
-  const expiryTimestamp = new Date();
-  expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + ALLOWED_SECONDS);
 
-  const isNewHighScore = (currentScore: IScore, highScore: IScore) => {
-    if (currentScore.total === highScore.total) {
-      if (currentScore.points > highScore.points) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    return currentScore.total > highScore.total;
-  };
+  const expiryTimestamp = new Date();
+  expiryTimestamp.setSeconds(
+    expiryTimestamp.getSeconds() + GAME_DURATION_SECONDS
+  );
+
   const { seconds, minutes, isRunning } = useTimer({
     expiryTimestamp,
     onExpire: () => {
       const score = gameData.score;
-      const isNewHighscore = isNewHighScore(
-        score,
-        highscoreData[gameData.mode!]
-      ); // the mode will not be null here because on play/[mode].tsx we only render the page when mode has been set
+      const isNewHigh = isNewHighscore(score, highscoreData[gameData.mode!]);
       gameDispatch({
         type: "TIME_UP",
-        isNewHighscore,
+        isNewHighscore: isNewHigh,
       });
-      if (isNewHighscore) {
+      if (isNewHigh) {
         highscoreDispatch({
           type: "UPDATE_SCORE",
           score,
@@ -44,6 +34,7 @@ export function Timer() {
       }
     },
   });
+
   return (
     <Flex direction={"column"} alignItems="center">
       <Text fontSize="lg">Time left</Text>

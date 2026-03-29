@@ -4,19 +4,8 @@ import { GameContext } from "contexts";
 import { useContext } from "react";
 import { useColors, useColorsClicked } from "features/colorblocks";
 import Header from "./Header";
+import { resolveColorClick } from "game/engine";
 
-const calculateScore = (numTriesLeft: number) => {
-  switch (numTriesLeft) {
-    case 3:
-      return 10;
-    case 2:
-      return 5;
-    case 1:
-      return 2;
-    default:
-      return 0;
-  }
-};
 export function Colorblocks() {
   const [gameData, gameDispatch] = useContext(GameContext);
   const { colors, correctColor, generateNewColors } = useColors(gameData.mode);
@@ -25,38 +14,43 @@ export function Colorblocks() {
   const toast = useToast();
 
   const handleColorClick = (index: number, isCorrect: boolean) => {
-    if (isCorrect) {
-      // show correct color toast!
-      toast({
-        title: "Correct color",
-        status: "success",
-        duration: 600,
-        position: "top",
-      });
-      gameDispatch({
-        type: "CORRECT_COLOR",
-        score: {
-          points: calculateScore(gameData.triesLeft),
-          total: 10, // adding 10
-        },
-      });
-      resetClickedColors();
-      generateNewColors();
-    } else {
-      toast({
-        title: "Incorrect color",
-        status: "error",
-        duration: 600,
-        position: "top",
-      });
-      if (gameData.triesLeft == 1) {
+    const outcome = resolveColorClick(isCorrect, gameData);
+
+    switch (outcome.result) {
+      case "correct":
+        toast({
+          title: "Correct color",
+          status: "success",
+          duration: 600,
+          position: "top",
+        });
+        gameDispatch({ type: "CORRECT_COLOR", score: outcome.score });
+        resetClickedColors();
+        generateNewColors();
+        break;
+
+      case "wrong_and_exhausted":
+        toast({
+          title: "Incorrect color",
+          status: "error",
+          duration: 600,
+          position: "top",
+        });
         gameDispatch({ type: "RESET_TRIES" });
         resetClickedColors();
         generateNewColors();
-      } else {
+        break;
+
+      case "wrong_but_continue":
+        toast({
+          title: "Incorrect color",
+          status: "error",
+          duration: 600,
+          position: "top",
+        });
         setColorClicked(index);
         gameDispatch({ type: "DECREMENT_TRIES" });
-      }
+        break;
     }
   };
 
