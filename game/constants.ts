@@ -13,15 +13,18 @@ export const DEFAULT_TRIES = 3;
 export const MAX_POINTS_PER_ROUND = 10;
 
 export const DEFAULT_GAME_STATE: IGameState = {
+  mode: null,
   score: {
     points: 0,
     total: 0,
   },
-  timeUp: false,
   triesLeft: DEFAULT_TRIES,
   correctColors: 0,
+  timeUp: false,
   isNewHighscore: false,
-  mode: null,
+  colors: [],
+  targetColor: "",
+  clickedColors: Array(NUM_COLORS).fill(false),
 };
 
 export const SCORING_RULES = [

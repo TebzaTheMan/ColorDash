@@ -4,23 +4,36 @@ export const gameModes = ["hsl", "rgb"];
 
 export interface IGameAction {
   type:
-    | "RESET"
-    | "DECREMENT_TRIES"
-    | "CORRECT_COLOR"
-    | "RESET_TRIES"
+    | "START_MODE"
+    | "SUBMIT_GUESS"
     | "TIME_UP"
-    | "CHANGE_MODE";
-  score?: IScore;
-  isNewHighscore?: boolean;
+    | "RESET";
   mode?: TMode;
+  index?: number;
+  isNewHighscore?: boolean;
 }
+
+export type ClickOutcomeResult =
+  | "correct"
+  | "wrong_but_continue"
+  | "wrong_and_exhausted";
+
 export interface IGameState {
+  mode: TMode;
   score: IScore;
   triesLeft: number;
   correctColors: number;
   timeUp: boolean;
   isNewHighscore?: boolean;
-  mode: TMode;
+
+  colors: string[];
+  targetColor: string;
+  clickedColors: boolean[];
+  
+  lastGuessResult?: {
+    result: ClickOutcomeResult;
+    id: number;
+  };
 }
 
 export interface IScore {

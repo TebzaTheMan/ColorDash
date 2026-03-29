@@ -16,10 +16,10 @@ export default function Play({ mode }: Props) {
 
   useEffect(() => {
     gameDispatch({
-      type: "CHANGE_MODE",
+      type: "START_MODE",
       mode: mode,
     });
-  }, []);
+  }, [mode]);
 
   if (GameData.mode == null) {
     return;
