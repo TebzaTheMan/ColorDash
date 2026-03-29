@@ -23,3 +23,9 @@ export const DEFAULT_GAME_STATE: IGameState = {
   isNewHighscore: false,
   mode: null,
 };
+
+export const SCORING_RULES = [
+  { triesLeft: 3, points: 10 },
+  { triesLeft: 2, points: 5 },
+  { triesLeft: 1, points: 2 },
+];

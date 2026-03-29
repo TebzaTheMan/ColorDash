@@ -1,17 +1,9 @@
 import { IScore } from "types";
-import { MAX_POINTS_PER_ROUND } from "./constants";
+import { MAX_POINTS_PER_ROUND, SCORING_RULES } from "./constants";
 
 export const calculateScore = (triesLeft: number): number => {
-  switch (triesLeft) {
-    case 3:
-      return 10;
-    case 2:
-      return 5;
-    case 1:
-      return 2;
-    default:
-      return 0;
-  }
+  const rule = SCORING_RULES.find((r) => r.triesLeft === triesLeft);
+  return rule ? rule.points : 0;
 };
 
 export const isNewHighscore = (current: IScore, best: IScore): boolean => {
