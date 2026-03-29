@@ -2,6 +2,12 @@ export type TMode = "rgb" | "hsl" | null;
 
 export const gameModes = ["hsl", "rgb"];
 
+export interface IGameDependencies {
+  generateColors: (mode: TMode) => string[];
+  pickCorrectColor: (colors: string[]) => string;
+  now: () => number;
+}
+
 export interface IGameAction {
   type: "START_MODE" | "SUBMIT_GUESS" | "TIME_UP" | "RESET";
   mode?: TMode;

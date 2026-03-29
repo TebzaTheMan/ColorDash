@@ -1,48 +1,100 @@
-// The engine decides WHAT should happen on a color click; the UI decides HOW to react.
-
-import { IGameState } from "types";
+import { IGameDependencies, IGameState, TMode } from "types";
+import { DEFAULT_GAME_STATE, NUM_COLORS } from "./constants";
 import { buildRoundScore } from "./scoring";
-import { IScore } from "types";
 
-// ─── Outcome Types ───────────────────────────────────────────────────────────
+// The pure engine functions for the game logic. All side effects are injected.
 
-/** Player picked the correct color on this attempt */
-export type CorrectOutcome = {
-  result: "correct";
-  score: IScore;
+export const startGame = (mode: TMode, deps: IGameDependencies): IGameState => {
+  const newColors = deps.generateColors(mode);
+  return {
+    ...DEFAULT_GAME_STATE,
+    mode,
+    colors: newColors,
+    targetColor: deps.pickCorrectColor(newColors),
+    clickedColors: Array(NUM_COLORS).fill(false),
+    gameStartTimestamp: deps.now(),
+  };
 };
 
-/** Player picked wrong, but still has tries remaining — eliminate the block */
-export type WrongContinueOutcome = {
-  result: "wrong_but_continue";
+export const resetGame = (
+  state: IGameState,
+  deps: IGameDependencies
+): IGameState => {
+  if (!state.mode) return DEFAULT_GAME_STATE;
+  const newColors = deps.generateColors(state.mode);
+  return {
+    ...DEFAULT_GAME_STATE,
+    mode: state.mode,
+    colors: newColors,
+    targetColor: deps.pickCorrectColor(newColors),
+    clickedColors: Array(NUM_COLORS).fill(false),
+    gameStartTimestamp: deps.now(),
+  };
 };
 
-/** Player picked wrong and exhausted all tries — reset the round */
-export type WrongExhaustedOutcome = {
-  result: "wrong_and_exhausted";
+export const handleTimeUp = (
+  state: IGameState,
+  isNewHighscore: boolean | undefined
+): IGameState => {
+  return { ...state, timeUp: true, isNewHighscore };
 };
 
-export type ClickOutcome =
-  | CorrectOutcome
-  | WrongContinueOutcome
-  | WrongExhaustedOutcome;
+export const processGuess = (
+  state: IGameState,
+  index: number,
+  deps: IGameDependencies
+): IGameState => {
+  if (state.timeUp || !state.mode) return state;
 
-// ─── Engine ──────────────────────────────────────────────────────────────────
+  // Prevent clicking already clicked colors
+  if (state.clickedColors[index]) return state;
 
-export const resolveColorClick = (
-  isCorrect: boolean,
-  state: IGameState
-): ClickOutcome => {
+  const isCorrect = state.colors[index] === state.targetColor;
+
+  // Calculate next ID purely based on state
+  const nextGuessId = state.lastGuessResult ? state.lastGuessResult.id + 1 : 1;
+
   if (isCorrect) {
+    const outcomeScore = buildRoundScore(state.triesLeft);
+    const newColors = deps.generateColors(state.mode);
     return {
-      result: "correct",
-      score: buildRoundScore(state.triesLeft),
+      ...state,
+      score: {
+        points: state.score.points + outcomeScore.points,
+        total: state.score.total + outcomeScore.total,
+      },
+      correctColors: state.correctColors + 1,
+      triesLeft: DEFAULT_GAME_STATE.triesLeft,
+      colors: newColors,
+      targetColor: deps.pickCorrectColor(newColors),
+      clickedColors: Array(NUM_COLORS).fill(false),
+      lastGuessResult: { result: "correct", id: nextGuessId },
     };
   }
 
+  const newClickedColors = [...state.clickedColors];
+  newClickedColors[index] = true;
+
   if (state.triesLeft <= 1) {
-    return { result: "wrong_and_exhausted" };
+    const newColors = deps.generateColors(state.mode);
+    return {
+      ...state,
+      triesLeft: DEFAULT_GAME_STATE.triesLeft,
+      colors: newColors,
+      targetColor: deps.pickCorrectColor(newColors),
+      clickedColors: Array(NUM_COLORS).fill(false),
+      lastGuessResult: {
+        result: "wrong_and_exhausted",
+        id: nextGuessId,
+      },
+    };
   }
 
-  return { result: "wrong_but_continue" };
+  // wrong_but_continue
+  return {
+    ...state,
+    triesLeft: state.triesLeft - 1,
+    clickedColors: newClickedColors,
+    lastGuessResult: { result: "wrong_but_continue", id: nextGuessId },
+  };
 };
