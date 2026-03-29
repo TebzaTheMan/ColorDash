@@ -25,6 +25,7 @@ export const DEFAULT_GAME_STATE: IGameState = {
   colors: [],
   targetColor: "",
   clickedColors: Array(NUM_COLORS).fill(false),
+  gameStartTimestamp: 0,
 };
 
 export const SCORING_RULES = [

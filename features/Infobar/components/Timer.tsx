@@ -1,7 +1,7 @@
 import { Flex, Heading } from "@chakra-ui/react";
 import { GameContext } from "contexts";
 import { HighscoreContext } from "features/Highscore";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useTimer } from "react-timer-hook";
 import { Text } from "@chakra-ui/react";
 import { isNewHighscore } from "game/scoring";
@@ -16,7 +16,7 @@ export function Timer() {
     expiryTimestamp.getSeconds() + GAME_DURATION_SECONDS
   );
 
-  const { seconds, minutes, isRunning } = useTimer({
+  const { seconds, minutes, isRunning, restart } = useTimer({
     expiryTimestamp,
     onExpire: () => {
       const score = gameData.score;
@@ -34,6 +34,14 @@ export function Timer() {
       }
     },
   });
+
+  useEffect(() => {
+    if (gameData.gameStartTimestamp) {
+      const newExpiry = new Date();
+      newExpiry.setSeconds(newExpiry.getSeconds() + GAME_DURATION_SECONDS);
+      restart(newExpiry);
+    }
+  }, [gameData.gameStartTimestamp, restart]);
 
   return (
     <Flex direction={"column"} alignItems="center">

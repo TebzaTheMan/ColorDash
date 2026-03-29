@@ -3,11 +3,7 @@ export type TMode = "rgb" | "hsl" | null;
 export const gameModes = ["hsl", "rgb"];
 
 export interface IGameAction {
-  type:
-    | "START_MODE"
-    | "SUBMIT_GUESS"
-    | "TIME_UP"
-    | "RESET";
+  type: "START_MODE" | "SUBMIT_GUESS" | "TIME_UP" | "RESET";
   mode?: TMode;
   index?: number;
   isNewHighscore?: boolean;
@@ -29,7 +25,8 @@ export interface IGameState {
   colors: string[];
   targetColor: string;
   clickedColors: boolean[];
-  
+  gameStartTimestamp: number;
+
   lastGuessResult?: {
     result: ClickOutcomeResult;
     id: number;

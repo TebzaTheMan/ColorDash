@@ -5,7 +5,10 @@ import { resolveColorClick } from "game/engine";
 
 let guessIdCounter = 0;
 
-export const GameReducer = (state: IGameState, action: IGameAction): IGameState => {
+export const GameReducer = (
+  state: IGameState,
+  action: IGameAction
+): IGameState => {
   switch (action.type) {
     case "START_MODE": {
       const mode = action.mode!;
@@ -16,6 +19,7 @@ export const GameReducer = (state: IGameState, action: IGameAction): IGameState 
         colors: newColors,
         targetColor: pickCorrectColor(newColors),
         clickedColors: Array(NUM_COLORS).fill(false),
+        gameStartTimestamp: Date.now(),
       };
     }
 
@@ -28,6 +32,7 @@ export const GameReducer = (state: IGameState, action: IGameAction): IGameState 
         colors: newColors,
         targetColor: pickCorrectColor(newColors),
         clickedColors: Array(NUM_COLORS).fill(false),
+        gameStartTimestamp: Date.now(),
       };
     }
 
@@ -73,7 +78,10 @@ export const GameReducer = (state: IGameState, action: IGameAction): IGameState 
           colors: newColors,
           targetColor: pickCorrectColor(newColors),
           clickedColors: Array(NUM_COLORS).fill(false),
-          lastGuessResult: { result: "wrong_and_exhausted", id: guessIdCounter },
+          lastGuessResult: {
+            result: "wrong_and_exhausted",
+            id: guessIdCounter,
+          },
         };
       }
 
