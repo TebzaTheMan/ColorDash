@@ -1,6 +1,6 @@
-import { IGameDependencies, IGameState, TMode } from "types";
+import { IGameDependencies, IGameState, IScore, TMode } from "types";
 import { DEFAULT_GAME_STATE, NUM_COLORS } from "./constants";
-import { buildRoundScore } from "./scoring";
+import { buildRoundScore, isNewHighscore } from "./scoring";
 
 // The pure engine functions for the game logic. All side effects are injected.
 
@@ -34,9 +34,13 @@ export const resetGame = (
 
 export const handleTimeUp = (
   state: IGameState,
-  isNewHighscore: boolean | undefined
+  highscore: IScore
 ): IGameState => {
-  return { ...state, timeUp: true, isNewHighscore };
+  return {
+    ...state,
+    timeUp: true,
+    isNewHighscore: isNewHighscore(state.score, highscore),
+  };
 };
 
 export const processGuess = (

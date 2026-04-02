@@ -20,7 +20,7 @@ export const GameReducer = (
       return resetGame(state, liveDependencies);
 
     case "TIME_UP":
-      return handleTimeUp(state, action.isNewHighscore);
+      return handleTimeUp(state, action.highscore!);
 
     case "SUBMIT_GUESS":
       return processGuess(state, action.index!, liveDependencies);

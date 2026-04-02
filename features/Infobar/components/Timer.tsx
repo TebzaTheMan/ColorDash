@@ -4,7 +4,6 @@ import { HighscoreContext } from "features/Highscore";
 import { useContext, useEffect } from "react";
 import { useTimer } from "react-timer-hook";
 import { Text } from "@chakra-ui/react";
-import { isNewHighscore } from "game/scoring";
 import { GAME_DURATION_SECONDS } from "game/constants";
 
 export function Timer() {
@@ -19,21 +18,22 @@ export function Timer() {
   const { seconds, minutes, isRunning, restart } = useTimer({
     expiryTimestamp,
     onExpire: () => {
-      const score = gameData.score;
-      const isNewHigh = isNewHighscore(score, highscoreData[gameData.mode!]);
       gameDispatch({
         type: "TIME_UP",
-        isNewHighscore: isNewHigh,
+        highscore: highscoreData[gameData.mode!],
       });
-      if (isNewHigh) {
-        highscoreDispatch({
-          type: "UPDATE_SCORE",
-          score,
-          mode: gameData.mode,
-        });
-      }
     },
   });
+
+  useEffect(() => {
+    if (gameData.timeUp && gameData.isNewHighscore) {
+      highscoreDispatch({
+        type: "UPDATE_SCORE",
+        score: gameData.score,
+        mode: gameData.mode,
+      });
+    }
+  }, [gameData.timeUp]);
 
   useEffect(() => {
     if (gameData.gameStartTimestamp) {

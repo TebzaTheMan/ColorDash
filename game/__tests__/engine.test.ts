@@ -215,22 +215,38 @@ describe("handleTimeUp", () => {
     ...overrides,
   });
 
+  it("should set timeUp to true", () => {
+    const state = makeState({ timeUp: false });
+
+    const result = handleTimeUp(state, { points: 0, total: 0 });
+
+    expect(result.timeUp).toBe(true);
+  });
   it.each([
-    { isNewHighscore: true },
-    { isNewHighscore: false },
-    { isNewHighscore: undefined },
+    {
+      score: { points: 100, total: 100 },
+      expectedResult: true,
+      case: "higher",
+    },
+    {
+      score: { points: 20, total: 20 },
+      expectedResult: false,
+      case: "lower",
+    },
+    {
+      score: { points: 50, total: 50 },
+      expectedResult: false,
+      case: "equal",
+    },
   ])(
-    "should set timeUp to true and isNewHighscore to $isNewHighscore",
-    ({ isNewHighscore }) => {
-      const state = makeState({ timeUp: false });
+    "should set isNewHighscore to $expectedResult when score is $case",
+    ({ score, expectedResult }) => {
+      const state = makeState({ score });
+      const highscore = { points: 50, total: 50 };
 
-      const result = handleTimeUp(state, isNewHighscore);
+      const result = handleTimeUp(state, highscore);
 
-      expect(result).toMatchObject({
-        ...state,
-        timeUp: true,
-        isNewHighscore,
-      });
+      expect(result.isNewHighscore).toBe(expectedResult);
     }
   );
 });

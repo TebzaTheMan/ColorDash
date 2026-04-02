@@ -12,7 +12,7 @@ export interface IGameAction {
   type: "START_MODE" | "SUBMIT_GUESS" | "TIME_UP" | "RESET";
   mode?: TMode;
   index?: number;
-  isNewHighscore?: boolean;
+  highscore?: IScore;
 }
 
 export type ClickOutcomeResult =
