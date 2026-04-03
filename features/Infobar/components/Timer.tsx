@@ -47,7 +47,9 @@ export function Timer() {
     <Flex direction={"column"} alignItems="center">
       <Text fontSize="lg">Time left</Text>
       <Heading size="lg" as="h1" color={isRunning ? "black" : "red.500"}>
-        {minutes + " : " + seconds}
+        {minutes.toString().padStart(2, "0") +
+          " : " +
+          seconds.toString().padStart(2, "0")}
       </Heading>
     </Flex>
   );
