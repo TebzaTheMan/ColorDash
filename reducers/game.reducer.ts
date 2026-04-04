@@ -1,34 +1,30 @@
-import { defaultGame } from "contexts/game.context";
-import { IGameAction, IGameState } from "types";
+import { IGameAction, IGameDependencies, IGameState } from "types";
+import { generateColors, pickCorrectColor } from "game/colors";
+import { handleTimeUp, processGuess, resetGame, startGame } from "game/engine";
 
-export const GameReducer = (state: IGameState, action: IGameAction) => {
+const liveDependencies: IGameDependencies = {
+  generateColors,
+  pickCorrectColor,
+  now: Date.now,
+};
+
+export const GameReducer = (
+  state: IGameState,
+  action: IGameAction
+): IGameState => {
   switch (action.type) {
+    case "START_MODE":
+      return startGame(action.mode!, liveDependencies);
+
     case "RESET":
-      return defaultGame;
+      return resetGame(state, liveDependencies);
+
     case "TIME_UP":
-      return { ...state, timeUp: true, isNewHighscore: action.isNewHighscore };
-    case "DECREMENT_TRIES":
-      return { ...state, triesLeft: state.triesLeft - 1 };
-    case "CORRECT_COLOR":
-      return {
-        ...state,
-        score: {
-          points: state.score.points + action.score!.points,
-          total: state.score.total + action.score!.total,
-        },
-        correctColors: state.correctColors + 1,
-        triesLeft: defaultGame.triesLeft,
-      };
-    case "RESET_TRIES":
-      return {
-        ...state,
-        triesLeft: defaultGame.triesLeft,
-      };
-    case "CHANGE_MODE":
-      return {
-        ...state,
-        mode: action.mode!,
-      };
+      return handleTimeUp(state, action.highscore!);
+
+    case "SUBMIT_GUESS":
+      return processGuess(state, action.index!, liveDependencies);
+
     default:
       return state;
   }

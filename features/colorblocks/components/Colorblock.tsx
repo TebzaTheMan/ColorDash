@@ -23,7 +23,7 @@ export function Colorblock({
       borderColor={"black"}
       boxShadow="lg"
       onClick={() => {
-        handleColorClick(index, isCorrect);
+        handleColorClick(index);
       }}
       visibility={isClicked && !isCorrect ? "hidden" : "visible"}
     />

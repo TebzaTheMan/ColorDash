@@ -2,25 +2,15 @@ import { createContext, ReactNode, Dispatch } from "react";
 import { GameReducer } from "reducers";
 import { useReducer } from "react";
 import { IGameAction, IGameState } from "types";
+import { DEFAULT_GAME_STATE } from "game/constants";
 
-export const defaultGame: IGameState = {
-  score: {
-    points: 0,
-    total: 0,
-  },
-  timeUp: false,
-  triesLeft: 3,
-  correctColors: 0,
-  isNewHighscore: false,
-  mode: null,
-};
 export const GameContext = createContext<[IGameState, Dispatch<IGameAction>]>([
-  defaultGame,
+  DEFAULT_GAME_STATE,
   () => {},
 ]);
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(GameReducer, defaultGame);
+  const [state, dispatch] = useReducer(GameReducer, DEFAULT_GAME_STATE);
   return (
     <GameContext.Provider value={[state, dispatch]}>
       {children}

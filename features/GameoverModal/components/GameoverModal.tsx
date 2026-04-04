@@ -14,18 +14,16 @@ import {
   Text,
   Badge,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+
 import { CancelButton } from "components/CancelButton";
 
 export function GameoverModal() {
-  const router = useRouter();
   const [gameData, gameDispatch] = useContext(GameContext);
   const isOpen = gameData.timeUp;
   const initialRef = useRef(null);
 
   const onClose = () => {
     gameDispatch({ type: "RESET" });
-    router.reload();
   };
 
   return (
