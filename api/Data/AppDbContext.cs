@@ -1,4 +1,4 @@
-﻿using ColorDash.Api.Domain;
+using ColorDash.Api.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace ColorDash.Api.Data;
@@ -18,7 +18,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasKey(x => x.Id);
             e.Property(x => x.Id).HasColumnName("id");
             e.Property(x => x.DeviceId).HasColumnName("device_id");
-            e.Property(x => x.Mode).HasColumnName("mode").HasMaxLength(8);
+            e.Property(x => x.Mode).HasColumnName("mode").HasMaxLength(8)
+                .HasConversion<string>();
             e.Property(x => x.CorrectIndex).HasColumnName("correct_index");
             e.Property(x => x.CurrentColors).HasColumnName("current_colors")
                 .HasColumnType(isPostgres ? "jsonb" : "TEXT");
@@ -49,7 +50,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasKey(x => x.Id);
             e.Property(x => x.Id).HasColumnName("id");
             e.Property(x => x.DeviceId).HasColumnName("device_id");
-            e.Property(x => x.Mode).HasColumnName("mode").HasMaxLength(8);
+            e.Property(x => x.Mode).HasColumnName("mode").HasMaxLength(8)
+                .HasConversion<string>();
             e.Property(x => x.Points).HasColumnName("points");
             e.Property(x => x.Total).HasColumnName("total");
             e.Property(x => x.AchievedAt).HasColumnName("achieved_at")

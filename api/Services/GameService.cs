@@ -1,4 +1,4 @@
-﻿using ColorDash.Api.Data.Repositories;
+using ColorDash.Api.Data.Repositories;
 using ColorDash.Api.Domain;
 using ColorDash.Api.Models;
 using ColorDash.Api.Models.Requests;
@@ -46,7 +46,7 @@ public class GameService(
             SessionId: session.Id,
             Mode: session.Mode,
             Colors: session.CurrentColors,
-            TargetLabel: FormatTargetLabel(colors[correctIndex], request.Mode),
+            TargetLabel: colors[correctIndex],
             TriesLeft: session.TriesLeft,
             StartedAt: session.StartedAt,
             ExpiresAt: session.ExpiresAt);
@@ -101,7 +101,7 @@ public class GameService(
             GameOver: false,
             NextColors: advancedRound ? session.CurrentColors : null,
             NextTargetLabel: advancedRound
-                ? FormatTargetLabel(session.CurrentColors[session.CorrectIndex], session.Mode)
+                ? session.CurrentColors[session.CorrectIndex]
                 : null);
     }
 
@@ -180,10 +180,4 @@ public class GameService(
 
         return session;
     }
-
-    // Formats with spaces to differ from the compact colors[] strings
-    private static string FormatTargetLabel(string color, string mode) =>
-        mode == "hsl"
-            ? System.Text.RegularExpressions.Regex.Replace(color, @"[\s]+", " ").Trim()
-            : color.Replace(",", ", ");
 }

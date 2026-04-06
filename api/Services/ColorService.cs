@@ -1,11 +1,12 @@
-﻿using ColorDash.Api.Models;
+using ColorDash.Api.Domain;
+using ColorDash.Api.Models;
 using Microsoft.Extensions.Options;
 
 namespace ColorDash.Api.Services;
 
 public interface IColorService
 {
-    string[] GenerateColors(string mode);
+    string[] GenerateColors(GameMode mode);
     int PickCorrectIndex(string[] colors);
 }
 
@@ -13,11 +14,17 @@ public class ColorService(IOptions<GameSettings> options) : IColorService
 {
     private readonly GameSettings _settings = options.Value;
     private static readonly Random Rng = Random.Shared;
-
-    public string[] GenerateColors(string mode)
+    public string[] GenerateColors(GameMode mode)
     {
-        var generator = mode == "hsl" ? GetHslColor : (Func<string>)GetRgbColor;
-        return [.. Enumerable.Range(0, _settings.NumColors).Select(_ => generator())];
+        Func<string> generator = mode switch
+        {
+            GameMode.Hsl => GetHslColor,
+            GameMode.Rgb => GetRgbColor,
+            _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
+        };
+
+        return [.. Enumerable.Range(0, _settings.NumColors)
+                         .Select(_ => generator())];
     }
 
     public int PickCorrectIndex(string[] colors) =>

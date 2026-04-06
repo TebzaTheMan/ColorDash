@@ -4,7 +4,7 @@ public class GameSession
 {
     public Guid Id { get; set; }
     public Guid DeviceId { get; set; }
-    public string Mode { get; set; } = null!;
+    public GameMode Mode { get; set; }
     public int CorrectIndex { get; set; }
     public string[] CurrentColors { get; set; } = [];
     public int ScorePoints { get; set; }

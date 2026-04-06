@@ -4,6 +4,8 @@ using ColorDash.Api.Endpoints;
 using ColorDash.Api.Models;
 using ColorDash.Api.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,11 @@ builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IHighscoreService, HighscoreService>();
 builder.Services.AddValidation();
 builder.Services.Configure<GameSettings>(builder.Configuration.GetSection("GameSettings"));
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
+});
 
 var app = builder.Build();
 

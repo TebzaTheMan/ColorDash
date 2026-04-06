@@ -4,7 +4,7 @@ public class Highscore
 {
     public Guid Id { get; set; }
     public Guid DeviceId { get; set; }
-    public string Mode { get; set; } = null!;
+    public GameMode Mode { get; set; }
     public int Points { get; set; }
     public int Total { get; set; }
     public DateTime AchievedAt { get; set; }
