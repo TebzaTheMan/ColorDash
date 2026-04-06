@@ -33,3 +33,40 @@ yarn-error.log*
 
 #typescript build
 *.tsbuildinfo
+
+# build outputs
+bin/
+obj/
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# user-specific files
+*.user
+*.suo
+.vs/
+.vscode/
+*.userprefs
+
+# rider
+.idea/
+
+# dotnet tools
+.config/
+
+
+# NuGet
+*.nupkg
+*.snupkg
+project.lock.json
+packages/
+
+# logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

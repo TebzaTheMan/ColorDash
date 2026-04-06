@@ -1,0 +1,57 @@
+using ColorDash.Api.Data;
+using ColorDash.Api.Data.Repositories;
+using ColorDash.Api.Endpoints;
+using ColorDash.Api.Models;
+using ColorDash.Api.Services;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddOpenApi();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
+
+if (builder.Environment.IsDevelopment())
+    builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlite(connectionString));
+else
+    builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(connectionString));
+
+builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+builder.Services.AddScoped<IHighscoreRepository, HighscoreRepository>();
+builder.Services.AddScoped<IColorService, ColorService>();
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IHighscoreService, HighscoreService>();
+builder.Services.AddValidation();
+builder.Services.Configure<GameSettings>(builder.Configuration.GetSection("GameSettings"));
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
+
+app.UseHttpsRedirection();
+
+app.UseExceptionHandler(err => err.Run(async ctx =>
+{
+    var ex = ctx.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>()?.Error;
+
+    var (status, message) = ex switch
+    {
+        BadHttpRequestException => (StatusCodes.Status400BadRequest, ex.Message),
+        KeyNotFoundException => (StatusCodes.Status404NotFound, ex.Message),
+        UnauthorizedAccessException => (StatusCodes.Status403Forbidden, ex.Message),
+        InvalidOperationException => (StatusCodes.Status410Gone, ex.Message),
+        _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred.")
+    };
+
+    ctx.Response.StatusCode = status;
+    await ctx.Response.WriteAsJsonAsync(new { error = message });
+}));
+
+app.MapGameEndpoints();
+app.MapHighscoreEndpoints();
+
+app.Run();
