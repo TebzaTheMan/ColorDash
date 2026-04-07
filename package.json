@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "workspaces": [
+    "web"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=web",
+    "check:web": "npm run test-all --workspace=web",
+    "format:web": "npm run format --workspace=web",
+    "dev:api": "dotnet run --project ./api/ColorDash.Api.csproj",
+    "test:api": "dotnet test --project ./api/ColorDash.Tests/ColorDash.Tests.csproj"
+  }
+}
