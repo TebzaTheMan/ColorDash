@@ -7,6 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Remove="ColorDash.Tests\**" />
+        <Content Remove="ColorDash.Tests\**" />
+        <EmbeddedResource Remove="ColorDash.Tests\**" />
+        <None Remove="ColorDash.Tests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
