@@ -166,7 +166,7 @@ public class GameServiceTests
 
         var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(2), deviceId);
 
-        Assert.Equal("correct", result.Result);
+        Assert.Equal(GuessResult.Correct, result.Result);
     }
 
     [Fact]
@@ -217,7 +217,7 @@ public class GameServiceTests
 
         var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId);
 
-        Assert.Equal("wrong_but_continue", result.Result);
+        Assert.Equal(GuessResult.WrongButContinue, result.Result);
         Assert.Equal(2, result.TriesLeft);
         Assert.Null(result.NextColors);
         Assert.Null(result.NextTargetLabel);
@@ -236,7 +236,7 @@ public class GameServiceTests
 
         var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId);
 
-        Assert.Equal("wrong_and_exhausted", result.Result);
+        Assert.Equal(GuessResult.WrongAndExhausted, result.Result);
         Assert.Equal(_settings.DefaultTries, result.TriesLeft);
         Assert.Equal(next, result.NextColors);
         Assert.Equal(next[0], result.NextTargetLabel);

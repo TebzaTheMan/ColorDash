@@ -57,7 +57,7 @@ public class GameService(
         var session = await GetActiveSessionAsync(sessionId, deviceId);
 
         bool correct = request.ColorIndex == session.CorrectIndex;
-        string result;
+        GuessResult result;
 
         if (correct)
         {
@@ -73,12 +73,12 @@ public class GameService(
             session.CurrentColors = nextColors;
             session.CorrectIndex = nextIndex;
 
-            result = "correct";
+            result = GuessResult.Correct;
         }
         else
         {
             session.TriesLeft--;
-            result = session.TriesLeft > 0 ? "wrong_but_continue" : "wrong_and_exhausted";
+            result = session.TriesLeft > 0 ? GuessResult.WrongButContinue : GuessResult.WrongAndExhausted;
 
             if (session.TriesLeft == 0)
             {
@@ -92,7 +92,7 @@ public class GameService(
 
         await sessions.SaveChangesAsync();
 
-        bool advancedRound = result is "correct" or "wrong_and_exhausted";
+        bool advancedRound = result is GuessResult.Correct or GuessResult.WrongAndExhausted;
 
         return new GuessResultResponse(
             Result: result,

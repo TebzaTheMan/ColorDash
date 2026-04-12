@@ -1,7 +1,9 @@
-﻿namespace ColorDash.Api.Models.Responses;
+﻿using ColorDash.Api.Domain;
+
+namespace ColorDash.Api.Models.Responses;
 
 public record GuessResultResponse(
-    string Result,
+    GuessResult Result,
     ScoreDto Score,
     int TriesLeft,
     bool GameOver,
