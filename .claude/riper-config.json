@@ -1,0 +1,34 @@
+{
+  "agents": {
+    "description": "3-agent consolidated architecture for improved performance",
+    "primary": ["research-innovate", "plan-execute", "review"]
+  },
+  "commands": {
+    "description": "RIPER mode control and memory bank operations",
+    "namespaces": ["riper", "memory"]
+  },
+  "memory-bank": {
+    "auto-backup": true,
+    "branch-aware": true,
+    "directories": {
+      "backups": "backups",
+      "plans": "{branch}/plans",
+      "reviews": "{branch}/reviews",
+      "root": ".claude/memory-bank",
+      "sessions": "{branch}/sessions"
+    },
+    "enabled": true
+  },
+  "project-context": {
+    "important-paths": {
+      "comment": "Update these paths to match your project structure",
+      "frontend": "web",
+      "backend": "api",
+      "backend:tests": "api/ColorDash.Tests"
+    },
+    "tech-stack": ["NextJS", "C#", "Minimal API", "ReactJs", "Typescript"]
+  },
+  "reference-docs": [".claude/project-info.md"],
+  "version": "1.0.0",
+  "workflow": "RIPER"
+}
