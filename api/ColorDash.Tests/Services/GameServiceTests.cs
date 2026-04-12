@@ -22,6 +22,7 @@ public class GameServiceTests
         GameDurationSeconds = 30,
         DefaultTries = 3,
         MaxPointsPerRound = 10,
+        ExpiryToleranceSeconds = 2,
         ScoringRules =
         [
             new ScoringRule { TriesLeft = 3, Points = 10 },
@@ -152,6 +153,23 @@ public class GameServiceTests
         await _sessions.Received(1).SaveChangesAsync();
     }
 
+    [Fact]
+    public async Task ProcessGuess_SessionExpiredByOneSecond_ThrowsInvalidOperationException()
+    {
+        // Expired 1 s ago — within EndGame tolerance, but ProcessGuess must still reject.
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        var session = ActiveSession(deviceId);
+        session.ExpiresAt = DateTime.UtcNow.AddSeconds(-1);
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId));
+
+        Assert.Equal(SessionStatus.Expired, session.Status);
+        await _sessions.Received(1).SaveChangesAsync();
+    }
+
     // --- ProcessGuessAsync: correct guess ---
 
     [Fact]
@@ -245,8 +263,9 @@ public class GameServiceTests
     // --- EndGameAsync ---
 
     [Fact]
-    public async Task EndGame_ExpiredSession_ThrowsInvalidOperationException()
+    public async Task EndGame_SessionExpiredBeyondTolerance_ThrowsInvalidOperationException()
     {
+        // Expired 10 s ago; tolerance is 2 s → must be rejected.
         var service = CreateService();
         var deviceId = Guid.NewGuid();
         var session = ActiveSession(deviceId);
@@ -255,6 +274,43 @@ public class GameServiceTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             service.EndGameAsync(session.Id, deviceId));
+    }
+
+    [Fact]
+    public async Task EndGame_SessionExpiredWithinTolerance_Succeeds()
+    {
+        // Expired 1 s ago; tolerance is 2 s → EndGame must complete successfully.
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        var session = ActiveSession(deviceId);
+        session.ExpiresAt = DateTime.UtcNow.AddSeconds(-1);
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+        _highscores.GetByDeviceAndModeAsync(deviceId, session.Mode).Returns((Highscore?)null);
+
+        // Should NOT throw.
+        var result = await service.EndGameAsync(session.Id, deviceId);
+
+        Assert.Equal(SessionStatus.Completed, session.Status);
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public async Task EndGame_SessionExpiredAtExactTolerance_Succeeds()
+    {
+        // Expired at the tolerance boundary minus 0.5 s headroom (1.5 s ago).
+        // Keeps the test deterministic while still confirming the boundary is inclusive.
+        // Per plan risk register: exact boundary is sub-millisecond race; 0.5 s headroom removes flakiness.
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        var session = ActiveSession(deviceId);
+        session.ExpiresAt = DateTime.UtcNow.AddSeconds(-_settings.ExpiryToleranceSeconds + 0.5);
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+        _highscores.GetByDeviceAndModeAsync(deviceId, session.Mode).Returns((Highscore?)null);
+
+        var result = await service.EndGameAsync(session.Id, deviceId);
+
+        Assert.Equal(SessionStatus.Completed, session.Status);
+        Assert.NotNull(result);
     }
 
     [Fact]

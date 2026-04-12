@@ -107,11 +107,8 @@ public class GameService(
 
     public async Task<EndGameResponse> EndGameAsync(Guid sessionId, Guid deviceId)
     {
-        var session = await GetActiveSessionAsync(sessionId, deviceId);
-
         var tolerance = TimeSpan.FromSeconds(_settings.ExpiryToleranceSeconds);
-        if (DateTime.UtcNow > session.ExpiresAt.Add(tolerance))
-            throw new InvalidOperationException("Session has expired.");
+        var session = await GetActiveSessionAsync(sessionId, deviceId, tolerance);
 
         session.Status = SessionStatus.Completed;
         session.EndedAt = DateTime.UtcNow;
@@ -160,7 +157,10 @@ public class GameService(
             SessionDurationMs: (long)(session.EndedAt.Value - session.StartedAt).TotalMilliseconds);
     }
 
-    private async Task<GameSession> GetActiveSessionAsync(Guid sessionId, Guid deviceId)
+    private async Task<GameSession> GetActiveSessionAsync(
+        Guid sessionId,
+        Guid deviceId,
+        TimeSpan tolerance = default)
     {
         var session = await sessions.GetByIdAsync(sessionId)
             ?? throw new KeyNotFoundException("Session not found.");
@@ -171,7 +171,7 @@ public class GameService(
         if (session.Status != SessionStatus.Active)
             throw new InvalidOperationException("Session is no longer active.");
 
-        if (DateTime.UtcNow > session.ExpiresAt)
+        if (DateTime.UtcNow > session.ExpiresAt.Add(tolerance))
         {
             session.Status = SessionStatus.Expired;
             await sessions.SaveChangesAsync();
