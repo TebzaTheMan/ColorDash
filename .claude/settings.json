@@ -1,8 +1,0 @@
-{
-  "hooks": {},
-  "instructions": "This project uses the RIPER workflow with 3 consolidated agents (research-innovate, plan-execute, review). See .claude/project-info.md for detailed context.",
-  "project": {
-    "description": "Color Dash is a fast-paced, educational, and addictive color-matching game designed to sharpen your understanding of RGB and HSL color models. Race against the clock to identify the target color from a set of options, aiming for a perfect score before time runs out!",
-    "name": "ColorDash"
-  }
-}
