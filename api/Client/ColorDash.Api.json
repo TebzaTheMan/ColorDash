@@ -1,0 +1,472 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "ColorDash API",
+    "description": "REST API for the ColorDash color-matching game. All game endpoints require the X-Device-ID header.",
+    "version": "v1"
+  },
+  "paths": {
+    "/game/start": {
+      "post": {
+        "tags": [
+          "ColorDash.Api"
+        ],
+        "summary": "Start a new game session",
+        "description": "Creates a new active game session for the given device and mode. Returns the initial color set and expiry time.",
+        "operationId": "StartGame",
+        "parameters": [
+          {
+            "name": "X-Device-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DeviceId"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartGameRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameStartedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/game/{sessionId}/guess": {
+      "post": {
+        "tags": [
+          "ColorDash.Api"
+        ],
+        "summary": "Submit a color guess",
+        "description": "Submit the index (0–5) of the color block the player selected. Returns result, updated score, and next round data if the round advanced.",
+        "operationId": "SubmitGuess",
+        "parameters": [
+          {
+            "name": "X-Device-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DeviceId"
+            }
+          },
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuessRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuessResultResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Gone",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/game/{sessionId}/end": {
+      "post": {
+        "tags": [
+          "ColorDash.Api"
+        ],
+        "summary": "End a game session",
+        "description": "End the session early or at expiry. Returns the final score and whether a new highscore was achieved.",
+        "operationId": "EndGame",
+        "parameters": [
+          {
+            "name": "X-Device-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DeviceId"
+            }
+          },
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndGameResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Gone",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/highscores": {
+      "get": {
+        "tags": [
+          "ColorDash.Api"
+        ],
+        "summary": "Get device highscores",
+        "description": "Returns the best recorded score per game mode for the given device. Modes never played are omitted. Requires X-Device-ID header.",
+        "operationId": "GetHighscores",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/ScoreDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DeviceId": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "EndGameResponse": {
+        "required": [
+          "finalScore",
+          "isNewHighscore",
+          "highscore",
+          "sessionDurationMs"
+        ],
+        "type": "object",
+        "properties": {
+          "finalScore": {
+            "$ref": "#/components/schemas/ScoreDto"
+          },
+          "isNewHighscore": {
+            "type": "boolean"
+          },
+          "highscore": {
+            "$ref": "#/components/schemas/ScoreDto"
+          },
+          "sessionDurationMs": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "GameMode": {
+        "enum": [
+          "rgb",
+          "hsl"
+        ]
+      },
+      "GameStartedResponse": {
+        "required": [
+          "sessionId",
+          "mode",
+          "colors",
+          "targetLabel",
+          "triesLeft",
+          "startedAt",
+          "expiresAt"
+        ],
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/GameMode"
+          },
+          "colors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "targetLabel": {
+            "type": "string"
+          },
+          "triesLeft": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "GuessRequest": {
+        "required": [
+          "colorIndex"
+        ],
+        "type": "object",
+        "properties": {
+          "colorIndex": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "GuessResult": {
+        "enum": [
+          "correct",
+          "wrong_but_continue",
+          "wrong_and_exhausted"
+        ]
+      },
+      "GuessResultResponse": {
+        "required": [
+          "result",
+          "score",
+          "triesLeft",
+          "gameOver",
+          "nextColors",
+          "nextTargetLabel"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/GuessResult"
+          },
+          "score": {
+            "$ref": "#/components/schemas/ScoreDto"
+          },
+          "triesLeft": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "gameOver": {
+            "type": "boolean"
+          },
+          "nextColors": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "nextTargetLabel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ScoreDto": {
+        "required": [
+          "points",
+          "total"
+        ],
+        "type": "object",
+        "properties": {
+          "points": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "total": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "StartGameRequest": {
+        "required": [
+          "mode"
+        ],
+        "type": "object",
+        "properties": {
+          "mode": {
+            "$ref": "#/components/schemas/GameMode"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "ColorDash.Api"
+    }
+  ]
+}

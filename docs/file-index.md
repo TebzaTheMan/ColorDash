@@ -28,25 +28,26 @@ Key files and their single responsibility. Read this before searching the codeba
 
 ## Backend (`api/`)
 
-| File                                           | Responsibility                                                              |
-| ---------------------------------------------- | --------------------------------------------------------------------------- |
-| `api/Program.cs`                               | App entry point — DI registration, middleware, EF Core setup, route mapping |
-| `api/appsettings.json`                         | Base configuration including `GameSettings`                                 |
-| `api/appsettings.Development.json`             | Dev overrides — SQLite connection string                                    |
-| `api/Domain/GameSession.cs`                    | Game session entity                                                         |
-| `api/Domain/Highscore.cs`                      | Highscore entity                                                            |
-| `api/Domain/GameMode.cs`                       | Enum: `Rgb`, `Hsl`                                                          |
-| `api/Domain/GuessResult.cs`                    | Enum: `Correct`, `WrongButContinue`, `WrongAndExhausted`                    |
-| `api/Data/AppDbContext.cs`                     | EF Core `DbContext` — registers entities, configures schema                 |
-| `api/Data/Repositories/SessionRepository.cs`   | CRUD for `GameSession` — no business logic                                  |
-| `api/Data/Repositories/HighscoreRepository.cs` | CRUD for `Highscore` — no business logic                                    |
-| `api/Services/GameService.cs`                  | Session lifecycle: start, guess evaluation, expiry, end                     |
-| `api/Services/ColorService.cs`                 | Server-side color generation per mode                                       |
-| `api/Services/HighscoreService.cs`             | Highscore retrieval and update logic                                        |
-| `api/Endpoints/GameEndpoints.cs`               | Route handlers for `/game/start`, `/game/{id}/guess`, `/game/{id}/end`      |
-| `api/Endpoints/HighscoreEndpoints.cs`          | Route handler for `GET /highscores`                                         |
-| `api/Models/GameSettings.cs`                   | Config POCO bound from `appsettings.json`                                   |
-| `api/Models/Requests/`                         | `StartGameRequest`, `GuessRequest`, `DeviceId` value object                 |
-| `api/Models/Responses/`                        | `GameStartedResponse`, `GuessResultResponse`, `EndGameResponse`, `ScoreDto` |
-| `api/Migrations/`                              | EF Core migration history                                                   |
-| `api/ColorDash.Tests/`                         | xUnit test project for services                                             |
+| File                                           | Responsibility                                                                               |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `api/Program.cs`                               | App entry point — DI registration, middleware, EF Core setup, route mapping                  |
+| `api/appsettings.json`                         | Base configuration including `GameSettings`                                                  |
+| `api/appsettings.Development.json`             | Dev overrides — SQLite connection string                                                     |
+| `api/Domain/GameSession.cs`                    | Game session entity                                                                          |
+| `api/Domain/Highscore.cs`                      | Highscore entity                                                                             |
+| `api/Domain/GameMode.cs`                       | Enum: `Rgb`, `Hsl`                                                                           |
+| `api/Domain/GuessResult.cs`                    | Enum: `Correct`, `WrongButContinue`, `WrongAndExhausted`                                     |
+| `api/Data/AppDbContext.cs`                     | EF Core `DbContext` — registers entities, configures schema                                  |
+| `api/Data/Repositories/SessionRepository.cs`   | CRUD for `GameSession` — no business logic                                                   |
+| `api/Data/Repositories/HighscoreRepository.cs` | CRUD for `Highscore` — no business logic                                                     |
+| `api/Services/GameService.cs`                  | Session lifecycle: start, guess evaluation, expiry, end                                      |
+| `api/Services/ColorService.cs`                 | Server-side color generation per mode                                                        |
+| `api/Services/HighscoreService.cs`             | Highscore retrieval and update logic                                                         |
+| `api/Endpoints/GameEndpoints.cs`               | Route handlers for `/game/start`, `/game/{id}/guess`, `/game/{id}/end`                       |
+| `api/Endpoints/HighscoreEndpoints.cs`          | Route handler for `GET /highscores`                                                          |
+| `api/Models/GameSettings.cs`                   | Config POCO bound from `appsettings.json`                                                    |
+| `api/Models/Requests/`                         | `StartGameRequest`, `GuessRequest`, `DeviceId` value object                                  |
+| `api/Models/Responses/`                        | `GameStartedResponse`, `GuessResultResponse`, `EndGameResponse`, `ScoreDto`, `ErrorResponse` |
+| `api/Client/ColorDash.Api.json`                | Auto-generated OpenAPI 3.1 spec (produced at build time)                                     |
+| `api/Migrations/`                              | EF Core migration history                                                                    |
+| `api/ColorDash.Tests/`                         | xUnit test project for services                                                              |

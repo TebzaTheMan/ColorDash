@@ -13,27 +13,34 @@ Frontend (Next.js)                    Backend (.NET Minimal API)
 ## Frontend Architecture
 
 ### Game Engine (`web/game/`)
+
 The core game logic is **pure TypeScript with zero React dependencies**. All state transitions are deterministic functions: given a state and an action, they return a new state. Side effects (color generation, current time) are injected via the `IGameDependencies` interface so the engine remains fully testable without mocking React internals.
 
 Key functions in `web/game/engine.ts`:
+
 - `startGame(deps)` → initial `IGameState`
 - `processGuess(state, colorIndex, deps)` → `{ newState, outcome }`
 - `handleTimeUp(state, currentHighscore)` → `IGameState` with `timeUp: true`
 
 ### State Management
+
 React Reducer + Context API — no external state library.
+
 - `GameContext` (`web/contexts/game.context.tsx`) — wraps the play page, holds active game state via `useLocalStorageReducer`
 - `HighscoreContext` (`web/features/Highscore/contexts/HighScore.context.tsx`) — persists per-mode highscores to `localStorage`
 - `game.reducer.ts` — dispatches actions to the pure engine functions
 
 ### Feature Modules (`web/features/`)
+
 Each feature owns its components, context, and reducer. Keep feature-specific logic inside the feature folder.
+
 - `colorblocks/` — renders the 6 clickable color blocks and the target label
 - `Highscore/` — displays and persists the player's best score
 - `Infobar/` — shows live score, countdown timer, and tries remaining
 - `GameoverModal/` — end-of-game overlay with stats and replay button
 
 ### Pages
+
 - `pages/index.tsx` — mode selection (RGB / HSL), routes to `/play/[mode]`
 - `pages/play/[mode].tsx` — active game page, wires together all features and the timer
 
@@ -51,45 +58,56 @@ Endpoints   →   Services   →   Repositories   →   Domain / EF Core
 - **Domain** (`api/Domain/`) — plain C# classes/enums; no EF dependencies.
 
 ### Device Identification
+
 All game endpoints require an `X-Device-ID: {guid}` header. The backend uses this to:
+
 1. Associate sessions with a device
 2. Enforce ownership — a device cannot guess on another device's session (403)
 3. Track highscores per device
 
 ### Session Expiry
+
 Sessions expire after `GameDurationSeconds + ExpiryToleranceSeconds` (30 + 2 = 32s). Requests to expired sessions return **HTTP 410 Gone**. The 2-second tolerance handles network latency on the final guess.
 
 ## Domain Model
 
 ### Frontend Types (`web/types/index.ts`)
+
 ```typescript
-type TMode = "rgb" | "hsl" | null
+type TMode = "rgb" | "hsl" | null;
 
 interface IGameState {
-  mode: TMode
-  score: IScore
-  colors: string[]         // 6 CSS color strings, e.g. "rgb(12,34,56)"
-  targetLabel: string      // the label shown to the player
-  triesLeft: number        // 0–3
-  timeUp: boolean
-  isNewHighscore: boolean
-  correctCount: number
-  roundCount: number
-  startedAt: number        // unix ms
-  expiresAt: number        // unix ms
+  mode: TMode;
+  score: IScore;
+  colors: string[]; // 6 CSS color strings, e.g. "rgb(12,34,56)"
+  targetLabel: string; // the label shown to the player
+  triesLeft: number; // 0–3
+  timeUp: boolean;
+  isNewHighscore: boolean;
+  correctCount: number;
+  roundCount: number;
+  startedAt: number; // unix ms
+  expiresAt: number; // unix ms
 }
 
-interface IScore { points: number; total: number }
+interface IScore {
+  points: number;
+  total: number;
+}
 
-type ClickOutcomeResult = "correct" | "wrong_but_continue" | "wrong_and_exhausted"
+type ClickOutcomeResult =
+  | "correct"
+  | "wrong_but_continue"
+  | "wrong_and_exhausted";
 
 interface IGameDependencies {
-  generateColors: (mode: TMode, count: number) => string[]
-  getCurrentTime: () => number
+  generateColors: (mode: TMode, count: number) => string[];
+  getCurrentTime: () => number;
 }
 ```
 
 ### Backend Domain (`api/Domain/`)
+
 ```csharp
 enum GameMode    { Rgb, Hsl }
 enum GuessResult { Correct, WrongButContinue, WrongAndExhausted }
@@ -111,11 +129,13 @@ class Highscore {
 ## Data Flow
 
 ### Starting a Game
+
 1. User picks mode on home page → navigates to `/play/[mode]`
 2. Page dispatches `START_MODE` → reducer calls `startGame(deps)`
 3. Colors generated client-side, game state initialised, 30s timer starts
 
 ### Gameplay Loop
+
 1. User clicks a color block → `SUBMIT_GUESS` dispatched with block index
 2. Reducer calls `processGuess(state, index, deps)` → returns `ClickOutcomeResult`
 3. **Correct**: score updated, new colors generated, tries reset, round counter incremented
@@ -124,6 +144,7 @@ class Highscore {
 6. UI updates; timer keeps running
 
 ### Game End
+
 1. Timer hits 0 → `TIME_UP` dispatched with current highscore value
 2. Reducer calls `handleTimeUp(state, highscore)` → `timeUp = true`, `isNewHighscore` computed
 3. `GameoverModal` renders final score breakdown

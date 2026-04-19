@@ -10,7 +10,19 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((doc, ctx, ct) =>
+    {
+        doc.Info = new()
+        {
+            Title = "ColorDash API",
+            Version = "v1",
+            Description = "REST API for the ColorDash color-matching game."
+        };
+        return Task.CompletedTask;
+    });
+});
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 
