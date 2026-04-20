@@ -44,6 +44,34 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
 });
 
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    if (builder.Environment.IsDevelopment())
+    {
+        options.AddPolicy("AllowColorDash", policy =>
+        {
+            policy.WithOrigins(
+                "http://localhost:3000",
+                "https://colordash-git-develop-tebzathemans-projects.vercel.app"
+            )
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+        });
+    }
+    else
+    {
+        options.AddPolicy("AllowColorDash", policy =>
+        {
+            policy.WithOrigins("https://colordash.vercel.app")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        });
+    }
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -52,6 +80,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowColorDash");
 
 app.UseExceptionHandler(err => err.Run(async ctx =>
 {
