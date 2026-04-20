@@ -26,9 +26,9 @@ Key functions in `web/game/engine.ts`:
 
 React Reducer + Context API — no external state library.
 
-- `GameContext` (`web/contexts/game.context.tsx`) — wraps the play page, holds active game state via `useLocalStorageReducer`
-- `HighscoreContext` (`web/features/Highscore/contexts/HighScore.context.tsx`) — persists per-mode highscores to `localStorage`
-- `game.reducer.ts` — dispatches actions to the pure engine functions
+- `GameContext` (`web/contexts/game.context.tsx`) — wraps the play page, holds active game state via `useReducer`. Exposes async methods (`startGame`, `submitGuess`, `endGame`, `reset`) that call the backend API and dispatch results into the reducer.
+- `HighscoreContext` (`web/features/Highscore/contexts/HighScore.context.tsx`) — persists per-mode highscores to `localStorage`; updated when the backend confirms a new highscore on game end.
+- `game.reducer.ts` — handles both local actions (`RESET`, `TIME_UP`) and API-response actions (`GAME_STARTED`, `GUESS_RESULT`, `GAME_ENDED`).
 
 ### Feature Modules (`web/features/`)
 
@@ -79,15 +79,22 @@ type TMode = "rgb" | "hsl" | null;
 interface IGameState {
   mode: TMode;
   score: IScore;
-  colors: string[]; // 6 CSS color strings, e.g. "rgb(12,34,56)"
-  targetLabel: string; // the label shown to the player
   triesLeft: number; // 0–3
+  correctColors: number; // correct guesses this session
   timeUp: boolean;
-  isNewHighscore: boolean;
-  correctCount: number;
-  roundCount: number;
-  startedAt: number; // unix ms
-  expiresAt: number; // unix ms
+  isNewHighscore?: boolean;
+
+  colors: string[]; // 6 CSS color strings from the backend
+  targetColor: string; // the label shown to the player
+  clickedColors: boolean[]; // tracks which blocks have been clicked this round
+  gameStartTimestamp: number; // used to reset the client-side timer
+  sessionId: string | null; // backend session ID
+  correctColorIndex: number | null;
+
+  lastGuessResult?: {
+    result: ClickOutcomeResult;
+    id: number; // timestamp used as a change key
+  };
 }
 
 interface IScore {
@@ -101,8 +108,9 @@ type ClickOutcomeResult =
   | "wrong_and_exhausted";
 
 interface IGameDependencies {
-  generateColors: (mode: TMode, count: number) => string[];
-  getCurrentTime: () => number;
+  generateColors: (mode: TMode) => string[];
+  pickCorrectColor: (colors: string[]) => string;
+  now: () => number;
 }
 ```
 
@@ -131,22 +139,28 @@ class Highscore {
 ### Starting a Game
 
 1. User picks mode on home page → navigates to `/play/[mode]`
-2. Page dispatches `START_MODE` → reducer calls `startGame(deps)`
-3. Colors generated client-side, game state initialised, 30s timer starts
+2. Page calls `startGame(mode)` on `GameContext`
+3. `GameContext` calls `gameApi.startGame(mode)` → `POST /game/start`
+4. Backend generates session, colors, and target label; returns `GameStartedResponse`
+5. `GAME_STARTED` dispatched → reducer initialises state from API response; 30s client-side timer resets
 
 ### Gameplay Loop
 
-1. User clicks a color block → `SUBMIT_GUESS` dispatched with block index
-2. Reducer calls `processGuess(state, index, deps)` → returns `ClickOutcomeResult`
-3. **Correct**: score updated, new colors generated, tries reset, round counter incremented
-4. **WrongButContinue**: tries decremented, error toast shown
-5. **WrongAndExhausted**: tries reset to 3, new colors generated (no points awarded for that round)
-6. UI updates; timer keeps running
+1. User clicks a color block → `submitGuess(colorIndex)` called on `GameContext`
+2. `GameContext` calls `gameApi.submitGuess(sessionId, colorIndex)` → `POST /game/{id}/guess`
+3. Backend evaluates guess, updates score and tries; returns `GuessResultResponse`
+4. `GUESS_RESULT` dispatched → reducer updates state:
+   - **Correct** (`nextColors` present): score updated, new colors/target set, `clickedColors` reset
+   - **WrongButContinue**: tries decremented, clicked block marked
+   - **WrongAndExhausted** (`nextColors` present): tries reset, new colors set, no points
+5. `gameOver: true` in response → `timeUp` set, game ends without a separate timer event
 
 ### Game End
 
-1. Timer hits 0 → `TIME_UP` dispatched with current highscore value
-2. Reducer calls `handleTimeUp(state, highscore)` → `timeUp = true`, `isNewHighscore` computed
-3. `GameoverModal` renders final score breakdown
-4. If new highscore → `HighscoreContext` updated and persisted to `localStorage`
-5. User clicks "Replay" → `RESET` → fresh game
+1. Timer hits 0 → `endGame()` called on `GameContext`
+2. `GameContext` calls `gameApi.endGame(sessionId)` → `POST /game/{id}/end`
+3. Backend computes final score and highscore; returns `EndGameResponse`
+4. `GAME_ENDED` dispatched → `timeUp = true`, `isNewHighscore` set from backend response
+5. `GameoverModal` renders final score breakdown
+6. If new highscore → `Timer` component updates `HighscoreContext` → persisted to `localStorage`
+7. User clicks "Replay" → `RESET` → fresh game (triggers new `startGame` call)

@@ -23,6 +23,7 @@ npm run check-lint     # ESLint check only
 npm run check-format   # Prettier check only
 npm run format         # Format all frontend files with Prettier
 npm run test-all       # Full pipeline: format + lint + types + build + test
+npm run generate:api   # Regenerate API client from api/Client/ColorDash.Api.json via orval
 ```
 
 ## Backend Scripts (`cd api` first)

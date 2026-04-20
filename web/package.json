@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "test-all": "npm run check-format && npm run check-lint && npm run check-types && npm run build && npm run test",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "generate:api": "orval"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.3.6",
@@ -36,7 +37,8 @@
     "eslint-config-next": "12.2.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-react": "^7.30.1",
-    "prettier": "^2.7.1",
+    "orval": "^8.8.0",
+    "prettier": "^3.8.3",
     "typescript": "^6.0.2",
     "vitest": "^4.1.2"
   }

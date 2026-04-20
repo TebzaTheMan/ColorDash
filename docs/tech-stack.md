@@ -13,8 +13,8 @@
 | Timer         | react-timer-hook       | 3.0.5               |
 | Testing       | Vitest                 | 4.1.2               |
 | Linting       | ESLint (Google config) | —                   |
-| Formatting    | Prettier               | —                   |
-| Git hooks     | Husky                  | —                   |
+| Formatting    | Prettier               | 3.x                 |
+| API codegen   | Orval                  | 8.8.0               |
 | Analytics     | Vercel Analytics       | —                   |
 
 TypeScript config: strict mode, `moduleResolution: node`, `jsx: react-jsx`, path alias `@/*` → project root, incremental compilation enabled.
