@@ -58,11 +58,11 @@ start → Active → [guess × N] → Completed (manual end or time up)
 
 ## Highscores
 
-- Tracked **per device** (via `X-Device-ID` header / `localStorage` key)
+- Tracked **per device** (via `X-Device-ID` header)
 - Tracked **per game mode** (RGB and HSL scored separately)
 - A score only replaces the stored highscore if it is strictly higher
-- Frontend persists highscores in `localStorage` via `HighscoreContext`
-- Backend persists in the database via `HighscoreService` and `HighscoreRepository`
+- Backend persists highscores in the database via `HighscoreService` and `HighscoreRepository`
+- Frontend fetches highscores from `GET /highscores` via `HighscoreContext`; `refresh()` is called after each game end
 
 ## Configuration Reference
 

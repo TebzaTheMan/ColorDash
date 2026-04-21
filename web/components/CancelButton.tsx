@@ -5,13 +5,13 @@ import { useContext } from "react";
 
 export function CancelButton() {
   const router = useRouter();
-  const [, infobarDispatch] = useContext(GameContext);
+  const { reset } = useContext(GameContext);
   return (
     <Button
       variant="solid"
       size={["md", "lg"]}
       onClick={() => {
-        infobarDispatch({ type: "RESET" });
+        reset();
         router.push("/");
       }}
     >

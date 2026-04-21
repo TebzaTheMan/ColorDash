@@ -18,12 +18,12 @@ import {
 import { CancelButton } from "components/CancelButton";
 
 export function GameoverModal() {
-  const [gameData, gameDispatch] = useContext(GameContext);
+  const { state: gameData, startGame } = useContext(GameContext);
   const isOpen = gameData.timeUp;
   const initialRef = useRef(null);
 
   const onClose = () => {
-    gameDispatch({ type: "RESET" });
+    if (gameData.mode) startGame(gameData.mode);
   };
 
   return (

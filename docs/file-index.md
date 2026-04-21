@@ -4,33 +4,29 @@ Key files and their single responsibility. Read this before searching the codeba
 
 ## Frontend (`web/`)
 
-| File                                                      | Responsibility                                                                           |
-| --------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `web/pages/index.tsx`                                     | Home page — mode selection (RGB / HSL)                                                   |
-| `web/pages/play/[mode].tsx`                               | Active game page — wires timer, color blocks, modals, context                            |
-| `web/contexts/game.context.tsx`                           | `GameContext` provider — holds active game state, dispatches actions                     |
-| `web/reducers/game.reducer.ts`                            | Game state reducer — maps dispatch actions to engine function calls                      |
-| `web/game/engine.ts`                                      | Pure state machine: `startGame`, `processGuess`, `handleTimeUp`                          |
-| `web/game/colors.ts`                                      | RGB/HSL color generation and manipulation                                                |
-| `web/game/scoring.ts`                                     | Score calculation based on tries remaining                                               |
-| `web/game/constants.ts`                                   | Shared game constants (tries, points, etc.)                                              |
-| `web/game/__tests__/`                                     | Vitest unit tests for engine, colors, and scoring                                        |
-| `web/types/index.ts`                                      | All frontend TypeScript type definitions                                                 |
-| `web/hooks/useLocalStorageReducer.tsx`                    | Reducer hook that persists state to `localStorage`                                       |
-| `web/features/Highscore/contexts/HighScore.context.tsx`   | Highscore context — persists per-mode best scores to `localStorage`                      |
-| `web/features/colorblocks/components/Colorblocks.tsx`     | Renders the 6 clickable color blocks                                                     |
-| `web/features/Infobar/components/Infobar.tsx`             | Score / timer / tries bar                                                                |
-| `web/features/GameoverModal/components/GameoverModal.tsx` | End-of-game overlay with stats and replay                                                |
-| `web/lib/api/gameApi.ts`                                  | High-level API wrapper: `startGame`, `submitGuess`, `endGame`, `getHighscores`           |
-| `web/lib/api/customFetch.ts`                              | Fetch wrapper — prepends base URL, injects `X-Device-ID` header, throws on non-2xx       |
-| `web/lib/api/deviceId.ts`                                 | Device ID persistence: generates a UUID on first run and stores it in `localStorage`     |
-| `web/lib/api/generated/colordash.ts`                      | Orval-generated API functions (do not edit manually)                                     |
-| `web/lib/api/generated/model/`                            | Orval-generated TypeScript types for all API request/response shapes                     |
-| `web/orval.config.ts`                                     | Orval config — reads `api/Client/ColorDash.Api.json`, writes to `web/lib/api/generated/` |
-| `web/next.config.js`                                      | Next.js configuration                                                                    |
-| `web/tsconfig.json`                                       | TypeScript config (strict, path aliases)                                                 |
-| `web/.eslintrc.js`                                        | ESLint config (Google style)                                                             |
-| `web/vitest.config.ts`                                    | Vitest configuration                                                                     |
+| File                                                      | Responsibility                                                                                                     |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `web/pages/index.tsx`                                     | Home page — mode selection (RGB / HSL)                                                                             |
+| `web/pages/play/[mode].tsx`                               | Active game page — wires timer, color blocks, modals, context                                                      |
+| `web/contexts/game.context.tsx`                           | `GameContext` provider — holds active game state; exposes `startGame`, `submitGuess`, `endGame`, `reset`           |
+| `web/reducers/game.reducer.ts`                            | Game state reducer — maps API-response actions (`GAME_STARTED`, `GUESS_RESULT`, `GAME_ENDED`) and `RESET` to state |
+| `web/game/constants.ts`                                   | Shared game constants (default tries, game duration, default state)                                                |
+| `web/types/index.ts`                                      | Frontend TypeScript types — `IGameState`, `IGameAction` (API shapes come from generated model)                     |
+| `web/features/Highscore/contexts/HighScore.context.tsx`   | Highscore context — fetches per-mode best scores from the API; provides `refresh()`                                |
+| `web/features/colorblocks/components/Colorblocks.tsx`     | Renders the 6 clickable color blocks                                                                               |
+| `web/features/Infobar/components/Infobar.tsx`             | Score / timer / tries bar                                                                                          |
+| `web/features/GameoverModal/components/GameoverModal.tsx` | End-of-game overlay with stats and replay                                                                          |
+| `web/lib/api/gameApi.ts`                                  | High-level API wrapper: `startGame`, `submitGuess`, `endGame`, `getHighscores`                                     |
+| `web/lib/api/customFetch.ts`                              | Fetch wrapper — prepends base URL, injects `X-Device-ID` header, throws on non-2xx                                 |
+| `web/lib/api/deviceId.ts`                                 | Device ID persistence: generates a UUID on first run and stores it in `localStorage`                               |
+| `web/lib/api/generated/colordash.ts`                      | Orval-generated API functions (do not edit manually)                                                               |
+| `web/lib/api/generated/model/`                            | Orval-generated TypeScript types for all API request/response shapes                                               |
+| `web/orval.config.ts`                                     | Orval config — reads `api/Client/ColorDash.Api.json`, writes to `web/lib/api/generated/`                           |
+| `web/.env.example`                                        | Environment variable template — copy to `.env.local` and set `NEXT_PUBLIC_API_BASE_URL`                            |
+| `web/next.config.js`                                      | Next.js configuration                                                                                              |
+| `web/tsconfig.json`                                       | TypeScript config (strict, path aliases)                                                                           |
+| `web/.eslintrc.js`                                        | ESLint config (Google style)                                                                                       |
+| `web/vitest.config.ts`                                    | Vitest configuration                                                                                               |
 
 ## Backend (`api/`)
 

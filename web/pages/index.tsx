@@ -5,7 +5,7 @@ import { HighScore } from "features/Highscore";
 import Link from "next/link";
 import { useState } from "react";
 import Logo from "images/logo.png";
-import { TMode } from "types";
+import type { GameMode } from "lib/api/generated/model";
 import Image from "next/image";
 // import Footer from "components/Footer";
 export default function Home() {
@@ -27,7 +27,7 @@ export default function Home() {
           height={["60vh", "80vh"]}
           marginTop="8"
         >
-          <HighScore mode={gameMode as TMode} />
+          <HighScore mode={gameMode as GameMode} />
           <Spacer />
           <Flex alignItems={"center"}>
             <Image src={Logo} alt="color dash logo" />

@@ -5,11 +5,11 @@ import { useContext, useEffect } from "react";
 import Header from "./Header";
 
 export function Colorblocks() {
-  const [gameData, gameDispatch] = useContext(GameContext);
+  const { state: gameData, submitGuess } = useContext(GameContext);
   const toast = useToast();
 
   const handleColorClick = (index: number) => {
-    gameDispatch({ type: "SUBMIT_GUESS", index });
+    submitGuess(index);
   };
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export function Colorblocks() {
               color={color}
               key={index}
               index={index}
-              isCorrect={color == gameData.targetColor ? true : false}
+              isCorrect={gameData.correctColorIndex === index}
               isClicked={gameData.clickedColors[index]}
               handleColorClick={handleColorClick}
             />

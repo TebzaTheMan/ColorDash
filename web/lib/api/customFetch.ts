@@ -1,23 +1,25 @@
-import { getDeviceId } from './deviceId';
+import { getDeviceId } from "./deviceId";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:5043';
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5043";
 
 export const customFetch = async <T>(
   url: string,
-  options: RequestInit,
+  options: RequestInit
 ): Promise<T> => {
   const response = await fetch(`${BASE_URL}${url}`, {
     ...options,
     headers: {
       ...options.headers,
-      'X-Device-ID': getDeviceId(),
+      "X-Device-ID": getDeviceId(),
     },
   });
+
+  const data = await response.json().catch(() => ({ error: response.statusText }));
+
   if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ error: response.statusText }));
-    throw error;
+    throw data;
   }
-  return response.json() as Promise<T>;
+
+  return { data, status: response.status, headers: response.headers } as T;
 };

@@ -12,23 +12,13 @@ Frontend (Next.js)                    Backend (.NET Minimal API)
 
 ## Frontend Architecture
 
-### Game Engine (`web/game/`)
-
-The core game logic is **pure TypeScript with zero React dependencies**. All state transitions are deterministic functions: given a state and an action, they return a new state. Side effects (color generation, current time) are injected via the `IGameDependencies` interface so the engine remains fully testable without mocking React internals.
-
-Key functions in `web/game/engine.ts`:
-
-- `startGame(deps)` → initial `IGameState`
-- `processGuess(state, colorIndex, deps)` → `{ newState, outcome }`
-- `handleTimeUp(state, currentHighscore)` → `IGameState` with `timeUp: true`
-
 ### State Management
 
-React Reducer + Context API — no external state library.
+React Reducer + Context API — no external state library. All game logic is now server-side; the frontend only manages UI state derived from API responses.
 
 - `GameContext` (`web/contexts/game.context.tsx`) — wraps the play page, holds active game state via `useReducer`. Exposes async methods (`startGame`, `submitGuess`, `endGame`, `reset`) that call the backend API and dispatch results into the reducer.
-- `HighscoreContext` (`web/features/Highscore/contexts/HighScore.context.tsx`) — persists per-mode highscores to `localStorage`; updated when the backend confirms a new highscore on game end.
-- `game.reducer.ts` — handles both local actions (`RESET`, `TIME_UP`) and API-response actions (`GAME_STARTED`, `GUESS_RESULT`, `GAME_ENDED`).
+- `HighscoreContext` (`web/features/Highscore/contexts/HighScore.context.tsx`) — fetches per-mode highscores from the API on mount; provides a `refresh()` method called after a new highscore is confirmed.
+- `game.reducer.ts` — handles local actions (`RESET`) and API-response actions (`GAME_STARTED`, `GUESS_RESULT`, `GAME_ENDED`).
 
 ### Feature Modules (`web/features/`)
 
@@ -73,44 +63,35 @@ Sessions expire after `GameDurationSeconds + ExpiryToleranceSeconds` (30 + 2 = 3
 
 ### Frontend Types (`web/types/index.ts`)
 
+Primitive game types are defined here; API shapes (`GameMode`, `ScoreDto`, `GuessResult`, `GameStartedResponse`, `GuessResultResponse`, `EndGameResponse`) come from the Orval-generated `web/lib/api/generated/model/`.
+
 ```typescript
-type TMode = "rgb" | "hsl" | null;
+// IGameAction is a discriminated union of reducer actions
+type IGameAction =
+  | { type: "RESET" }
+  | { type: "GAME_STARTED"; data: GameStartedResponse; sessionId: string }
+  | { type: "GUESS_RESULT"; data: GuessResultResponse; guessIndex: number }
+  | { type: "GAME_ENDED"; data: EndGameResponse };
 
 interface IGameState {
-  mode: TMode;
-  score: IScore;
+  mode: GameMode | undefined;
+  score: ScoreDto; // { points, total }
   triesLeft: number; // 0–3
   correctColors: number; // correct guesses this session
   timeUp: boolean;
   isNewHighscore?: boolean;
 
-  colors: string[]; // 6 CSS color strings from the backend
+  colors: string[]; // CSS color strings from the backend
   targetColor: string; // the label shown to the player
   clickedColors: boolean[]; // tracks which blocks have been clicked this round
-  gameStartTimestamp: number; // used to reset the client-side timer
-  sessionId: string | null; // backend session ID
+  gameStartTimestamp: number;
+  sessionId: string | null;
   correctColorIndex: number | null;
 
   lastGuessResult?: {
-    result: ClickOutcomeResult;
-    id: number; // timestamp used as a change key
+    result: GuessResult; // "correct" | "wrong_but_continue" | "wrong_and_exhausted"
+    id: number;
   };
-}
-
-interface IScore {
-  points: number;
-  total: number;
-}
-
-type ClickOutcomeResult =
-  | "correct"
-  | "wrong_but_continue"
-  | "wrong_and_exhausted";
-
-interface IGameDependencies {
-  generateColors: (mode: TMode) => string[];
-  pickCorrectColor: (colors: string[]) => string;
-  now: () => number;
 }
 ```
 
@@ -162,5 +143,5 @@ class Highscore {
 3. Backend computes final score and highscore; returns `EndGameResponse`
 4. `GAME_ENDED` dispatched → `timeUp = true`, `isNewHighscore` set from backend response
 5. `GameoverModal` renders final score breakdown
-6. If new highscore → `Timer` component updates `HighscoreContext` → persisted to `localStorage`
+6. If new highscore → `Timer` component calls `HighscoreContext.refresh()` → re-fetches highscores from the API
 7. User clicks "Replay" → `RESET` → fresh game (triggers new `startGame` call)

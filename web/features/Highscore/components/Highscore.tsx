@@ -2,23 +2,22 @@ import { Box, Center, Heading } from "@chakra-ui/react";
 import { Text } from "@chakra-ui/react";
 import { HighscoreContext } from "features/Highscore";
 import { useContext } from "react";
-import { TMode } from "types";
+import type { GameMode } from "lib/api/generated/model";
 
 interface IProps {
-  mode: TMode;
+  mode: GameMode;
 }
 export function HighScore({ mode }: IProps) {
-  const [highscoreData] = useContext(HighscoreContext);
+  const { highscores } = useContext(HighscoreContext);
+  const score = highscores[mode];
   return (
-    <>
-      <Box mt={"8"}>
-        <Text fontSize="lg">{mode?.toUpperCase()} High Score</Text>
-        <Center>
-          <Heading size="lg" as="h1">
-            {highscoreData[mode!].points} / {highscoreData[mode!].total}
-          </Heading>
-        </Center>
-      </Box>
-    </>
+    <Box mt={"8"}>
+      <Text fontSize="lg">{mode?.toUpperCase()} High Score</Text>
+      <Center>
+        <Heading size="lg" as="h1">
+          {score ? `${score.points} / ${score.total}` : "--/--"}
+        </Heading>
+      </Center>
+    </Box>
   );
 }

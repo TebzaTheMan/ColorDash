@@ -2,7 +2,7 @@
   "openapi": "3.1.1",
   "info": {
     "title": "ColorDash API",
-    "description": "REST API for the ColorDash color-matching game. All game endpoints require the X-Device-ID header.",
+    "description": "REST API for the ColorDash color-matching game.",
     "version": "v1"
   },
   "paths": {

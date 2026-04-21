@@ -1,28 +1,21 @@
-export type TMode = "rgb" | "hsl" | null;
+import type {
+  GameMode,
+  GuessResult,
+  GameStartedResponse,
+  GuessResultResponse,
+  EndGameResponse,
+  ScoreDto,
+} from "lib/api/generated/model";
 
-export const gameModes = ["hsl", "rgb"];
-
-export interface IGameDependencies {
-  generateColors: (mode: TMode) => string[];
-  pickCorrectColor: (colors: string[]) => string;
-  now: () => number;
-}
-
-export interface IGameAction {
-  type: "START_MODE" | "SUBMIT_GUESS" | "TIME_UP" | "RESET";
-  mode?: TMode;
-  index?: number;
-  highscore?: IScore;
-}
-
-export type ClickOutcomeResult =
-  | "correct"
-  | "wrong_but_continue"
-  | "wrong_and_exhausted";
+export type IGameAction =
+  | { type: "RESET" }
+  | { type: "GAME_STARTED"; data: GameStartedResponse; sessionId: string }
+  | { type: "GUESS_RESULT"; data: GuessResultResponse; guessIndex: number }
+  | { type: "GAME_ENDED"; data: EndGameResponse };
 
 export interface IGameState {
-  mode: TMode;
-  score: IScore;
+  mode: GameMode | undefined;
+  score: ScoreDto;
   triesLeft: number;
   correctColors: number;
   timeUp: boolean;
@@ -32,14 +25,11 @@ export interface IGameState {
   targetColor: string;
   clickedColors: boolean[];
   gameStartTimestamp: number;
+  sessionId: string | null;
+  correctColorIndex: number | null;
 
   lastGuessResult?: {
-    result: ClickOutcomeResult;
+    result: GuessResult;
     id: number;
   };
-}
-
-export interface IScore {
-  points: number;
-  total: number;
 }

@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { Text } from "@chakra-ui/react";
 
 export function Tries() {
-  const [gameData] = useContext(GameContext);
+  const { state: gameData } = useContext(GameContext);
   return (
     <Flex direction={"column"} alignItems="center">
       <Text fontSize="lg">Tries Left</Text>

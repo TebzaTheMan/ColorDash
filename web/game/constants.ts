@@ -9,11 +9,8 @@ export const GAME_DURATION_SECONDS = 30;
 /** Number of tries a player starts each round with */
 export const DEFAULT_TRIES = 3;
 
-/** Maximum points achievable per correct answer (first-try perfect score) */
-export const MAX_POINTS_PER_ROUND = 10;
-
 export const DEFAULT_GAME_STATE: IGameState = {
-  mode: null,
+  mode: undefined,
   score: {
     points: 0,
     total: 0,
@@ -26,10 +23,6 @@ export const DEFAULT_GAME_STATE: IGameState = {
   targetColor: "",
   clickedColors: Array(NUM_COLORS).fill(false),
   gameStartTimestamp: 0,
+  sessionId: null,
+  correctColorIndex: null,
 };
-
-export const SCORING_RULES = [
-  { triesLeft: 3, points: 10 },
-  { triesLeft: 2, points: 5 },
-  { triesLeft: 1, points: 2 },
-];

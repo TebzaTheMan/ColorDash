@@ -7,8 +7,8 @@ import { Text } from "@chakra-ui/react";
 import { GAME_DURATION_SECONDS } from "game/constants";
 
 export function Timer() {
-  const [gameData, gameDispatch] = useContext(GameContext);
-  const [highscoreData, highscoreDispatch] = useContext(HighscoreContext);
+  const { state: gameData, endGame } = useContext(GameContext);
+  const { refresh } = useContext(HighscoreContext);
 
   const expiryTimestamp = new Date();
   expiryTimestamp.setSeconds(
@@ -18,20 +18,13 @@ export function Timer() {
   const { seconds, minutes, isRunning, restart } = useTimer({
     expiryTimestamp,
     onExpire: () => {
-      gameDispatch({
-        type: "TIME_UP",
-        highscore: highscoreData[gameData.mode!],
-      });
+      endGame();
     },
   });
 
   useEffect(() => {
     if (gameData.timeUp && gameData.isNewHighscore) {
-      highscoreDispatch({
-        type: "UPDATE_SCORE",
-        score: gameData.score,
-        mode: gameData.mode,
-      });
+      refresh();
     }
   }, [gameData.timeUp]);
 

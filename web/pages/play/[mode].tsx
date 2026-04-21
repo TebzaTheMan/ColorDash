@@ -1,27 +1,25 @@
 import { GetServerSidePropsContext } from "next";
 import { Colorblocks } from "features/colorblocks";
 import { Infobar } from "features/Infobar";
-import { GameContext } from "contexts";
+import { GameContext, GameProvider } from "contexts";
 import { GameoverModal } from "features/GameoverModal";
 import Head from "next/head";
 import { useContext, useEffect } from "react";
-import { TMode } from "types";
+import type { GameMode } from "lib/api/generated/model";
 
 interface Props {
-  mode: TMode;
+  mode: GameMode;
 }
-export default function Play({ mode }: Props) {
-  const [GameData, gameDispatch] = useContext(GameContext);
+
+function PlayInner({ mode }: Props) {
+  const { state: GameData, startGame } = useContext(GameContext);
   const isTimeUp = GameData.timeUp;
 
   useEffect(() => {
-    gameDispatch({
-      type: "START_MODE",
-      mode: mode,
-    });
+    startGame(mode);
   }, [mode]);
 
-  if (GameData.mode == null) {
+  if (!GameData.mode) {
     return;
   }
   return (
@@ -46,16 +44,24 @@ export default function Play({ mode }: Props) {
     </>
   );
 }
+
+export default function Play({ mode }: Props) {
+  return (
+    <GameProvider>
+      <PlayInner mode={mode} />
+    </GameProvider>
+  );
+}
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { mode } = context.query; // Access the URL parameter from the context object
+  const { mode } = context.query;
   if (mode === undefined || (mode !== "rgb" && mode !== "hsl")) {
     return {
-      notFound: true, // Return a 404 page if the mode is invalid
+      notFound: true,
     };
   }
   return {
     props: {
-      mode: mode as TMode,
+      mode: mode as GameMode,
     },
   };
 }
