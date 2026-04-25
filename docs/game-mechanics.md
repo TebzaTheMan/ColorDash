@@ -60,7 +60,7 @@ start → Active → [guess × N] → Completed (manual end or time up)
 
 - Tracked **per device** (via `X-Device-ID` header)
 - Tracked **per game mode** (RGB and HSL scored separately)
-- A score only replaces the stored highscore if it is strictly higher
+- A score replaces the stored highscore only if its **ratio** (`points / total`) is strictly greater than the stored ratio — raw points alone do not determine ranking (e.g. 25/40 = 62.5% beats 30/100 = 30%, even though 30 > 25)
 - Backend persists highscores in the database via `HighscoreService` and `HighscoreRepository`
 - Frontend fetches highscores from `GET /highscores` via `HighscoreContext`; `refresh()` is called after each game end
 

@@ -72,4 +72,4 @@ logs/
 Thumbs.db
 
 #Claude
-.claude/memory-bank/
+.claude/settings.local.json

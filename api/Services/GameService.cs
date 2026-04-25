@@ -114,7 +114,9 @@ public class GameService(
         session.EndedAt = DateTime.UtcNow;
 
         var existing = await highscores.GetByDeviceAndModeAsync(deviceId, session.Mode);
-        bool isNewHighscore = session.ScorePoints > (existing?.Points ?? 0);
+        bool isNewHighscore = session.ScoreTotal > 0 &&
+            (existing is null ||
+             (double)session.ScorePoints / session.ScoreTotal > (double)existing.Points / existing.Total);
 
         if (isNewHighscore)
         {

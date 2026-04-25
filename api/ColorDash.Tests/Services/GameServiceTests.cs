@@ -320,6 +320,7 @@ public class GameServiceTests
         var deviceId = Guid.NewGuid();
         var session = ActiveSession(deviceId);
         session.ScorePoints = 20;
+        session.ScoreTotal = 20;
         _sessions.GetByIdAsync(session.Id).Returns(session);
         _highscores.GetByDeviceAndModeAsync(deviceId, session.Mode).Returns((Highscore?)null);
 
@@ -337,6 +338,7 @@ public class GameServiceTests
         var deviceId = Guid.NewGuid();
         var session = ActiveSession(deviceId);
         session.ScorePoints = 30;
+        session.ScoreTotal = 30; // 100% > existing 40%
         _sessions.GetByIdAsync(session.Id).Returns(session);
         var existing = new Highscore { Points = 20, Total = 50 };
         _highscores.GetByDeviceAndModeAsync(deviceId, session.Mode).Returns(existing);
@@ -355,6 +357,7 @@ public class GameServiceTests
         var deviceId = Guid.NewGuid();
         var session = ActiveSession(deviceId);
         session.ScorePoints = 10;
+        session.ScoreTotal = 50; // 20% < existing 50%
         _sessions.GetByIdAsync(session.Id).Returns(session);
         var existing = new Highscore { Points = 50, Total = 100 };
         _highscores.GetByDeviceAndModeAsync(deviceId, session.Mode).Returns(existing);
@@ -363,6 +366,46 @@ public class GameServiceTests
 
         Assert.False(result.IsNewHighscore);
         Assert.Equal(new ScoreDto(50, 100), result.Highscore);
+        await _highscores.DidNotReceive().SaveChangesAsync();
+    }
+
+    [Fact]
+    public async Task EndGame_HigherRatioWithLowerRawPoints_IsNewHighscore()
+    {
+        // 25/40 = 62.5% beats stored 30/100 = 30%, even though raw points are lower.
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        var session = ActiveSession(deviceId);
+        session.ScorePoints = 25;
+        session.ScoreTotal = 40;
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+        var existing = new Highscore { Points = 30, Total = 100 };
+        _highscores.GetByDeviceAndModeAsync(deviceId, session.Mode).Returns(existing);
+
+        var result = await service.EndGameAsync(session.Id, deviceId);
+
+        Assert.True(result.IsNewHighscore);
+        Assert.Equal(25, existing.Points);
+        Assert.Equal(40, existing.Total);
+    }
+
+    [Fact]
+    public async Task EndGame_LowerRatioWithHigherRawPoints_IsNotNewHighscore()
+    {
+        // 6/60 = 10% does not beat stored 5/10 = 50%, even though raw points are higher.
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        var session = ActiveSession(deviceId);
+        session.ScorePoints = 6;
+        session.ScoreTotal = 60;
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+        var existing = new Highscore { Points = 5, Total = 10 };
+        _highscores.GetByDeviceAndModeAsync(deviceId, session.Mode).Returns(existing);
+
+        var result = await service.EndGameAsync(session.Id, deviceId);
+
+        Assert.False(result.IsNewHighscore);
+        Assert.Equal(new ScoreDto(5, 10), result.Highscore);
         await _highscores.DidNotReceive().SaveChangesAsync();
     }
 
