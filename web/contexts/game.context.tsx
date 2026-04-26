@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useReducer, useState } from "react";
+import { createContext, ReactNode, useReducer, useRef, useState } from "react";
 import { GameReducer } from "reducers";
 import { IGameState } from "types";
 import type { GameMode } from "lib/api/generated/model";
@@ -26,24 +26,39 @@ export const GameContext = createContext<IGameContext>({
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(GameReducer, DEFAULT_GAME_STATE);
   const [isStarting, setIsStarting] = useState(false);
+  // startingRef guards against concurrent calls (ref is synchronous; state is not).
+  const startingRef = useRef(false);
+  const startKeyRef = useRef<string | null>(null);
+  const guessKeyRef = useRef<string | null>(null);
 
   const startGame = async (mode: GameMode) => {
+    if (startingRef.current) return;
+    startingRef.current = true;
     setIsStarting(true);
-    const response = await gameApi.startGame(mode);
-    if (response.status === 201) {
-      dispatch({
-        type: "GAME_STARTED",
-        data: response.data,
-        sessionId: response.data.sessionId,
+    try {
+      if (!startKeyRef.current) startKeyRef.current = crypto.randomUUID();
+      const response = await gameApi.startGame(mode, {
+        headers: { 'Idempotency-Key': startKeyRef.current },
       });
+      if (response.status === 200 || response.status === 201) {
+        dispatch({
+          type: "GAME_STARTED",
+          data: response.data,
+          sessionId: response.data.sessionId,
+        });
+      }
+    } finally {
+      startingRef.current = false;
+      setIsStarting(false);
     }
-    setIsStarting(false);
   };
 
   const submitGuess = async (colorIndex: number) => {
     if (!state.sessionId) return;
-    const response = await gameApi.submitGuess(state.sessionId, colorIndex);
+    if (!guessKeyRef.current) guessKeyRef.current = crypto.randomUUID();
+    const response = await gameApi.submitGuess(state.sessionId, colorIndex, guessKeyRef.current);
     if (response.status === 200) {
+      guessKeyRef.current = null;
       dispatch({
         type: "GUESS_RESULT",
         data: response.data,
@@ -61,6 +76,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
   };
 
   const reset = () => {
+    startKeyRef.current = null;
+    guessKeyRef.current = null;
     dispatch({ type: "RESET" });
   };
 

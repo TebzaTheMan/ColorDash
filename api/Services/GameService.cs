@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ColorDash.Api.Data.Repositories;
 using ColorDash.Api.Domain;
 using ColorDash.Api.Models;
@@ -9,8 +10,8 @@ namespace ColorDash.Api.Services;
 
 public interface IGameService
 {
-    Task<GameStartedResponse> StartGameAsync(StartGameRequest request, Guid deviceId);
-    Task<GuessResultResponse> ProcessGuessAsync(Guid sessionId, GuessRequest request, Guid deviceId);
+    Task<(GameStartedResponse Response, bool IsNew)> StartGameAsync(StartGameRequest request, Guid deviceId, string? startIdempotencyKey);
+    Task<GuessResultResponse> ProcessGuessAsync(Guid sessionId, GuessRequest request, Guid deviceId, string? idempotencyKey);
     Task<EndGameResponse> EndGameAsync(Guid sessionId, Guid deviceId);
 }
 public class GameService(
@@ -20,8 +21,15 @@ public class GameService(
     IOptions<GameSettings> options) : IGameService
 {
     private readonly GameSettings _settings = options.Value;
-    public async Task<GameStartedResponse> StartGameAsync(StartGameRequest request, Guid deviceId)
+    public async Task<(GameStartedResponse Response, bool IsNew)> StartGameAsync(StartGameRequest request, Guid deviceId, string? startIdempotencyKey)
     {
+        if (startIdempotencyKey is not null)
+        {
+            var existing = await sessions.GetByStartIdempotencyKeyAsync(deviceId, startIdempotencyKey);
+            if (existing is not null)
+                return (ToStartedResponse(existing), IsNew: false);
+        }
+
         var colors = colorService.GenerateColors(request.Mode);
         var correctIndex = colorService.PickCorrectIndex(colors);
         var now = DateTime.UtcNow;
@@ -37,24 +45,25 @@ public class GameService(
             Status = SessionStatus.Active,
             StartedAt = now,
             ExpiresAt = now.AddSeconds(_settings.GameDurationSeconds),
+            StartIdempotencyKey = startIdempotencyKey,
         };
 
         await sessions.AddAsync(session);
         await sessions.SaveChangesAsync();
 
-        return new GameStartedResponse(
-            SessionId: session.Id,
-            Mode: session.Mode,
-            Colors: session.CurrentColors,
-            TargetLabel: colors[correctIndex],
-            TriesLeft: session.TriesLeft,
-            StartedAt: session.StartedAt,
-            ExpiresAt: session.ExpiresAt);
+        return (ToStartedResponse(session), IsNew: true);
     }
 
-    public async Task<GuessResultResponse> ProcessGuessAsync(Guid sessionId, GuessRequest request, Guid deviceId)
+    public async Task<GuessResultResponse> ProcessGuessAsync(Guid sessionId, GuessRequest request, Guid deviceId, string? idempotencyKey)
     {
         var session = await GetActiveSessionAsync(sessionId, deviceId);
+
+        if (idempotencyKey is not null &&
+            session.LastGuessIdempotencyKey == idempotencyKey &&
+            session.LastGuessResponseJson is not null)
+        {
+            return JsonSerializer.Deserialize<GuessResultResponse>(session.LastGuessResponseJson)!;
+        }
 
         bool correct = request.ColorIndex == session.CorrectIndex;
         GuessResult result;
@@ -90,11 +99,9 @@ public class GameService(
             }
         }
 
-        await sessions.SaveChangesAsync();
-
         bool advancedRound = result is GuessResult.Correct or GuessResult.WrongAndExhausted;
 
-        return new GuessResultResponse(
+        var response = new GuessResultResponse(
             Result: result,
             Score: new ScoreDto(session.ScorePoints, session.ScoreTotal),
             TriesLeft: session.TriesLeft,
@@ -103,12 +110,38 @@ public class GameService(
             NextTargetLabel: advancedRound
                 ? session.CurrentColors[session.CorrectIndex]
                 : null);
+
+        if (idempotencyKey is not null)
+        {
+            session.LastGuessIdempotencyKey = idempotencyKey;
+            session.LastGuessResponseJson = JsonSerializer.Serialize(response);
+        }
+
+        await sessions.SaveChangesAsync();
+        return response;
     }
 
     public async Task<EndGameResponse> EndGameAsync(Guid sessionId, Guid deviceId)
     {
+        var session = await sessions.GetByIdAsync(sessionId)
+            ?? throw new KeyNotFoundException("Session not found.");
+
+        if (session.DeviceId != deviceId)
+            throw new UnauthorizedAccessException("Session not found.");
+
+        if (session.Status == SessionStatus.Completed && session.EndResponseJson is not null)
+            return JsonSerializer.Deserialize<EndGameResponse>(session.EndResponseJson)!;
+
         var tolerance = TimeSpan.FromSeconds(_settings.ExpiryToleranceSeconds);
-        var session = await GetActiveSessionAsync(sessionId, deviceId, tolerance);
+        if (session.Status != SessionStatus.Active || DateTime.UtcNow > session.ExpiresAt.Add(tolerance))
+        {
+            if (session.Status == SessionStatus.Active)
+            {
+                session.Status = SessionStatus.Expired;
+                await sessions.SaveChangesAsync();
+            }
+            throw new InvalidOperationException("Session has expired.");
+        }
 
         session.Status = SessionStatus.Completed;
         session.EndedAt = DateTime.UtcNow;
@@ -141,10 +174,7 @@ public class GameService(
                 existing.SessionId = session.Id;
             }
 
-            await highscores.SaveChangesAsync();
         }
-
-        await sessions.SaveChangesAsync();
 
         var highscore = isNewHighscore
             ? new ScoreDto(session.ScorePoints, session.ScoreTotal)
@@ -152,12 +182,26 @@ public class GameService(
                 ? new ScoreDto(existing.Points, existing.Total)
                 : new ScoreDto(0, 0);
 
-        return new EndGameResponse(
+        var endResponse = new EndGameResponse(
             FinalScore: new ScoreDto(session.ScorePoints, session.ScoreTotal),
             IsNewHighscore: isNewHighscore,
             Highscore: highscore,
-            SessionDurationMs: (long)(session.EndedAt.Value - session.StartedAt).TotalMilliseconds);
+            SessionDurationMs: (long)(session.EndedAt!.Value - session.StartedAt).TotalMilliseconds);
+
+        session.EndResponseJson = JsonSerializer.Serialize(endResponse);
+        await sessions.SaveChangesAsync();
+
+        return endResponse;
     }
+
+    private static GameStartedResponse ToStartedResponse(GameSession s) =>
+        new(SessionId: s.Id,
+            Mode: s.Mode,
+            Colors: s.CurrentColors,
+            TargetLabel: s.CurrentColors[s.CorrectIndex],
+            TriesLeft: s.TriesLeft,
+            StartedAt: s.StartedAt,
+            ExpiresAt: s.ExpiresAt);
 
     private async Task<GameSession> GetActiveSessionAsync(
         Guid sessionId,

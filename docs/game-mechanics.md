@@ -43,7 +43,7 @@ If all 3 tries are exhausted without a correct guess, **0 points** are awarded f
 - Each game lasts **30 seconds** (`GameDurationSeconds`)
 - Timer starts when the play page loads
 - When timer reaches 0, the game ends immediately regardless of round state
-- A **2-second expiry tolerance** (`ExpiryToleranceSeconds`) is applied server-side to account for network latency on the final guess
+- A **10-second expiry tolerance** (`ExpiryToleranceSeconds`) is applied server-side to account for network latency on the final guess
 
 ## Session Lifecycle
 
@@ -74,4 +74,4 @@ All values are set in `api/appsettings.json → GameSettings`. See [tech-stack.m
 | `GameDurationSeconds`    | 30      | Total game time                         |
 | `DefaultTries`           | 3       | Tries allowed per round                 |
 | `MaxPointsPerRound`      | 10      | Points possible if correct on first try |
-| `ExpiryToleranceSeconds` | 2       | Extra grace time for the final guess    |
+| `ExpiryToleranceSeconds` | 10      | Extra grace time for the final guess    |

@@ -3,6 +3,7 @@ using System;
 using ColorDash.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ColorDash.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260426085535_AddStartIdempotencyKey")]
+    partial class AddStartIdempotencyKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.5");
@@ -95,9 +98,6 @@ namespace ColorDash.Api.Migrations
 
                     b.HasIndex("ExpiresAt")
                         .HasDatabaseName("ix_game_sessions_expires_at");
-
-                    b.HasIndex("DeviceId", "StartIdempotencyKey")
-                        .HasDatabaseName("ix_game_sessions_device_id_start_key");
 
                     b.ToTable("game_sessions", (string)null);
                 });

@@ -38,6 +38,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             e.HasIndex(x => x.DeviceId).HasDatabaseName("ix_game_sessions_device_id");
             e.HasIndex(x => x.ExpiresAt).HasDatabaseName("ix_game_sessions_expires_at");
+            e.HasIndex(x => new { x.DeviceId, x.StartIdempotencyKey })
+                .HasDatabaseName("ix_game_sessions_device_id_start_key");
 
             e.HasOne(x => x.Highscore)
                 .WithOne(x => x.Session)

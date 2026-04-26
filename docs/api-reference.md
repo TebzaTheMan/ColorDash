@@ -14,6 +14,13 @@ Base URL (dev): `http://localhost:5000`
 
 Start a new game session for the given device and mode.
 
+**Headers:**
+
+| Header            | Required | Description                                                                                                                       |
+| ----------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `X-Device-ID`     | Yes      | Device GUID                                                                                                                       |
+| `Idempotency-Key` | No       | Stable string key for the request. Re-sending the same key returns the existing session (HTTP 200) instead of creating a new one. |
+
 **Request body:**
 
 ```json
@@ -22,7 +29,7 @@ Start a new game session for the given device and mode.
 
 `mode` is `"rgb"` or `"hsl"`.
 
-**Response 201:**
+**Response 201** — new session created:
 
 ```json
 {
@@ -43,11 +50,20 @@ Start a new game session for the given device and mode.
 }
 ```
 
+**Response 200** — idempotency hit (same key, session already exists): same shape as 201.
+
 ---
 
 ## POST `/game/{sessionId}/guess`
 
 Submit a color block selection (0–5) for an active session.
+
+**Headers:**
+
+| Header            | Required | Description                                                                                                                  |
+| ----------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `X-Device-ID`     | Yes      | Device GUID                                                                                                                  |
+| `Idempotency-Key` | No       | Stable string key for this guess attempt. Re-sending the same key replays the stored result without re-evaluating the guess. |
 
 **Request body:**
 

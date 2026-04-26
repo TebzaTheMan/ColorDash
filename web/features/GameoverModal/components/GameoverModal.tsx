@@ -19,12 +19,15 @@ import { CancelButton } from "components/CancelButton";
 import { SCORING_RULES } from "game/constants";
 
 export function GameoverModal() {
-  const { state: gameData, startGame } = useContext(GameContext);
+  const { state: gameData, startGame, reset } = useContext(GameContext);
   const isOpen = gameData.timeUp;
   const initialRef = useRef(null);
 
   const onClose = () => {
-    if (gameData.mode) startGame(gameData.mode);
+    const mode = gameData.mode;
+    if (!mode) return;
+    reset();
+    startGame(mode);
   };
 
   return (

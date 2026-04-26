@@ -16,6 +16,11 @@ public class GameSession
     public DateTime ExpiresAt { get; set; }
     public DateTime? EndedAt { get; set; }
 
+    public string? StartIdempotencyKey { get; set; }
+    public string? LastGuessIdempotencyKey { get; set; }
+    public string? LastGuessResponseJson { get; set; }
+    public string? EndResponseJson { get; set; }
+
     public Highscore? Highscore { get; set; }
 }
 

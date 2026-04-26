@@ -57,7 +57,7 @@ All game endpoints require an `X-Device-ID: {guid}` header. The backend uses thi
 
 ### Session Expiry
 
-Sessions expire after `GameDurationSeconds + ExpiryToleranceSeconds` (30 + 2 = 32s). Requests to expired sessions return **HTTP 410 Gone**. The 2-second tolerance handles network latency on the final guess.
+Sessions expire after `GameDurationSeconds + ExpiryToleranceSeconds` (30 + 10 = 40s). Requests to expired sessions return **HTTP 410 Gone**. The 10-second tolerance handles network latency on the final guess.
 
 ## Domain Model
 

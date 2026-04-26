@@ -42,7 +42,7 @@ Located in `api/appsettings.json` under the `GameSettings` key. Bound to `api/Mo
     "GameDurationSeconds": 30,
     "DefaultTries": 3,
     "MaxPointsPerRound": 10,
-    "ExpiryToleranceSeconds": 2,
+    "ExpiryToleranceSeconds": 10,
     "ScoringRules": [
       { "triesLeft": 3, "points": 10 },
       { "triesLeft": 2, "points": 5 },

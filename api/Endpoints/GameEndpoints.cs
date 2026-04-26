@@ -13,27 +13,32 @@ public static class GameEndpoints
 
         group.MapPost("/start", async (
             [FromHeader(Name = "X-Device-ID")] DeviceId deviceId,
+            [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
             StartGameRequest request,
             HttpContext http,
             IGameService gameService) =>
         {
-            var response = await gameService.StartGameAsync(request, deviceId.Value);
-            return Results.Created($"/game/{response.SessionId}", response);
+            var (response, isNew) = await gameService.StartGameAsync(request, deviceId.Value, idempotencyKey);
+            return isNew
+                ? Results.Created($"/game/{response.SessionId}", response)
+                : Results.Ok(response);
         })
         .WithName("StartGame")
         .WithSummary("Start a new game session")
         .WithDescription("Creates a new active game session for the given device and mode. Returns the initial color set and expiry time.")
         .Produces<GameStartedResponse>(StatusCodes.Status201Created)
+        .Produces<GameStartedResponse>(StatusCodes.Status200OK)
         .Produces<ErrorResponse>(StatusCodes.Status400BadRequest);
 
         group.MapPost("/{sessionId:guid}/guess", async (
             [FromHeader(Name = "X-Device-ID")] DeviceId deviceId,
+            [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
             Guid sessionId,
             GuessRequest request,
             HttpContext http,
             IGameService gameService) =>
         {
-            var response = await gameService.ProcessGuessAsync(sessionId, request, deviceId.Value);
+            var response = await gameService.ProcessGuessAsync(sessionId, request, deviceId.Value, idempotencyKey);
             return Results.Ok(response);
         })
         .WithName("SubmitGuess")
