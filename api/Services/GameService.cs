@@ -133,7 +133,7 @@ public class GameService(
             return JsonSerializer.Deserialize<EndGameResponse>(session.EndResponseJson)!;
 
         var tolerance = TimeSpan.FromSeconds(_settings.ExpiryToleranceSeconds);
-        if (session.Status != SessionStatus.Active || DateTime.UtcNow > session.ExpiresAt.Add(tolerance))
+        if (DateTime.UtcNow > session.ExpiresAt.Add(tolerance))
         {
             if (session.Status == SessionStatus.Active)
             {

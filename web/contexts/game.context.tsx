@@ -8,7 +8,7 @@ import { gameApi } from "lib/api/gameApi";
 interface IGameContext {
   state: IGameState;
   isStarting: boolean;
-  startGame: (mode: GameMode) => Promise<void>;
+  startGame: (mode: GameMode) => Promise<boolean>;
   submitGuess: (colorIndex: number) => Promise<void>;
   endGame: () => Promise<void>;
   reset: () => void;
@@ -17,7 +17,7 @@ interface IGameContext {
 export const GameContext = createContext<IGameContext>({
   state: DEFAULT_GAME_STATE,
   isStarting: false,
-  startGame: async () => {},
+  startGame: async () => false,
   submitGuess: async () => {},
   endGame: async () => {},
   reset: () => {},
@@ -31,12 +31,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const startKeyRef = useRef<string | null>(null);
   const guessKeyRef = useRef<string | null>(null);
 
-  const startGame = async (mode: GameMode) => {
-    if (startingRef.current) return;
+  const startGame = async (mode: GameMode): Promise<boolean> => {
+    if (startingRef.current) return false;
     startingRef.current = true;
     setIsStarting(true);
+    if (!startKeyRef.current) startKeyRef.current = crypto.randomUUID();
     try {
-      if (!startKeyRef.current) startKeyRef.current = crypto.randomUUID();
       const response = await gameApi.startGame(mode, {
         headers: { 'Idempotency-Key': startKeyRef.current },
       });
@@ -46,7 +46,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
           data: response.data,
           sessionId: response.data.sessionId,
         });
+        return true;
       }
+      return false;
     } finally {
       startingRef.current = false;
       setIsStarting(false);

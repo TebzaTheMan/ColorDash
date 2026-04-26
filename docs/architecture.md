@@ -16,7 +16,7 @@ Frontend (Next.js)                    Backend (.NET Minimal API)
 
 React Reducer + Context API — no external state library. All game logic is now server-side; the frontend only manages UI state derived from API responses.
 
-- `GameContext` (`web/contexts/game.context.tsx`) — wraps the play page, holds active game state via `useReducer`. Exposes async methods (`startGame`, `submitGuess`, `endGame`, `reset`) and `isStarting` (true while the initial `startGame` API call is in flight — used to show `GameSkeleton`).
+- `GameContext` (`web/contexts/game.context.tsx`) — wraps the play page, holds active game state via `useReducer`. Exposes async methods (`startGame`, `submitGuess`, `endGame`, `reset`) and `isStarting` (true while the initial `startGame` API call is in flight — used to show `GameSkeleton`). `startGame` returns `Promise<boolean>`: `true` when the session was created (HTTP 200/201), `false` on network error or any other non-success status.
 - `HighscoreContext` (`web/features/Highscore/contexts/HighScore.context.tsx`) — fetches per-mode highscores from the API on mount; provides `refresh()` (called after a new highscore is confirmed) and `isLoading` (true while fetching — drives the `Skeleton` on the home page).
 - `game.reducer.ts` — handles local actions (`RESET`) and API-response actions (`GAME_STARTED`, `GUESS_RESULT`, `GAME_ENDED`).
 
@@ -124,6 +124,7 @@ class Highscore {
 3. `GameContext` calls `gameApi.startGame(mode)` → `POST /game/start`
 4. Backend generates session, colors, and target label; returns `GameStartedResponse`
 5. `GAME_STARTED` dispatched → reducer initialises state from API response; 30s client-side timer resets
+6. **On failure** (`startGame` returns `false`): play page shows an error toast and redirects to `/`
 
 ### Gameplay Loop
 

@@ -1,15 +1,22 @@
 import { Box, Grid, useToast } from "@chakra-ui/react";
 import { Colorblock } from "./Colorblock";
 import { GameContext } from "contexts";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import Header from "./Header";
 
 export function Colorblocks() {
   const { state: gameData, submitGuess } = useContext(GameContext);
   const toast = useToast();
+  const [pendingIndex, setPendingIndex] = useState<number | null>(null);
 
-  const handleColorClick = (index: number) => {
-    submitGuess(index);
+  const handleColorClick = async (index: number) => {
+    if (pendingIndex !== null) return;
+    setPendingIndex(index);
+    try {
+      await submitGuess(index);
+    } finally {
+      setPendingIndex(null);
+    }
   };
 
   useEffect(() => {
@@ -51,6 +58,7 @@ export function Colorblocks() {
               index={index}
               isCorrect={gameData.correctColorIndex === index}
               isClicked={gameData.clickedColors[index]}
+              isLoading={pendingIndex === index}
               handleColorClick={handleColorClick}
             />
           );

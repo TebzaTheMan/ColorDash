@@ -7,6 +7,8 @@ import Head from "next/head";
 import { useContext, useEffect } from "react";
 import type { GameMode } from "lib/api/generated/model";
 import { GameSkeleton } from "components/GameSkeleton";
+import { useRouter } from "next/router";
+import { useToast } from "@chakra-ui/react";
 
 interface Props {
   mode: GameMode;
@@ -15,9 +17,22 @@ interface Props {
 function PlayInner({ mode }: Props) {
   const { state: GameData, isStarting, startGame } = useContext(GameContext);
   const isTimeUp = GameData.timeUp;
+  const router = useRouter();
+  const toast = useToast();
 
   useEffect(() => {
-    startGame(mode);
+    startGame(mode).then((ok) => {
+      if (!ok) {
+        toast({
+          title: "Server unavailable",
+          description: "Could not connect to the server. Please try again.",
+          status: "error",
+          duration: 4000,
+          position: "top",
+        });
+        router.push("/");
+      }
+    });
   }, [mode]);
 
   if (isStarting || !GameData.mode) {
