@@ -6,21 +6,22 @@ import { GameoverModal } from "features/GameoverModal";
 import Head from "next/head";
 import { useContext, useEffect } from "react";
 import type { GameMode } from "lib/api/generated/model";
+import { GameSkeleton } from "components/GameSkeleton";
 
 interface Props {
   mode: GameMode;
 }
 
 function PlayInner({ mode }: Props) {
-  const { state: GameData, startGame } = useContext(GameContext);
+  const { state: GameData, isStarting, startGame } = useContext(GameContext);
   const isTimeUp = GameData.timeUp;
 
   useEffect(() => {
     startGame(mode);
   }, [mode]);
 
-  if (!GameData.mode) {
-    return;
+  if (isStarting || !GameData.mode) {
+    return <GameSkeleton />;
   }
   return (
     <>

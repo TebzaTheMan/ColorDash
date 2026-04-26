@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useReducer } from "react";
+import { createContext, ReactNode, useReducer, useState } from "react";
 import { GameReducer } from "reducers";
 import { IGameState } from "types";
 import type { GameMode } from "lib/api/generated/model";
@@ -7,6 +7,7 @@ import { gameApi } from "lib/api/gameApi";
 
 interface IGameContext {
   state: IGameState;
+  isStarting: boolean;
   startGame: (mode: GameMode) => Promise<void>;
   submitGuess: (colorIndex: number) => Promise<void>;
   endGame: () => Promise<void>;
@@ -15,6 +16,7 @@ interface IGameContext {
 
 export const GameContext = createContext<IGameContext>({
   state: DEFAULT_GAME_STATE,
+  isStarting: false,
   startGame: async () => {},
   submitGuess: async () => {},
   endGame: async () => {},
@@ -23,8 +25,10 @@ export const GameContext = createContext<IGameContext>({
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(GameReducer, DEFAULT_GAME_STATE);
+  const [isStarting, setIsStarting] = useState(false);
 
   const startGame = async (mode: GameMode) => {
+    setIsStarting(true);
     const response = await gameApi.startGame(mode);
     if (response.status === 201) {
       dispatch({
@@ -33,6 +37,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         sessionId: response.data.sessionId,
       });
     }
+    setIsStarting(false);
   };
 
   const submitGuess = async (colorIndex: number) => {
@@ -60,7 +65,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <GameContext.Provider value={{ state, startGame, submitGuess, endGame, reset }}>
+    <GameContext.Provider value={{ state, isStarting, startGame, submitGuess, endGame, reset }}>
       {children}
     </GameContext.Provider>
   );

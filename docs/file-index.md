@@ -10,9 +10,10 @@ Key files and their single responsibility. Read this before searching the codeba
 | `web/pages/play/[mode].tsx`                               | Active game page — wires timer, color blocks, modals, context                                                      |
 | `web/contexts/game.context.tsx`                           | `GameContext` provider — holds active game state; exposes `startGame`, `submitGuess`, `endGame`, `reset`           |
 | `web/reducers/game.reducer.ts`                            | Game state reducer — maps API-response actions (`GAME_STARTED`, `GUESS_RESULT`, `GAME_ENDED`) and `RESET` to state |
-| `web/game/constants.ts`                                   | Shared game constants (default tries, game duration, default state)                                                |
+| `web/game/constants.ts`                                   | Shared game constants (game duration, `SCORING_RULES` array, default state) — must stay in sync with `api/appsettings.json` |
 | `web/types/index.ts`                                      | Frontend TypeScript types — `IGameState`, `IGameAction` (API shapes come from generated model)                     |
-| `web/features/Highscore/contexts/HighScore.context.tsx`   | Highscore context — fetches per-mode best scores from the API; provides `refresh()`                                |
+| `web/features/Highscore/contexts/HighScore.context.tsx`   | Highscore context — fetches per-mode best scores from the API; provides `refresh()` and `isLoading`               |
+| `web/components/GameSkeleton.tsx`                         | Skeleton loading state for the play page — mirrors Infobar + color block grid layout                               |
 | `web/features/colorblocks/components/Colorblocks.tsx`     | Renders the 6 clickable color blocks                                                                               |
 | `web/features/Infobar/components/Infobar.tsx`             | Score / timer / tries bar                                                                                          |
 | `web/features/GameoverModal/components/GameoverModal.tsx` | End-of-game overlay with stats and replay                                                                          |

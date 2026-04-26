@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { GameContext } from "contexts";
 import { Box, Flex, Icon, List, ListItem } from "@chakra-ui/react";
-import { BsCheckCircleFill } from "react-icons/bs";
+import { BsTrophyFill } from "react-icons/bs";
 import { useContext } from "react";
 import {
   Button,
@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 
 import { CancelButton } from "components/CancelButton";
+import { SCORING_RULES } from "game/constants";
 
 export function GameoverModal() {
   const { state: gameData, startGame } = useContext(GameContext);
@@ -40,10 +41,10 @@ export function GameoverModal() {
           <ModalHeader>
             <Flex>
               <Icon
-                as={BsCheckCircleFill}
+                as={BsTrophyFill}
                 w={8}
                 h={8}
-                color="green.500"
+                color="yellow.500"
                 mr={4}
               />
               <Text>Game Over</Text>
@@ -81,13 +82,14 @@ export function GameoverModal() {
             </Text>
             <br />
             <Text fontSize="lg">
-              Remember, each correct guess earns points based on the number of
-              tries taken:
+              Points per correct guess depend on how many tries you used:
             </Text>
             <List fontSize={"lg"}>
-              <ListItem>First try: 10 points</ListItem>
-              <ListItem>Second try: 5 points</ListItem>
-              <ListItem> Third try: 2 points</ListItem>
+              {SCORING_RULES.map((rule) => (
+                <ListItem key={rule.triesLeft}>
+                  {rule.label}: {rule.points} point{rule.points !== 1 ? "s" : ""}
+                </ListItem>
+              ))}
             </List>
             <br />
             <Text fontSize="lg">

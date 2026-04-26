@@ -16,8 +16,8 @@ Frontend (Next.js)                    Backend (.NET Minimal API)
 
 React Reducer + Context API — no external state library. All game logic is now server-side; the frontend only manages UI state derived from API responses.
 
-- `GameContext` (`web/contexts/game.context.tsx`) — wraps the play page, holds active game state via `useReducer`. Exposes async methods (`startGame`, `submitGuess`, `endGame`, `reset`) that call the backend API and dispatch results into the reducer.
-- `HighscoreContext` (`web/features/Highscore/contexts/HighScore.context.tsx`) — fetches per-mode highscores from the API on mount; provides a `refresh()` method called after a new highscore is confirmed.
+- `GameContext` (`web/contexts/game.context.tsx`) — wraps the play page, holds active game state via `useReducer`. Exposes async methods (`startGame`, `submitGuess`, `endGame`, `reset`) and `isStarting` (true while the initial `startGame` API call is in flight — used to show `GameSkeleton`).
+- `HighscoreContext` (`web/features/Highscore/contexts/HighScore.context.tsx`) — fetches per-mode highscores from the API on mount; provides `refresh()` (called after a new highscore is confirmed) and `isLoading` (true while fetching — drives the `Skeleton` on the home page).
 - `game.reducer.ts` — handles local actions (`RESET`) and API-response actions (`GAME_STARTED`, `GUESS_RESULT`, `GAME_ENDED`).
 
 ### Feature Modules (`web/features/`)

@@ -1,13 +1,18 @@
 import { IGameState } from "types";
 
-/** Number of color blocks shown per round */
-export const NUM_COLORS = 6;
-
-/** Seconds allowed per game session */
+// needs to match with the backend
 export const GAME_DURATION_SECONDS = 30;
 
-/** Number of tries a player starts each round with */
-export const DEFAULT_TRIES = 3;
+// needs to match with the backend
+export const SCORING_RULES: {
+  triesLeft: number;
+  points: number;
+  label: string;
+}[] = [
+  { triesLeft: 3, points: 10, label: "First try" },
+  { triesLeft: 2, points: 5, label: "Second try" },
+  { triesLeft: 1, points: 2, label: "Third try" },
+];
 
 export const DEFAULT_GAME_STATE: IGameState = {
   mode: undefined,
@@ -15,13 +20,13 @@ export const DEFAULT_GAME_STATE: IGameState = {
     points: 0,
     total: 0,
   },
-  triesLeft: DEFAULT_TRIES,
+  triesLeft: 0,
   correctColors: 0,
   timeUp: false,
   isNewHighscore: false,
   colors: [],
   targetColor: "",
-  clickedColors: Array(NUM_COLORS).fill(false),
+  clickedColors: [],
   gameStartTimestamp: 0,
   sessionId: null,
   correctColorIndex: null,
