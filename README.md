@@ -20,81 +20,9 @@
 
 ![Game Preview](/screen%20rgb.png)
 
-## ✨ Key Features
+## 📚 Documentation
 
-- 🌓 **Dual Modes**: Challenge yourself in either **RGB** (Red, Green, Blue) or **HSL** (Hue, Saturation, Lightness).
-- ⏱️ **Timed Rounds**: 30-second adrenaline-pumping sessions to test your speed-matching skills.
-- 🏆 **Local Highscores**: Track your progress and aim for the top of your personal leaderboard.
-- 🎯 **Dynamic Scoring**: Earn points based on accuracy and speed. Perfect scores for first-try guesses!
-- 📱 **Responsive Design**: Optimized for mobile, tablet, and desktop experiences using **Chakra UI**.
-- ⚛️ **Pure Logic Engine**: Decoupled game rules for consistent performance and easy extensibility.
-
-## 🛠️ Technology Stack
-
-| Category      | Technology                                      |
-| :------------ | :---------------------------------------------- |
-| **Framework** | [Next.js](https://nextjs.org/) (React)          |
-| **Styling**   | [Chakra UI](https://chakra-ui.com/)             |
-| **Motion**    | [Framer Motion](https://www.framer.com/motion/) |
-| **Language**  | [TypeScript](https://www.typescriptlang.org/)   |
-| **Testing**   | [Vitest](https://vitest.dev/)                   |
-| **Tools**     | ESLint, Prettier, Husky                         |
-
-## 🏗️ Project Architecture
-
-Color Dash follows a **decoupled architecture** to ensure the game logic is pure, deterministic, and highly testable.
-
-- **`game/`**: The core "brain" of the game. Contains pure functions (`engine.ts`) for state transitions, scoring rules, and color generation.
-- **`features/`**: Modularized UI components (Highscores, Timer, Modals) that interact with the game state.
-- **`reducers/`**: Side-effect-free React Reducers that wrap the core game engine.
-- **`types/`**: Centralized domain types for consistent data structures across the app.
-
-## 🚀 Getting Started
-
-To run the project locally, follow these simple steps:
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/TebzaTheMan/colordash.git
-cd colordash
-```
-
-### 2. Install dependencies
-
-```bash
-npm install
-```
-
-### 3. Run the development server
-
-```bash
-npm run dev
-```
-
-The application will be available at `http://localhost:3000`.
-
-### 4. Build for production
-
-```bash
-npm run build
-npm start
-```
-
-## 🧪 Testing
-
-We value high-quality, bug-free code. Run the test suite using Vitest:
-
-```bash
-# Run all tests once
-npm run test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run full project check (lint, format, types, build, test)
-npm run test-all
-```
+All technical documentation — architecture, tech stack, API reference, game mechanics, and commands for running, building, and testing — lives in [**`docs/`**](docs/index.md). Start with [`docs/index.md`](docs/index.md) and follow the pointers from there.
 
 ## 🤝 Contributing
 
