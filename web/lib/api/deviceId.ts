@@ -1,4 +1,4 @@
-const KEY = 'colordash_device_id';
+const KEY = "colordash_device_id";
 
 export const getDeviceId = (): string => {
   let id = localStorage.getItem(KEY);

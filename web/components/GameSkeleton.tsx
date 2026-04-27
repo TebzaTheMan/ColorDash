@@ -37,10 +37,7 @@ export function GameSkeleton() {
         mb="8"
         ml={["0", "8"]}
       >
-        <Box
-          gridColumn={["1", "1", "2"]}
-          justifySelf="center"
-        >
+        <Box gridColumn={["1", "1", "2"]} justifySelf="center">
           <Skeleton h="36px" w={["160px", "200px"]} borderRadius="md" />
         </Box>
       </Grid>

@@ -12,213 +12,206 @@ import type {
   GetHighscores200,
   GuessRequest,
   GuessResultResponse,
-  StartGameRequest
-} from './model';
+  StartGameRequest,
+} from "./model";
 
-import { customFetch } from '../customFetch';
+import { customFetch } from "../customFetch";
 /**
  * Creates a new active game session for the given device and mode. Returns the initial color set and expiry time.
  * @summary Start a new game session
  */
 export type startGameResponse200 = {
-  data: GameStartedResponse
-  status: 200
-}
+  data: GameStartedResponse;
+  status: 200;
+};
 
 export type startGameResponse201 = {
-  data: GameStartedResponse
-  status: 201
-}
+  data: GameStartedResponse;
+  status: 201;
+};
 
 export type startGameResponse400 = {
-  data: ErrorResponse
-  status: 400
-}
-
-export type startGameResponseSuccess = (startGameResponse200 | startGameResponse201) & {
-  headers: Headers;
-};
-export type startGameResponseError = (startGameResponse400) & {
-  headers: Headers;
+  data: ErrorResponse;
+  status: 400;
 };
 
-export type startGameResponse = (startGameResponseSuccess | startGameResponseError)
+export type startGameResponseSuccess = (
+  | startGameResponse200
+  | startGameResponse201
+) & {
+  headers: Headers;
+};
+export type startGameResponseError = startGameResponse400 & {
+  headers: Headers;
+};
+
+export type startGameResponse =
+  | startGameResponseSuccess
+  | startGameResponseError;
 
 export const getStartGameUrl = () => {
+  return `/game/start`;
+};
 
-
-
-
-  return `/game/start`
-}
-
-export const startGame = async (startGameRequest: StartGameRequest, options?: RequestInit): Promise<startGameResponse> => {
-
-  return customFetch<startGameResponse>(getStartGameUrl(),
-  {
+export const startGame = async (
+  startGameRequest: StartGameRequest,
+  options?: RequestInit
+): Promise<startGameResponse> => {
+  return customFetch<startGameResponse>(getStartGameUrl(), {
     ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      startGameRequest,)
-  }
-);}
-
-
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(startGameRequest),
+  });
+};
 
 /**
  * Submit the index (0–5) of the color block the player selected. Returns result, updated score, and next round data if the round advanced.
  * @summary Submit a color guess
  */
 export type submitGuessResponse200 = {
-  data: GuessResultResponse
-  status: 200
-}
+  data: GuessResultResponse;
+  status: 200;
+};
 
 export type submitGuessResponse400 = {
-  data: ErrorResponse
-  status: 400
-}
+  data: ErrorResponse;
+  status: 400;
+};
 
 export type submitGuessResponse403 = {
-  data: ErrorResponse
-  status: 403
-}
+  data: ErrorResponse;
+  status: 403;
+};
 
 export type submitGuessResponse404 = {
-  data: ErrorResponse
-  status: 404
-}
+  data: ErrorResponse;
+  status: 404;
+};
 
 export type submitGuessResponse410 = {
-  data: ErrorResponse
-  status: 410
-}
-
-export type submitGuessResponseSuccess = (submitGuessResponse200) & {
-  headers: Headers;
-};
-export type submitGuessResponseError = (submitGuessResponse400 | submitGuessResponse403 | submitGuessResponse404 | submitGuessResponse410) & {
-  headers: Headers;
+  data: ErrorResponse;
+  status: 410;
 };
 
-export type submitGuessResponse = (submitGuessResponseSuccess | submitGuessResponseError)
+export type submitGuessResponseSuccess = submitGuessResponse200 & {
+  headers: Headers;
+};
+export type submitGuessResponseError = (
+  | submitGuessResponse400
+  | submitGuessResponse403
+  | submitGuessResponse404
+  | submitGuessResponse410
+) & {
+  headers: Headers;
+};
 
-export const getSubmitGuessUrl = (sessionId: string,) => {
+export type submitGuessResponse =
+  | submitGuessResponseSuccess
+  | submitGuessResponseError;
 
+export const getSubmitGuessUrl = (sessionId: string) => {
+  return `/game/${sessionId}/guess`;
+};
 
-
-
-  return `/game/${sessionId}/guess`
-}
-
-export const submitGuess = async (sessionId: string,
-    guessRequest: GuessRequest, options?: RequestInit): Promise<submitGuessResponse> => {
-
-  return customFetch<submitGuessResponse>(getSubmitGuessUrl(sessionId),
-  {
+export const submitGuess = async (
+  sessionId: string,
+  guessRequest: GuessRequest,
+  options?: RequestInit
+): Promise<submitGuessResponse> => {
+  return customFetch<submitGuessResponse>(getSubmitGuessUrl(sessionId), {
     ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      guessRequest,)
-  }
-);}
-
-
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(guessRequest),
+  });
+};
 
 /**
  * End the session early or at expiry. Returns the final score and whether a new highscore was achieved.
  * @summary End a game session
  */
 export type endGameResponse200 = {
-  data: EndGameResponse
-  status: 200
-}
+  data: EndGameResponse;
+  status: 200;
+};
 
 export type endGameResponse403 = {
-  data: ErrorResponse
-  status: 403
-}
+  data: ErrorResponse;
+  status: 403;
+};
 
 export type endGameResponse404 = {
-  data: ErrorResponse
-  status: 404
-}
+  data: ErrorResponse;
+  status: 404;
+};
 
 export type endGameResponse410 = {
-  data: ErrorResponse
-  status: 410
-}
-
-export type endGameResponseSuccess = (endGameResponse200) & {
-  headers: Headers;
-};
-export type endGameResponseError = (endGameResponse403 | endGameResponse404 | endGameResponse410) & {
-  headers: Headers;
+  data: ErrorResponse;
+  status: 410;
 };
 
-export type endGameResponse = (endGameResponseSuccess | endGameResponseError)
+export type endGameResponseSuccess = endGameResponse200 & {
+  headers: Headers;
+};
+export type endGameResponseError = (
+  | endGameResponse403
+  | endGameResponse404
+  | endGameResponse410
+) & {
+  headers: Headers;
+};
 
-export const getEndGameUrl = (sessionId: string,) => {
+export type endGameResponse = endGameResponseSuccess | endGameResponseError;
 
+export const getEndGameUrl = (sessionId: string) => {
+  return `/game/${sessionId}/end`;
+};
 
-
-
-  return `/game/${sessionId}/end`
-}
-
-export const endGame = async (sessionId: string, options?: RequestInit): Promise<endGameResponse> => {
-
-  return customFetch<endGameResponse>(getEndGameUrl(sessionId),
-  {
+export const endGame = async (
+  sessionId: string,
+  options?: RequestInit
+): Promise<endGameResponse> => {
+  return customFetch<endGameResponse>(getEndGameUrl(sessionId), {
     ...options,
-    method: 'POST'
-
-
-  }
-);}
-
-
+    method: "POST",
+  });
+};
 
 /**
  * Returns the best recorded score per game mode for the given device. Modes never played are omitted. Requires X-Device-ID header.
  * @summary Get device highscores
  */
 export type getHighscoresResponse200 = {
-  data: GetHighscores200
-  status: 200
-}
+  data: GetHighscores200;
+  status: 200;
+};
 
 export type getHighscoresResponse400 = {
-  data: ErrorResponse
-  status: 400
-}
-
-export type getHighscoresResponseSuccess = (getHighscoresResponse200) & {
-  headers: Headers;
-};
-export type getHighscoresResponseError = (getHighscoresResponse400) & {
-  headers: Headers;
+  data: ErrorResponse;
+  status: 400;
 };
 
-export type getHighscoresResponse = (getHighscoresResponseSuccess | getHighscoresResponseError)
+export type getHighscoresResponseSuccess = getHighscoresResponse200 & {
+  headers: Headers;
+};
+export type getHighscoresResponseError = getHighscoresResponse400 & {
+  headers: Headers;
+};
+
+export type getHighscoresResponse =
+  | getHighscoresResponseSuccess
+  | getHighscoresResponseError;
 
 export const getGetHighscoresUrl = () => {
+  return `/highscores`;
+};
 
-
-
-
-  return `/highscores`
-}
-
-export const getHighscores = async ( options?: RequestInit): Promise<getHighscoresResponse> => {
-
-  return customFetch<getHighscoresResponse>(getGetHighscoresUrl(),
-  {
+export const getHighscores = async (
+  options?: RequestInit
+): Promise<getHighscoresResponse> => {
+  return customFetch<getHighscoresResponse>(getGetHighscoresUrl(), {
     ...options,
-    method: 'GET'
-
-
-  }
-);}
+    method: "GET",
+  });
+};

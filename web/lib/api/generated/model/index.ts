@@ -6,14 +6,14 @@
  * OpenAPI spec version: v1
  */
 
-export * from './deviceId';
-export * from './endGameResponse';
-export * from './errorResponse';
-export * from './gameMode';
-export * from './gameStartedResponse';
-export * from './getHighscores200';
-export * from './guessRequest';
-export * from './guessResult';
-export * from './guessResultResponse';
-export * from './scoreDto';
-export * from './startGameRequest';
+export * from "./deviceId";
+export * from "./endGameResponse";
+export * from "./errorResponse";
+export * from "./gameMode";
+export * from "./gameStartedResponse";
+export * from "./getHighscores200";
+export * from "./guessRequest";
+export * from "./guessResult";
+export * from "./guessResultResponse";
+export * from "./scoreDto";
+export * from "./startGameRequest";

@@ -5,7 +5,7 @@
  * REST API for the ColorDash color-matching game.
  * OpenAPI spec version: v1
  */
-import type { GameMode } from './gameMode';
+import type { GameMode } from "./gameMode";
 
 export interface GameStartedResponse {
   sessionId: string;

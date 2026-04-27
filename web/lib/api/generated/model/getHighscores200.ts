@@ -5,6 +5,6 @@
  * REST API for the ColorDash color-matching game.
  * OpenAPI spec version: v1
  */
-import type { ScoreDto } from './scoreDto';
+import type { ScoreDto } from "./scoreDto";
 
-export type GetHighscores200 = {[key: string]: ScoreDto};
+export type GetHighscores200 = { [key: string]: ScoreDto };

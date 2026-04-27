@@ -6,10 +6,9 @@
  * OpenAPI spec version: v1
  */
 
-export type GameMode = typeof GameMode[keyof typeof GameMode];
-
+export type GameMode = (typeof GameMode)[keyof typeof GameMode];
 
 export const GameMode = {
-  rgb: 'rgb',
-  hsl: 'hsl',
+  rgb: "rgb",
+  hsl: "hsl",
 } as const;

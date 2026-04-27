@@ -5,8 +5,8 @@
  * REST API for the ColorDash color-matching game.
  * OpenAPI spec version: v1
  */
-import type { GuessResult } from './guessResult';
-import type { ScoreDto } from './scoreDto';
+import type { GuessResult } from "./guessResult";
+import type { ScoreDto } from "./scoreDto";
 
 export interface GuessResultResponse {
   result: GuessResult;

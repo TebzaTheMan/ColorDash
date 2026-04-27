@@ -43,13 +43,7 @@ export function GameoverModal() {
         <ModalContent>
           <ModalHeader>
             <Flex>
-              <Icon
-                as={BsTrophyFill}
-                w={8}
-                h={8}
-                color="yellow.500"
-                mr={4}
-              />
+              <Icon as={BsTrophyFill} w={8} h={8} color="yellow.500" mr={4} />
               <Text>Game Over</Text>
             </Flex>
           </ModalHeader>
@@ -90,7 +84,8 @@ export function GameoverModal() {
             <List fontSize={"lg"}>
               {SCORING_RULES.map((rule) => (
                 <ListItem key={rule.triesLeft}>
-                  {rule.label}: {rule.points} point{rule.points !== 1 ? "s" : ""}
+                  {rule.label}: {rule.points} point
+                  {rule.points !== 1 ? "s" : ""}
                 </ListItem>
               ))}
             </List>

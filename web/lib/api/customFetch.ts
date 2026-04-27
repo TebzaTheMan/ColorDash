@@ -17,10 +17,16 @@ export const customFetch = async <T>(
       },
     });
   } catch {
-    return { data: { error: "Network error" }, status: 0, headers: new Headers() } as T;
+    return {
+      data: { error: "Network error" },
+      status: 0,
+      headers: new Headers(),
+    } as T;
   }
 
-  const data = await response.json().catch(() => ({ error: response.statusText }));
+  const data = await response
+    .json()
+    .catch(() => ({ error: response.statusText }));
 
   return { data, status: response.status, headers: response.headers } as T;
 };

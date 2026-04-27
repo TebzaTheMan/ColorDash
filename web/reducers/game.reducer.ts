@@ -45,7 +45,11 @@ export const GameReducer = (
         clickedColors: isNewRound
           ? new Array((data.nextColors ?? state.colors).length).fill(false)
           : clickedColors,
-        correctColorIndex: isNewRound ? null : (isCorrect ? guessIndex : state.correctColorIndex),
+        correctColorIndex: isNewRound
+          ? null
+          : isCorrect
+            ? guessIndex
+            : state.correctColorIndex,
         lastGuessResult: { result: data.result, id: Date.now() },
       };
     }

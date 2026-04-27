@@ -6,11 +6,10 @@
  * OpenAPI spec version: v1
  */
 
-export type GuessResult = typeof GuessResult[keyof typeof GuessResult];
-
+export type GuessResult = (typeof GuessResult)[keyof typeof GuessResult];
 
 export const GuessResult = {
-  correct: 'correct',
-  wrong_but_continue: 'wrong_but_continue',
-  wrong_and_exhausted: 'wrong_and_exhausted',
+  correct: "correct",
+  wrong_but_continue: "wrong_but_continue",
+  wrong_and_exhausted: "wrong_and_exhausted",
 } as const;
