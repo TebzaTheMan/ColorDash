@@ -64,12 +64,13 @@ public class GameServiceTests
         _colorService.GenerateColors(GameMode.Rgb).Returns(colors);
         _colorService.PickCorrectIndex(colors).Returns(1);
 
-        var result = await service.StartGameAsync(new StartGameRequest(GameMode.Rgb), Guid.NewGuid());
+        var (response, isNew) = await service.StartGameAsync(new StartGameRequest(GameMode.Rgb), Guid.NewGuid(), null);
 
-        Assert.Equal(colors, result.Colors);
-        Assert.Equal(colors[1], result.TargetLabel);
-        Assert.Equal(GameMode.Rgb, result.Mode);
-        Assert.Equal(_settings.DefaultTries, result.TriesLeft);
+        Assert.Equal(colors, response.Colors);
+        Assert.Equal(colors[1], response.TargetLabel);
+        Assert.Equal(GameMode.Rgb, response.Mode);
+        Assert.Equal(_settings.DefaultTries, response.TriesLeft);
+        Assert.True(isNew);
     }
 
     [Fact]
@@ -79,7 +80,7 @@ public class GameServiceTests
         _colorService.GenerateColors(Arg.Any<GameMode>()).Returns(SomeColors());
         _colorService.PickCorrectIndex(Arg.Any<string[]>()).Returns(0);
 
-        await service.StartGameAsync(new StartGameRequest(GameMode.Rgb), Guid.NewGuid());
+        await service.StartGameAsync(new StartGameRequest(GameMode.Rgb), Guid.NewGuid(), null);
 
         await _sessions.Received(1).AddAsync(Arg.Any<GameSession>());
         await _sessions.Received(1).SaveChangesAsync();
@@ -93,12 +94,68 @@ public class GameServiceTests
         _colorService.PickCorrectIndex(Arg.Any<string[]>()).Returns(0);
 
         var before = DateTime.UtcNow;
-        var result = await service.StartGameAsync(new StartGameRequest(GameMode.Rgb), Guid.NewGuid());
+        var (response, _) = await service.StartGameAsync(new StartGameRequest(GameMode.Rgb), Guid.NewGuid(), null);
         var after = DateTime.UtcNow;
 
-        Assert.InRange(result.ExpiresAt,
+        Assert.InRange(response.ExpiresAt,
             before.AddSeconds(_settings.GameDurationSeconds),
             after.AddSeconds(_settings.GameDurationSeconds));
+    }
+
+    [Fact]
+    public async Task StartGame_NoIdempotencyKey_DoesNotLookupExisting()
+    {
+        var service = CreateService();
+        _colorService.GenerateColors(Arg.Any<GameMode>()).Returns(SomeColors());
+        _colorService.PickCorrectIndex(Arg.Any<string[]>()).Returns(0);
+
+        await service.StartGameAsync(new StartGameRequest(GameMode.Rgb), Guid.NewGuid(), null);
+
+        await _sessions.DidNotReceive().GetByStartIdempotencyKeyAsync(Arg.Any<Guid>(), Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task StartGame_WithIdempotencyKey_NoExistingSession_CreatesNewAndPersistsKey()
+    {
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        const string key = "abc-123";
+        _sessions.GetByStartIdempotencyKeyAsync(deviceId, key).Returns((GameSession?)null);
+        _colorService.GenerateColors(Arg.Any<GameMode>()).Returns(SomeColors());
+        _colorService.PickCorrectIndex(Arg.Any<string[]>()).Returns(0);
+
+        GameSession? captured = null;
+        await _sessions.AddAsync(Arg.Do<GameSession>(s => captured = s));
+
+        var (_, isNew) = await service.StartGameAsync(new StartGameRequest(GameMode.Rgb), deviceId, key);
+
+        Assert.True(isNew);
+        Assert.NotNull(captured);
+        Assert.Equal(key, captured!.StartIdempotencyKey);
+        await _sessions.Received(1).AddAsync(Arg.Any<GameSession>());
+    }
+
+    [Fact]
+    public async Task StartGame_WithIdempotencyKey_ExistingSession_ReturnsExistingWithoutCreating()
+    {
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        const string key = "abc-123";
+        var existing = ActiveSession(deviceId);
+        existing.CurrentColors = SomeColors();
+        existing.CorrectIndex = 4;
+        existing.StartIdempotencyKey = key;
+        _sessions.GetByStartIdempotencyKeyAsync(deviceId, key).Returns(existing);
+
+        var (response, isNew) = await service.StartGameAsync(new StartGameRequest(GameMode.Rgb), deviceId, key);
+
+        Assert.False(isNew);
+        Assert.Equal(existing.Id, response.SessionId);
+        Assert.Equal(existing.CurrentColors, response.Colors);
+        Assert.Equal(existing.CurrentColors[existing.CorrectIndex], response.TargetLabel);
+        await _sessions.DidNotReceive().AddAsync(Arg.Any<GameSession>());
+        await _sessions.DidNotReceive().SaveChangesAsync();
+        _colorService.DidNotReceive().GenerateColors(Arg.Any<GameMode>());
     }
 
     // --- GetActiveSessionAsync (exercised via ProcessGuessAsync) ---
@@ -110,7 +167,7 @@ public class GameServiceTests
         _sessions.GetByIdAsync(Arg.Any<Guid>()).Returns((GameSession?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() =>
-            service.ProcessGuessAsync(Guid.NewGuid(), new GuessRequest(0), Guid.NewGuid()));
+            service.ProcessGuessAsync(Guid.NewGuid(), new GuessRequest(0), Guid.NewGuid(), null));
     }
 
     [Fact]
@@ -121,7 +178,7 @@ public class GameServiceTests
         _sessions.GetByIdAsync(session.Id).Returns(session);
 
         await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
-            service.ProcessGuessAsync(session.Id, new GuessRequest(0), Guid.NewGuid()));
+            service.ProcessGuessAsync(session.Id, new GuessRequest(0), Guid.NewGuid(), null));
     }
 
     [Fact]
@@ -134,7 +191,7 @@ public class GameServiceTests
         _sessions.GetByIdAsync(session.Id).Returns(session);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId));
+            service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId, null));
     }
 
     [Fact]
@@ -147,7 +204,7 @@ public class GameServiceTests
         _sessions.GetByIdAsync(session.Id).Returns(session);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId));
+            service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId, null));
 
         Assert.Equal(SessionStatus.Expired, session.Status);
         await _sessions.Received(1).SaveChangesAsync();
@@ -164,7 +221,7 @@ public class GameServiceTests
         _sessions.GetByIdAsync(session.Id).Returns(session);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId));
+            service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId, null));
 
         Assert.Equal(SessionStatus.Expired, session.Status);
         await _sessions.Received(1).SaveChangesAsync();
@@ -182,7 +239,7 @@ public class GameServiceTests
         _colorService.GenerateColors(Arg.Any<GameMode>()).Returns(NextColors());
         _colorService.PickCorrectIndex(Arg.Any<string[]>()).Returns(0);
 
-        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(2), deviceId);
+        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(2), deviceId, null);
 
         Assert.Equal(GuessResult.Correct, result.Result);
     }
@@ -198,7 +255,7 @@ public class GameServiceTests
         _colorService.GenerateColors(Arg.Any<GameMode>()).Returns(NextColors());
         _colorService.PickCorrectIndex(Arg.Any<string[]>()).Returns(0);
 
-        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(2), deviceId);
+        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(2), deviceId, null);
 
         Assert.Equal(10, result.Score.Points);
         Assert.Equal(_settings.MaxPointsPerRound, result.Score.Total);
@@ -216,7 +273,7 @@ public class GameServiceTests
         _colorService.GenerateColors(Arg.Any<GameMode>()).Returns(next);
         _colorService.PickCorrectIndex(Arg.Any<string[]>()).Returns(1);
 
-        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(2), deviceId);
+        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(2), deviceId, null);
 
         Assert.Equal(_settings.DefaultTries, result.TriesLeft);
         Assert.Equal(next, result.NextColors);
@@ -233,7 +290,7 @@ public class GameServiceTests
         var session = ActiveSession(deviceId, triesLeft: 3, correctIndex: 2);
         _sessions.GetByIdAsync(session.Id).Returns(session);
 
-        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId);
+        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId, null);
 
         Assert.Equal(GuessResult.WrongButContinue, result.Result);
         Assert.Equal(2, result.TriesLeft);
@@ -252,12 +309,99 @@ public class GameServiceTests
         _colorService.GenerateColors(Arg.Any<GameMode>()).Returns(next);
         _colorService.PickCorrectIndex(Arg.Any<string[]>()).Returns(0);
 
-        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId);
+        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId, null);
 
         Assert.Equal(GuessResult.WrongAndExhausted, result.Result);
         Assert.Equal(_settings.DefaultTries, result.TriesLeft);
         Assert.Equal(next, result.NextColors);
         Assert.Equal(next[0], result.NextTargetLabel);
+    }
+
+    // --- ProcessGuessAsync: idempotency ---
+
+    [Fact]
+    public async Task ProcessGuess_RepeatedIdempotencyKey_ReturnsCachedResponseWithoutMutating()
+    {
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        const string key = "guess-key-1";
+        var session = ActiveSession(deviceId, triesLeft: 3, correctIndex: 2);
+        var cached = new GuessResultResponse(
+            Result: GuessResult.Correct,
+            Score: new ScoreDto(10, 10),
+            TriesLeft: 3,
+            GameOver: false,
+            NextColors: NextColors(),
+            NextTargetLabel: NextColors()[0]);
+        session.LastGuessIdempotencyKey = key;
+        session.LastGuessResponseJson = System.Text.Json.JsonSerializer.Serialize(cached);
+        var triesBefore = session.TriesLeft;
+        var pointsBefore = session.ScorePoints;
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+
+        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId, key);
+
+        Assert.Equal(cached.Result, result.Result);
+        Assert.Equal(cached.Score, result.Score);
+        Assert.Equal(triesBefore, session.TriesLeft);
+        Assert.Equal(pointsBefore, session.ScorePoints);
+        await _sessions.DidNotReceive().SaveChangesAsync();
+        _colorService.DidNotReceive().GenerateColors(Arg.Any<GameMode>());
+    }
+
+    [Fact]
+    public async Task ProcessGuess_NewIdempotencyKey_CachesResponseOnSession()
+    {
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        const string key = "guess-key-2";
+        var session = ActiveSession(deviceId, triesLeft: 3, correctIndex: 2);
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+        _colorService.GenerateColors(Arg.Any<GameMode>()).Returns(NextColors());
+        _colorService.PickCorrectIndex(Arg.Any<string[]>()).Returns(0);
+
+        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(2), deviceId, key);
+
+        Assert.Equal(key, session.LastGuessIdempotencyKey);
+        Assert.NotNull(session.LastGuessResponseJson);
+        var cached = System.Text.Json.JsonSerializer.Deserialize<GuessResultResponse>(session.LastGuessResponseJson!);
+        Assert.Equal(result.Result, cached!.Result);
+        Assert.Equal(result.Score, cached.Score);
+    }
+
+    [Fact]
+    public async Task ProcessGuess_NoIdempotencyKey_DoesNotCacheResponse()
+    {
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        var session = ActiveSession(deviceId, triesLeft: 3, correctIndex: 2);
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+        _colorService.GenerateColors(Arg.Any<GameMode>()).Returns(NextColors());
+        _colorService.PickCorrectIndex(Arg.Any<string[]>()).Returns(0);
+
+        await service.ProcessGuessAsync(session.Id, new GuessRequest(2), deviceId, null);
+
+        Assert.Null(session.LastGuessIdempotencyKey);
+        Assert.Null(session.LastGuessResponseJson);
+    }
+
+    [Fact]
+    public async Task ProcessGuess_DifferentIdempotencyKey_ProcessesNormallyAndOverwritesCache()
+    {
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        var session = ActiveSession(deviceId, triesLeft: 3, correctIndex: 2);
+        session.LastGuessIdempotencyKey = "old-key";
+        session.LastGuessResponseJson = "{\"stale\":true}";
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+        _colorService.GenerateColors(Arg.Any<GameMode>()).Returns(NextColors());
+        _colorService.PickCorrectIndex(Arg.Any<string[]>()).Returns(0);
+
+        var result = await service.ProcessGuessAsync(session.Id, new GuessRequest(2), deviceId, "new-key");
+
+        Assert.Equal(GuessResult.Correct, result.Result);
+        Assert.Equal("new-key", session.LastGuessIdempotencyKey);
+        Assert.NotEqual("{\"stale\":true}", session.LastGuessResponseJson);
     }
 
     // --- EndGameAsync ---
@@ -328,7 +472,7 @@ public class GameServiceTests
 
         Assert.True(result.IsNewHighscore);
         await _highscores.Received(1).AddAsync(Arg.Any<Highscore>());
-        await _highscores.Received(1).SaveChangesAsync();
+        await _sessions.Received().SaveChangesAsync();
     }
 
     [Fact]
@@ -366,7 +510,9 @@ public class GameServiceTests
 
         Assert.False(result.IsNewHighscore);
         Assert.Equal(new ScoreDto(50, 100), result.Highscore);
-        await _highscores.DidNotReceive().SaveChangesAsync();
+        Assert.Equal(50, existing.Points);
+        Assert.Equal(100, existing.Total);
+        await _highscores.DidNotReceive().AddAsync(Arg.Any<Highscore>());
     }
 
     [Fact]
@@ -406,7 +552,9 @@ public class GameServiceTests
 
         Assert.False(result.IsNewHighscore);
         Assert.Equal(new ScoreDto(5, 10), result.Highscore);
-        await _highscores.DidNotReceive().SaveChangesAsync();
+        Assert.Equal(5, existing.Points);
+        Assert.Equal(10, existing.Total);
+        await _highscores.DidNotReceive().AddAsync(Arg.Any<Highscore>());
     }
 
     [Fact]
@@ -437,5 +585,94 @@ public class GameServiceTests
         var result = await service.EndGameAsync(session.Id, deviceId);
 
         Assert.InRange(result.SessionDurationMs, 10_000, 12_000);
+    }
+
+    // --- EndGameAsync: idempotency ---
+
+    [Fact]
+    public async Task EndGame_CachesResponseOnSession()
+    {
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        var session = ActiveSession(deviceId);
+        session.ScorePoints = 15;
+        session.ScoreTotal = 30;
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+        _highscores.GetByDeviceAndModeAsync(deviceId, session.Mode).Returns((Highscore?)null);
+
+        var result = await service.EndGameAsync(session.Id, deviceId);
+
+        Assert.NotNull(session.EndResponseJson);
+        var cached = System.Text.Json.JsonSerializer.Deserialize<EndGameResponse>(session.EndResponseJson!);
+        Assert.Equal(result.IsNewHighscore, cached!.IsNewHighscore);
+        Assert.Equal(result.FinalScore, cached.FinalScore);
+        Assert.Equal(result.Highscore, cached.Highscore);
+    }
+
+    [Fact]
+    public async Task EndGame_AlreadyCompletedWithCachedResponse_ReturnsCachedResponse()
+    {
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        var session = ActiveSession(deviceId);
+        session.Status = SessionStatus.Completed;
+        var cachedResponse = new EndGameResponse(
+            FinalScore: new ScoreDto(40, 50),
+            IsNewHighscore: true,
+            Highscore: new ScoreDto(40, 50),
+            SessionDurationMs: 12_345);
+        session.EndResponseJson = System.Text.Json.JsonSerializer.Serialize(cachedResponse);
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+
+        var result = await service.EndGameAsync(session.Id, deviceId);
+
+        Assert.Equal(cachedResponse, result);
+        await _highscores.DidNotReceive().GetByDeviceAndModeAsync(Arg.Any<Guid>(), Arg.Any<GameMode>());
+        await _highscores.DidNotReceive().AddAsync(Arg.Any<Highscore>());
+        await _sessions.DidNotReceive().SaveChangesAsync();
+    }
+
+    [Fact]
+    public async Task EndGame_AlreadyCompletedReplaySkipsExpiryCheck()
+    {
+        // A completed session whose ExpiresAt is far in the past must still replay
+        // its cached response — replay must short-circuit before the expiry check.
+        var service = CreateService();
+        var deviceId = Guid.NewGuid();
+        var session = ActiveSession(deviceId);
+        session.Status = SessionStatus.Completed;
+        session.ExpiresAt = DateTime.UtcNow.AddMinutes(-5);
+        var cachedResponse = new EndGameResponse(
+            FinalScore: new ScoreDto(10, 20),
+            IsNewHighscore: false,
+            Highscore: new ScoreDto(20, 20),
+            SessionDurationMs: 9_999);
+        session.EndResponseJson = System.Text.Json.JsonSerializer.Serialize(cachedResponse);
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+
+        var result = await service.EndGameAsync(session.Id, deviceId);
+
+        Assert.Equal(cachedResponse, result);
+    }
+
+    [Fact]
+    public async Task EndGame_WrongDevice_ThrowsUnauthorizedAccessException()
+    {
+        var service = CreateService();
+        var session = ActiveSession(Guid.NewGuid());
+        _sessions.GetByIdAsync(session.Id).Returns(session);
+
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
+            service.EndGameAsync(session.Id, Guid.NewGuid()));
+    }
+
+    [Fact]
+    public async Task EndGame_SessionNotFound_ThrowsKeyNotFoundException()
+    {
+        var service = CreateService();
+        _sessions.GetByIdAsync(Arg.Any<Guid>()).Returns((GameSession?)null);
+
+        await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            service.EndGameAsync(Guid.NewGuid(), Guid.NewGuid()));
     }
 }
