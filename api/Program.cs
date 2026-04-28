@@ -49,8 +49,7 @@ builder.Services.AddCors(options =>
         options.AddPolicy("AllowColorDash", policy =>
         {
             policy.WithOrigins(
-                "http://localhost:3000",
-                "https://colordash-git-develop-tebzathemans-projects.vercel.app"
+                "http://localhost:3000"
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
@@ -61,7 +60,7 @@ builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowColorDash", policy =>
         {
-            policy.WithOrigins("https://colordash.vercel.app")
+            policy.WithOrigins("https://colordash-git-develop-tebzathemans-projects.vercel.app", "https://colordash.vercel.app")
                   .AllowAnyMethod()
                   .AllowAnyHeader()
                   .AllowCredentials();
