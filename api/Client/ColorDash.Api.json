@@ -6,6 +6,41 @@
     "version": "v1"
   },
   "paths": {
+    "/highscores": {
+      "get": {
+        "tags": [
+          "ColorDash.Api"
+        ],
+        "summary": "Get device highscores",
+        "description": "Returns the best recorded score per game mode for the given device. Modes never played are omitted. Requires X-Device-ID header.",
+        "operationId": "GetHighscores",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/ScoreDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/game/start": {
       "post": {
         "tags": [
@@ -233,41 +268,6 @@
           },
           "410": {
             "description": "Gone",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/highscores": {
-      "get": {
-        "tags": [
-          "ColorDash.Api"
-        ],
-        "summary": "Get device highscores",
-        "description": "Returns the best recorded score per game mode for the given device. Modes never played are omitted. Requires X-Device-ID header.",
-        "operationId": "GetHighscores",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "$ref": "#/components/schemas/ScoreDto"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {

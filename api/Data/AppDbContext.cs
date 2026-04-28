@@ -10,8 +10,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        bool isPostgres = Database.IsNpgsql();
-
         modelBuilder.Entity<GameSession>(e =>
         {
             e.ToTable("game_sessions");
@@ -22,19 +20,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .HasConversion<string>();
             e.Property(x => x.CorrectIndex).HasColumnName("correct_index");
             e.Property(x => x.CurrentColors).HasColumnName("current_colors")
-                .HasColumnType(isPostgres ? "jsonb" : "TEXT");
+                .HasColumnType("jsonb");
             e.Property(x => x.ScorePoints).HasColumnName("score_points");
             e.Property(x => x.ScoreTotal).HasColumnName("score_total");
             e.Property(x => x.CorrectCount).HasColumnName("correct_count");
             e.Property(x => x.TriesLeft).HasColumnName("tries_left");
             e.Property(x => x.Status).HasColumnName("status")
                 .HasConversion<string>();
-            e.Property(x => x.StartedAt).HasColumnName("started_at")
-                .HasColumnType(isPostgres ? "jsonb" : "TEXT");
-            e.Property(x => x.ExpiresAt).HasColumnName("expires_at")
-                .HasColumnType(isPostgres ? "jsonb" : "TEXT");
-            e.Property(x => x.EndedAt).HasColumnName("ended_at")
-                .HasColumnType(isPostgres ? "jsonb" : "TEXT");
+            e.Property(x => x.StartedAt).HasColumnName("started_at");
+            e.Property(x => x.ExpiresAt).HasColumnName("expires_at");
+            e.Property(x => x.EndedAt).HasColumnName("ended_at");
 
             e.HasIndex(x => x.DeviceId).HasDatabaseName("ix_game_sessions_device_id");
             e.HasIndex(x => x.ExpiresAt).HasDatabaseName("ix_game_sessions_expires_at");
@@ -56,8 +51,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .HasConversion<string>();
             e.Property(x => x.Points).HasColumnName("points");
             e.Property(x => x.Total).HasColumnName("total");
-            e.Property(x => x.AchievedAt).HasColumnName("achieved_at")
-                .HasColumnType(isPostgres ? "jsonb" : "TEXT");
+            e.Property(x => x.AchievedAt).HasColumnName("achieved_at");
             e.Property(x => x.SessionId).HasColumnName("session_id");
 
             e.HasIndex(x => new { x.DeviceId, x.Mode })

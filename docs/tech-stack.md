@@ -27,9 +27,10 @@ TypeScript config: strict mode, `moduleResolution: node`, `jsx: react-jsx`, path
 | Framework       | ASP.NET Core Minimal API | 10.0                                        |
 | Language        | C#                       | (nullable enabled, implicit usings)         |
 | ORM             | Entity Framework Core    | 10.0.5                                      |
-| Database (dev)  | SQLite                   | via `Microsoft.EntityFrameworkCore.Sqlite`  |
-| Database (prod) | PostgreSQL               | via `Npgsql.EntityFrameworkCore.PostgreSQL` |
+| Database        | PostgreSQL 16            | via `Npgsql.EntityFrameworkCore.PostgreSQL` |
 | API docs        | ASP.NET Core OpenAPI     | 10.0                                        |
+
+Local Postgres runs in Docker — see `docker-compose.yml` at the repo root.
 
 ## Game Configuration
 
@@ -57,7 +58,7 @@ Dev database connection string is in `api/appsettings.Development.json`:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Data Source=colordash.db"
+    "DefaultConnection": "Host=localhost;Port=5432;Database=colordash;Username=colordash;Password=colordash"
   }
 }
 ```

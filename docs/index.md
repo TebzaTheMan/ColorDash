@@ -29,6 +29,6 @@
 - **Game logic changes** go through `web/game/` (pure functions) — not directly in components or reducers.
 - **Backend** follows clean architecture: repositories for data access, services for business logic, endpoints only for routing. Do not put logic in endpoints.
 - **`X-Device-ID` header** is mandatory on all game API calls — always pass it in frontend requests.
-- **Database**: SQLite in dev, PostgreSQL in prod. Avoid SQLite-specific syntax in EF Core migrations.
+- **Database**: PostgreSQL in dev and prod. Local Postgres runs via `docker-compose.yml` at the repo root.
 - Write tests for any new game engine or service logic.
 - Follow existing code patterns before introducing new abstractions.

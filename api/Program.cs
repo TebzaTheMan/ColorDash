@@ -26,10 +26,7 @@ builder.Services.AddOpenApi(options =>
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 
-if (builder.Environment.IsDevelopment())
-    builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlite(connectionString));
-else
-    builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(connectionString));
+builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 builder.Services.AddScoped<IHighscoreRepository, HighscoreRepository>();

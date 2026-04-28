@@ -10,6 +10,15 @@ npm run format:web     # Format frontend code with Prettier
 npm run test:api       # Run backend xUnit test suite
 ```
 
+## Docker Compose (local Postgres + API + Web)
+
+```bash
+docker compose up postgres -d         # Start Postgres only (host dev against it)
+docker compose up                     # Start postgres + api + web
+docker compose down                   # Stop and remove containers
+docker compose down -v                # Also remove the postgres data volume
+```
+
 ## Frontend Scripts (`cd web` first, or use root `npm run` prefix)
 
 ```bash

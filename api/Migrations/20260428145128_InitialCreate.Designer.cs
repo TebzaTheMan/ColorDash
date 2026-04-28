@@ -5,90 +5,95 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace ColorDash.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260426085535_AddStartIdempotencyKey")]
-    partial class AddStartIdempotencyKey
+    [Migration("20260428145128_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.5");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("ColorDash.Api.Domain.GameSession", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<int>("CorrectCount")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("integer")
                         .HasColumnName("correct_count");
 
                     b.Property<int>("CorrectIndex")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("integer")
                         .HasColumnName("correct_index");
 
                     b.PrimitiveCollection<string>("CurrentColors")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("jsonb")
                         .HasColumnName("current_colors");
 
                     b.Property<Guid>("DeviceId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("device_id");
 
                     b.Property<string>("EndResponseJson")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("EndedAt")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("ended_at");
 
                     b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("expires_at");
 
                     b.Property<string>("LastGuessIdempotencyKey")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("LastGuessResponseJson")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Mode")
                         .IsRequired()
                         .HasMaxLength(8)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(8)")
                         .HasColumnName("mode");
 
                     b.Property<int>("ScorePoints")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("integer")
                         .HasColumnName("score_points");
 
                     b.Property<int>("ScoreTotal")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("integer")
                         .HasColumnName("score_total");
 
                     b.Property<string>("StartIdempotencyKey")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("StartedAt")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("started_at");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("status");
 
                     b.Property<int>("TriesLeft")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("integer")
                         .HasColumnName("tries_left");
 
                     b.HasKey("Id");
@@ -99,6 +104,9 @@ namespace ColorDash.Api.Migrations
                     b.HasIndex("ExpiresAt")
                         .HasDatabaseName("ix_game_sessions_expires_at");
 
+                    b.HasIndex("DeviceId", "StartIdempotencyKey")
+                        .HasDatabaseName("ix_game_sessions_device_id_start_key");
+
                     b.ToTable("game_sessions", (string)null);
                 });
 
@@ -106,33 +114,33 @@ namespace ColorDash.Api.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<DateTime>("AchievedAt")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("achieved_at");
 
                     b.Property<Guid>("DeviceId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("device_id");
 
                     b.Property<string>("Mode")
                         .IsRequired()
                         .HasMaxLength(8)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(8)")
                         .HasColumnName("mode");
 
                     b.Property<int>("Points")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("integer")
                         .HasColumnName("points");
 
                     b.Property<Guid>("SessionId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("session_id");
 
                     b.Property<int>("Total")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("integer")
                         .HasColumnName("total");
 
                     b.HasKey("Id");
