@@ -24,7 +24,7 @@ export interface IGameState {
   colors: string[];
   targetColor: string;
   clickedColors: boolean[];
-  gameStartTimestamp: number;
+  expiresAt: string | null;
   sessionId: string | null;
   correctColorIndex: number | null;
 

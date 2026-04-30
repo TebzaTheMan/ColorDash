@@ -1,9 +1,6 @@
 import { IGameState } from "types";
 
 // needs to match with the backend
-export const GAME_DURATION_SECONDS = 30;
-
-// needs to match with the backend
 export const SCORING_RULES: {
   triesLeft: number;
   points: number;
@@ -27,7 +24,7 @@ export const DEFAULT_GAME_STATE: IGameState = {
   colors: [],
   targetColor: "",
   clickedColors: [],
-  gameStartTimestamp: 0,
+  expiresAt: null,
   sessionId: null,
   correctColorIndex: null,
 };

@@ -16,7 +16,7 @@ export const GameReducer = (
         colors: action.data.colors,
         targetColor: action.data.targetLabel,
         triesLeft: Number(action.data.triesLeft),
-        gameStartTimestamp: Date.now(),
+        expiresAt: action.data.expiresAt,
         sessionId: action.sessionId,
         clickedColors: new Array(action.data.colors.length).fill(false),
       };

@@ -74,8 +74,8 @@ describe("GameProvider.startGame in-flight dedup", () => {
           colors: [],
           targetLabel: "",
           triesLeft: 3,
-          startedAt: "",
-          expiresAt: "",
+          startedAt: new Date().toISOString(),
+          expiresAt: new Date(Date.now() + 30_000).toISOString(),
         },
         headers: new Headers(),
       });

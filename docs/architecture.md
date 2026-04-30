@@ -84,7 +84,7 @@ interface IGameState {
   colors: string[]; // CSS color strings from the backend
   targetColor: string; // the label shown to the player
   clickedColors: boolean[]; // tracks which blocks have been clicked this round
-  gameStartTimestamp: number;
+  expiresAt: string | null; // ISO timestamp from the server; drives the on-screen timer
   sessionId: string | null;
   correctColorIndex: number | null;
 
@@ -123,7 +123,7 @@ class Highscore {
 2. Page calls `startGame(mode)` on `GameContext`
 3. `GameContext` calls `gameApi.startGame(mode)` → `POST /game/start`
 4. Backend generates session, colors, and target label; returns `GameStartedResponse`
-5. `GAME_STARTED` dispatched → reducer initialises state from API response; 30s client-side timer resets
+5. `GAME_STARTED` dispatched → reducer initialises state from API response; the timer is restarted against the server's `expiresAt`
 6. **On failure** (`startGame` returns `false`): play page shows an error toast and redirects to `/`
 
 ### Gameplay Loop
