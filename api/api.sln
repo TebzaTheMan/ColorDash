@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorDash.Api", "ColorDash.Api.csproj", "{D26033A0-1366-4BA1-A290-C294B95F636E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorDash.Tests", "ColorDash.Tests\ColorDash.Tests.csproj", "{B7E4F1A2-3C8D-4E9F-A012-B345C678D901}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D26033A0-1366-4BA1-A290-C294B95F636E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D26033A0-1366-4BA1-A290-C294B95F636E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D26033A0-1366-4BA1-A290-C294B95F636E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D26033A0-1366-4BA1-A290-C294B95F636E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7E4F1A2-3C8D-4E9F-A012-B345C678D901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7E4F1A2-3C8D-4E9F-A012-B345C678D901}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7E4F1A2-3C8D-4E9F-A012-B345C678D901}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7E4F1A2-3C8D-4E9F-A012-B345C678D901}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

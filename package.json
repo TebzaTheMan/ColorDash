@@ -1,45 +1,10 @@
 {
-  "name": "color-dash",
-  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --webpack",
-    "build": "next build",
-    "start": "next start",
-    "check-types": "tsc --pretty --noEmit",
-    "check-format": "prettier --check .",
-    "check-lint": "eslint . --ext ts --ext tsx --ext js",
-    "format": "prettier --write .",
-    "test-all": "npm run check-format && npm run check-lint && npm run check-types && npm run build && npm run test",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "prepare": "husky install"
-  },
-  "dependencies": {
-    "@chakra-ui/react": "^2.3.6",
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
-    "@vercel/analytics": "^0.1.5",
-    "framer-motion": "^7.6.1",
-    "next": "^16.2.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-icons": "^4.6.0",
-    "react-timer-hook": "^3.0.5"
-  },
-  "devDependencies": {
-    "@types/node": "^25.5.0",
-    "@types/react": "^18.0.15",
-    "@typescript-eslint/eslint-plugin": "^5.30.5",
-    "@typescript-eslint/parser": "^5.30.5",
-    "eslint": ">=5.16.0",
-    "eslint-config-google": "^0.14.0",
-    "eslint-config-next": "12.2.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-react": "^7.30.1",
-    "husky": "^8.0.0",
-    "prettier": "^2.7.1",
-    "typescript": "^6.0.2",
-    "vitest": "^4.1.2"
+    "dev:web": "cd web && npm run dev",
+    "check:web": "cd web && npm run test-all",
+    "format:web": "cd web && npm run format",
+    "dev:api": "cd api && dotnet run --project ColorDash.Api.csproj",
+    "test:api": "cd api && dotnet test --project ColorDash.Tests/ColorDash.Tests.csproj"
   }
 }

@@ -1,16 +1,16 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
-/.pnp
+node_modules
+.pnp
 .pnp.js
 
 # testing
 /coverage
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
 /build
@@ -33,3 +33,43 @@ yarn-error.log*
 
 #typescript build
 *.tsbuildinfo
+
+# build outputs
+bin/
+obj/
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# user-specific files
+*.user
+*.suo
+.vs/
+.vscode/
+*.userprefs
+
+# rider
+.idea/
+
+# dotnet tools
+.config/
+
+
+# NuGet
+*.nupkg
+*.snupkg
+project.lock.json
+packages/
+
+# logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+#Claude
+.claude/settings.local.json
