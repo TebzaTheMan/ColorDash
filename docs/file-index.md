@@ -40,6 +40,7 @@ Key files and their single responsibility. Read this before searching the codeba
 | `api/Domain/Highscore.cs`                      | Highscore entity                                                                             |
 | `api/Domain/GameMode.cs`                       | Enum: `Rgb`, `Hsl`                                                                           |
 | `api/Domain/GuessResult.cs`                    | Enum: `Correct`, `WrongButContinue`, `WrongAndExhausted`                                     |
+| `api/Domain/Exceptions/SessionExceptions.cs`   | Typed exceptions thrown by `GameService`; mapped to HTTP status codes in `Program.cs`        |
 | `api/Data/AppDbContext.cs`                     | EF Core `DbContext` — registers entities, configures schema                                  |
 | `api/Data/Repositories/SessionRepository.cs`   | CRUD for `GameSession` — no business logic                                                   |
 | `api/Data/Repositories/HighscoreRepository.cs` | CRUD for `Highscore` — no business logic                                                     |

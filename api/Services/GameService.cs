@@ -1,6 +1,7 @@
 using System.Text.Json;
 using ColorDash.Api.Data.Repositories;
 using ColorDash.Api.Domain;
+using ColorDash.Api.Domain.Exceptions;
 using ColorDash.Api.Models;
 using ColorDash.Api.Models.Requests;
 using ColorDash.Api.Models.Responses;
@@ -105,7 +106,6 @@ public class GameService(
             Result: result,
             Score: new ScoreDto(session.ScorePoints, session.ScoreTotal),
             TriesLeft: session.TriesLeft,
-            GameOver: false,
             NextColors: advancedRound ? session.CurrentColors : null,
             NextTargetLabel: advancedRound
                 ? session.CurrentColors[session.CorrectIndex]
@@ -124,10 +124,10 @@ public class GameService(
     public async Task<EndGameResponse> EndGameAsync(Guid sessionId, Guid deviceId)
     {
         var session = await sessions.GetByIdAsync(sessionId)
-            ?? throw new KeyNotFoundException("Session not found.");
+            ?? throw new SessionNotFoundException();
 
         if (session.DeviceId != deviceId)
-            throw new UnauthorizedAccessException("Session not found.");
+            throw new SessionOwnershipException();
 
         if (session.Status == SessionStatus.Completed && session.EndResponseJson is not null)
             return JsonSerializer.Deserialize<EndGameResponse>(session.EndResponseJson)!;
@@ -140,7 +140,7 @@ public class GameService(
                 session.Status = SessionStatus.Expired;
                 await sessions.SaveChangesAsync();
             }
-            throw new InvalidOperationException("Session has expired.");
+            throw new SessionExpiredException();
         }
 
         session.Status = SessionStatus.Completed;
@@ -209,19 +209,19 @@ public class GameService(
         TimeSpan tolerance = default)
     {
         var session = await sessions.GetByIdAsync(sessionId)
-            ?? throw new KeyNotFoundException("Session not found.");
+            ?? throw new SessionNotFoundException();
 
         if (session.DeviceId != deviceId)
-            throw new UnauthorizedAccessException("Session not found.");
+            throw new SessionOwnershipException();
 
         if (session.Status != SessionStatus.Active)
-            throw new InvalidOperationException("Session is no longer active.");
+            throw new SessionNotActiveException();
 
         if (DateTime.UtcNow > session.ExpiresAt.Add(tolerance))
         {
             session.Status = SessionStatus.Expired;
             await sessions.SaveChangesAsync();
-            throw new InvalidOperationException("Session has expired.");
+            throw new SessionExpiredException();
         }
 
         return session;

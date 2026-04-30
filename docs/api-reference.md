@@ -78,7 +78,6 @@ Submit a color block selection (0–5) for an active session.
   "result": "Correct",
   "score": { "points": 10, "total": 10 },
   "triesLeft": 3,
-  "gameOver": false,
   "nextColors": [
     "rgb(...)",
     "rgb(...)",

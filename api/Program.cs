@@ -1,5 +1,6 @@
 using ColorDash.Api.Data;
 using ColorDash.Api.Data.Repositories;
+using ColorDash.Api.Domain.Exceptions;
 using ColorDash.Api.Endpoints;
 using ColorDash.Api.Models;
 using ColorDash.Api.Services;
@@ -42,30 +43,18 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 
 // Add CORS
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? [];
+
 builder.Services.AddCors(options =>
 {
-    if (builder.Environment.IsDevelopment())
+    options.AddPolicy("AllowColorDash", policy =>
     {
-        options.AddPolicy("AllowColorDash", policy =>
-        {
-            policy.WithOrigins(
-                "http://localhost:3000"
-            )
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials();
-        });
-    }
-    else
-    {
-        options.AddPolicy("AllowColorDash", policy =>
-        {
-            policy.WithOrigins("https://colordash-git-develop-tebzathemans-projects.vercel.app", "https://colordash.vercel.app")
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials();
-        });
-    }
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
 
 var app = builder.Build();
@@ -93,9 +82,9 @@ app.UseExceptionHandler(err => err.Run(async ctx =>
     var (status, message) = ex switch
     {
         BadHttpRequestException => (StatusCodes.Status400BadRequest, ex.Message),
-        KeyNotFoundException => (StatusCodes.Status404NotFound, ex.Message),
-        UnauthorizedAccessException => (StatusCodes.Status403Forbidden, ex.Message),
-        InvalidOperationException => (StatusCodes.Status410Gone, ex.Message),
+        SessionNotFoundException => (StatusCodes.Status404NotFound, ex.Message),
+        SessionOwnershipException => (StatusCodes.Status403Forbidden, ex.Message),
+        SessionNotActiveException or SessionExpiredException => (StatusCodes.Status410Gone, ex.Message),
         _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred.")
     };
 

@@ -36,7 +36,6 @@ export const GameReducer = (
           total: Number(data.score.total),
         },
         triesLeft: Number(data.triesLeft),
-        timeUp: data.gameOver,
         correctColors: isCorrect
           ? state.correctColors + 1
           : state.correctColors,

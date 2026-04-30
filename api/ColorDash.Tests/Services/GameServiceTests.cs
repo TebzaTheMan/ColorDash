@@ -1,5 +1,6 @@
 using ColorDash.Api.Data.Repositories;
 using ColorDash.Api.Domain;
+using ColorDash.Api.Domain.Exceptions;
 using ColorDash.Api.Models;
 using ColorDash.Api.Models.Requests;
 using ColorDash.Api.Models.Responses;
@@ -161,28 +162,28 @@ public class GameServiceTests
     // --- GetActiveSessionAsync (exercised via ProcessGuessAsync) ---
 
     [Fact]
-    public async Task ProcessGuess_SessionNotFound_ThrowsKeyNotFoundException()
+    public async Task ProcessGuess_SessionNotFound_ThrowsSessionNotFoundException()
     {
         var service = CreateService();
         _sessions.GetByIdAsync(Arg.Any<Guid>()).Returns((GameSession?)null);
 
-        await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+        await Assert.ThrowsAsync<SessionNotFoundException>(() =>
             service.ProcessGuessAsync(Guid.NewGuid(), new GuessRequest(0), Guid.NewGuid(), null));
     }
 
     [Fact]
-    public async Task ProcessGuess_WrongDevice_ThrowsUnauthorizedAccessException()
+    public async Task ProcessGuess_WrongDevice_ThrowsSessionOwnershipException()
     {
         var service = CreateService();
         var session = ActiveSession(Guid.NewGuid());
         _sessions.GetByIdAsync(session.Id).Returns(session);
 
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
+        await Assert.ThrowsAsync<SessionOwnershipException>(() =>
             service.ProcessGuessAsync(session.Id, new GuessRequest(0), Guid.NewGuid(), null));
     }
 
     [Fact]
-    public async Task ProcessGuess_InactiveSession_ThrowsInvalidOperationException()
+    public async Task ProcessGuess_InactiveSession_ThrowsSessionNotActiveException()
     {
         var service = CreateService();
         var deviceId = Guid.NewGuid();
@@ -190,7 +191,7 @@ public class GameServiceTests
         session.Status = SessionStatus.Completed;
         _sessions.GetByIdAsync(session.Id).Returns(session);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        await Assert.ThrowsAsync<SessionNotActiveException>(() =>
             service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId, null));
     }
 
@@ -203,7 +204,7 @@ public class GameServiceTests
         session.ExpiresAt = DateTime.UtcNow.AddSeconds(-10);
         _sessions.GetByIdAsync(session.Id).Returns(session);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        await Assert.ThrowsAsync<SessionExpiredException>(() =>
             service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId, null));
 
         Assert.Equal(SessionStatus.Expired, session.Status);
@@ -211,7 +212,7 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task ProcessGuess_SessionExpiredByOneSecond_ThrowsInvalidOperationException()
+    public async Task ProcessGuess_SessionExpiredByOneSecond_ThrowsSessionExpiredException()
     {
         // Expired 1 s ago — within EndGame tolerance, but ProcessGuess must still reject.
         var service = CreateService();
@@ -220,7 +221,7 @@ public class GameServiceTests
         session.ExpiresAt = DateTime.UtcNow.AddSeconds(-1);
         _sessions.GetByIdAsync(session.Id).Returns(session);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        await Assert.ThrowsAsync<SessionExpiredException>(() =>
             service.ProcessGuessAsync(session.Id, new GuessRequest(0), deviceId, null));
 
         Assert.Equal(SessionStatus.Expired, session.Status);
@@ -330,7 +331,6 @@ public class GameServiceTests
             Result: GuessResult.Correct,
             Score: new ScoreDto(10, 10),
             TriesLeft: 3,
-            GameOver: false,
             NextColors: NextColors(),
             NextTargetLabel: NextColors()[0]);
         session.LastGuessIdempotencyKey = key;
@@ -407,7 +407,7 @@ public class GameServiceTests
     // --- EndGameAsync ---
 
     [Fact]
-    public async Task EndGame_SessionExpiredBeyondTolerance_ThrowsInvalidOperationException()
+    public async Task EndGame_SessionExpiredBeyondTolerance_ThrowsSessionExpiredException()
     {
         // Expired 10 s ago; tolerance is 2 s → must be rejected.
         var service = CreateService();
@@ -416,7 +416,7 @@ public class GameServiceTests
         session.ExpiresAt = DateTime.UtcNow.AddSeconds(-10);
         _sessions.GetByIdAsync(session.Id).Returns(session);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        await Assert.ThrowsAsync<SessionExpiredException>(() =>
             service.EndGameAsync(session.Id, deviceId));
     }
 
@@ -656,23 +656,23 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task EndGame_WrongDevice_ThrowsUnauthorizedAccessException()
+    public async Task EndGame_WrongDevice_ThrowsSessionOwnershipException()
     {
         var service = CreateService();
         var session = ActiveSession(Guid.NewGuid());
         _sessions.GetByIdAsync(session.Id).Returns(session);
 
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
+        await Assert.ThrowsAsync<SessionOwnershipException>(() =>
             service.EndGameAsync(session.Id, Guid.NewGuid()));
     }
 
     [Fact]
-    public async Task EndGame_SessionNotFound_ThrowsKeyNotFoundException()
+    public async Task EndGame_SessionNotFound_ThrowsSessionNotFoundException()
     {
         var service = CreateService();
         _sessions.GetByIdAsync(Arg.Any<Guid>()).Returns((GameSession?)null);
 
-        await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+        await Assert.ThrowsAsync<SessionNotFoundException>(() =>
             service.EndGameAsync(Guid.NewGuid(), Guid.NewGuid()));
     }
 }

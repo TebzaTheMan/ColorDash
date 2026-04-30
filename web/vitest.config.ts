@@ -10,6 +10,8 @@ export default defineConfig({
     alias: {
       types: path.resolve(__dirname, "./types"),
       game: path.resolve(__dirname, "./game"),
+      reducers: path.resolve(__dirname, "./reducers"),
+      lib: path.resolve(__dirname, "./lib"),
     },
   },
 });

@@ -1,5 +1,7 @@
+using ColorDash.Api.Models.Requests;
 using ColorDash.Api.Models.Responses;
 using ColorDash.Api.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ColorDash.Api.Endpoints;
 
@@ -8,13 +10,9 @@ public static class HighscoreEndpoints
     public static void MapHighscoreEndpoints(this WebApplication app)
     {
         app.MapGet("/highscores", async (
-            HttpContext http,
+            [FromHeader(Name = "X-Device-ID")] DeviceId deviceId,
             IHighscoreService highscoreService) =>
         {
-            var deviceId = GetDeviceId(http);
-            if (deviceId is null)
-                return Results.BadRequest("X-Device-ID header is missing or invalid.");
-
             var response = await highscoreService.GetHighscoresAsync(deviceId.Value);
             return Results.Ok(response);
         })
@@ -23,11 +21,5 @@ public static class HighscoreEndpoints
         .WithDescription("Returns the best recorded score per game mode for the given device. Modes never played are omitted. Requires X-Device-ID header.")
         .Produces<Dictionary<string, ScoreDto>>(StatusCodes.Status200OK)
         .Produces<ErrorResponse>(StatusCodes.Status400BadRequest);
-    }
-
-    private static Guid? GetDeviceId(HttpContext http)
-    {
-        var header = http.Request.Headers["X-Device-ID"].FirstOrDefault();
-        return Guid.TryParse(header, out var id) ? id : null;
     }
 }

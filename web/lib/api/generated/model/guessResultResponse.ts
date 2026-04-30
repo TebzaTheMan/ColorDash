@@ -13,7 +13,6 @@ export interface GuessResultResponse {
   score: ScoreDto;
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   triesLeft: number | string;
-  gameOver: boolean;
   /** @nullable */
   nextColors: string[] | null;
   /** @nullable */

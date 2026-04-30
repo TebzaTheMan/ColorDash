@@ -1,9 +1,13 @@
 import { createContext, ReactNode, useReducer, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import { useToast } from "@chakra-ui/react";
 import { GameReducer } from "reducers";
 import { IGameState } from "types";
 import type { GameMode } from "lib/api/generated/model";
 import { DEFAULT_GAME_STATE } from "game/constants";
 import { gameApi } from "lib/api/gameApi";
+
+const SESSION_GONE_STATUSES: readonly number[] = [403, 404, 410];
 
 interface IGameContext {
   state: IGameState;
@@ -30,6 +34,48 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const startPromiseRef = useRef<Promise<boolean> | null>(null);
   const startKeyRef = useRef<string | null>(null);
   const guessKeyRef = useRef<string | null>(null);
+  const router = useRouter();
+  const toast = useToast();
+
+  const showSessionGone = () => {
+    toast({
+      title: "Session no longer valid",
+      description: "Returning to the home page.",
+      status: "warning",
+      duration: 4000,
+      isClosable: true,
+    });
+  };
+
+  const showNetworkError = () => {
+    toast({
+      title: "Network error",
+      description: "Please check your connection and try again.",
+      status: "error",
+      duration: 4000,
+      isClosable: true,
+    });
+  };
+
+  const reset = () => {
+    startKeyRef.current = null;
+    guessKeyRef.current = null;
+    dispatch({ type: "RESET" });
+  };
+
+  const abandonSession = () => {
+    reset();
+    router.push("/");
+  };
+
+  const handleSessionResponseError = (status: number) => {
+    if (SESSION_GONE_STATUSES.includes(status)) {
+      showSessionGone();
+      abandonSession();
+      return;
+    }
+    showNetworkError();
+  };
 
   const startGame = (mode: GameMode): Promise<boolean> => {
     if (startPromiseRef.current) return startPromiseRef.current;
@@ -75,7 +121,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
         data: response.data,
         guessIndex: colorIndex,
       });
+      return;
     }
+    handleSessionResponseError(response.status);
   };
 
   const endGame = async () => {
@@ -83,13 +131,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const response = await gameApi.endGame(state.sessionId);
     if (response.status === 200) {
       dispatch({ type: "GAME_ENDED", data: response.data });
+      return;
     }
-  };
-
-  const reset = () => {
-    startKeyRef.current = null;
-    guessKeyRef.current = null;
-    dispatch({ type: "RESET" });
+    handleSessionResponseError(response.status);
   };
 
   return (

@@ -6,41 +6,6 @@
     "version": "v1"
   },
   "paths": {
-    "/highscores": {
-      "get": {
-        "tags": [
-          "ColorDash.Api"
-        ],
-        "summary": "Get device highscores",
-        "description": "Returns the best recorded score per game mode for the given device. Modes never played are omitted. Requires X-Device-ID header.",
-        "operationId": "GetHighscores",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "$ref": "#/components/schemas/ScoreDto"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/game/start": {
       "post": {
         "tags": [
@@ -278,6 +243,51 @@
           }
         }
       }
+    },
+    "/highscores": {
+      "get": {
+        "tags": [
+          "ColorDash.Api"
+        ],
+        "summary": "Get device highscores",
+        "description": "Returns the best recorded score per game mode for the given device. Modes never played are omitted. Requires X-Device-ID header.",
+        "operationId": "GetHighscores",
+        "parameters": [
+          {
+            "name": "X-Device-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DeviceId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/ScoreDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -410,7 +420,6 @@
           "result",
           "score",
           "triesLeft",
-          "gameOver",
           "nextColors",
           "nextTargetLabel"
         ],
@@ -429,9 +438,6 @@
               "string"
             ],
             "format": "int32"
-          },
-          "gameOver": {
-            "type": "boolean"
           },
           "nextColors": {
             "type": [
