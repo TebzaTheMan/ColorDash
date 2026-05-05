@@ -4,7 +4,6 @@ import type {
   GameStartedResponse,
   GuessResultResponse,
   EndGameResponse,
-  ScoreDto,
 } from "lib/api/generated/model";
 
 export type IGameAction =
@@ -15,7 +14,7 @@ export type IGameAction =
 
 export interface IGameState {
   mode: GameMode | undefined;
-  score: ScoreDto;
+  score: { points: number; total: number };
   triesLeft: number;
   correctColors: number;
   timeUp: boolean;
@@ -31,5 +30,6 @@ export interface IGameState {
   lastGuessResult?: {
     result: GuessResult;
     id: number;
+    pointsAwarded: number;
   };
 }

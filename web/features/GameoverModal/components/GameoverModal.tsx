@@ -1,114 +1,138 @@
-import { useRef } from "react";
-import { GameContext } from "contexts";
-import { Box, Flex, Icon, List, ListItem } from "@chakra-ui/react";
-import { BsTrophyFill } from "react-icons/bs";
-import { useContext } from "react";
+import { Fragment, useContext } from "react";
+import { useRouter } from "next/router";
 import {
-  Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Text,
-  Badge,
-} from "@chakra-ui/react";
-
-import { CancelButton } from "components/CancelButton";
-import { SCORING_RULES } from "game/constants";
+  Dialog,
+  DialogPanel,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
+import { GameContext } from "contexts";
+import { DEFAULT_GAME_MODE } from "game/constants";
 
 export function GameoverModal() {
   const { state: gameData, startGame, reset } = useContext(GameContext);
+  const router = useRouter();
   const isOpen = gameData.timeUp;
-  const initialRef = useRef(null);
 
-  const onClose = () => {
+  const onReplay = () => {
     const mode = gameData.mode;
     if (!mode) return;
     reset();
     startGame(mode);
   };
 
+  const onHome = () => {
+    reset();
+    router.push("/");
+  };
+
+  const { points, total } = gameData.score;
+  const accuracy = total > 0 ? Math.round((points / total) * 100) : 0;
+  const correctCount = gameData.correctColors;
+  const isHighscore = !!gameData.isNewHighscore;
+  const mode = gameData.mode ?? DEFAULT_GAME_MODE;
+
   return (
-    <>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        closeOnOverlayClick={false}
-        initialFocusRef={initialRef}
-        isCentered
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            <Flex>
-              <Icon as={BsTrophyFill} w={8} h={8} color="yellow.500" mr={4} />
-              <Text>Game Over</Text>
-            </Flex>
-          </ModalHeader>
-          <ModalBody>
-            <Text fontSize="lg">
-              You got{" "}
-              <Box
-                as="span"
-                color={"black"}
-                fontWeight={"semibold"}
-                display={"inline"}
-              >
-                {gameData.correctColors}
-              </Box>{" "}
-              correct color{gameData.correctColors > 1 ? "s" : ""} with a score
-              of <br />
-              <Box
-                as="span"
-                fontSize={"3xl"}
-                color={"black"}
-                fontWeight={"semibold"}
-                display={"inline"}
-              >
-                {" "}
-                {gameData.score.points}
-              </Box>{" "}
-              / {gameData.score.total}
-              {gameData.isNewHighscore && (
-                <Badge colorScheme="green" variant="solid" ml="3">
-                  New
-                </Badge>
-              )}
-            </Text>
-            <br />
-            <Text fontSize="lg">
-              Points per correct guess depend on how many tries you used:
-            </Text>
-            <List fontSize={"lg"}>
-              {SCORING_RULES.map((rule) => (
-                <ListItem key={rule.triesLeft}>
-                  {rule.label}: {rule.points} point
-                  {rule.points !== 1 ? "s" : ""}
-                </ListItem>
-              ))}
-            </List>
-            <br />
-            <Text fontSize="lg">
-              The score is calculated by dividing the total points earned by the
-              maximum possible points.
-            </Text>
-          </ModalBody>
-          <ModalFooter bgColor={"white"} bgImg={"none"}>
-            <CancelButton />
-            <Button
-              colorScheme="teal"
-              onClick={onClose}
-              ml={3}
-              ref={initialRef}
-              size={["md", "lg"]}
-            >
-              Replay
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+    <Transition show={isOpen} as={Fragment}>
+      <Dialog onClose={onReplay} className="relative z-modal">
+        <TransitionChild
+          as={Fragment}
+          enter="transition-opacity duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transition-opacity duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div
+            className="animate-fade-in fixed inset-0 bg-modal-backdrop backdrop-blur-modal"
+            aria-hidden="true"
+          />
+        </TransitionChild>
+
+        <div className="fixed inset-0 grid place-items-center p-3 sm:p-6">
+          <TransitionChild
+            as={Fragment}
+            enter="transition duration-300 ease-out"
+            enterFrom="opacity-0 translate-y-3 scale-95"
+            enterTo="opacity-100 translate-y-0 scale-100"
+            leave="transition duration-150 ease-in"
+            leaveFrom="opacity-100 translate-y-0 scale-100"
+            leaveTo="opacity-0 translate-y-2 scale-95"
+          >
+            <DialogPanel className="animate-panel-in w-full max-w-[540px] bg-panel border border-line rounded-panel shadow-panel overflow-hidden">
+              <div className="px-4 sm:px-6 py-4 sm:py-5 bg-panel-header border-b border-line flex items-center justify-between gap-3 flex-wrap">
+                <div className="mono text-mono-sm tracking-mono-xl text-ink-2 uppercase flex items-center gap-2.5">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-hot shadow-led-hot-sm" />
+                  Session ended · {mode.toUpperCase()}
+                </div>
+                {isHighscore && (
+                  <div className="mono px-2.5 py-1 bg-neon text-neon-on-bg rounded-md text-mono-xs font-bold tracking-mono-lg uppercase shadow-highscore-badge">
+                    ★ New best
+                  </div>
+                )}
+              </div>
+
+              <div className="px-4 sm:px-6 pt-6 sm:pt-8 pb-4 text-center">
+                <div className="mono text-mono-xs tracking-mono-2xl text-ink-3 uppercase mb-2">
+                  Final score
+                </div>
+                <div
+                  className={`mono text-display-score font-bold tabular-nums ${
+                    isHighscore
+                      ? "text-neon text-shadow-score-best"
+                      : "text-ink-0 text-shadow-neon-glow"
+                  }`}
+                >
+                  {points}
+                  <span className="text-ink-3 font-medium">/{total}</span>
+                </div>
+                <div className="mt-3 flex justify-center gap-6 text-ink-2 flex-wrap">
+                  <span>
+                    <span className="text-neon font-bold">{correctCount}</span>{" "}
+                    match{correctCount === 1 ? "" : "es"}
+                  </span>
+                  <span className="text-ink-3">·</span>
+                  <span>
+                    <span className="text-neon font-bold">{accuracy}%</span>{" "}
+                    accuracy
+                  </span>
+                </div>
+              </div>
+
+              <div className="px-4 sm:px-5 pt-4 pb-4 sm:pb-5 flex gap-3 border-t border-line bg-panel-header">
+                <button
+                  type="button"
+                  onClick={onHome}
+                  className="btn-ghost focus-ring flex-1 !px-4 !py-3.5"
+                >
+                  ← Home
+                </button>
+                <button
+                  type="button"
+                  onClick={onReplay}
+                  className="btn-primary focus-ring flex-[2] !px-4 !py-3.5 inline-flex items-center justify-center gap-2.5"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="23 4 23 10 17 10" />
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                  </svg>
+                  Replay
+                </button>
+              </div>
+            </DialogPanel>
+          </TransitionChild>
+        </div>
+      </Dialog>
+    </Transition>
   );
 }

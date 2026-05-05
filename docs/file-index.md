@@ -14,7 +14,13 @@ Key files and their single responsibility. Read this before searching the codeba
 | `web/types/index.ts`                                      | Frontend TypeScript types — `IGameState`, `IGameAction` (API shapes come from generated model)                               |
 | `web/features/Highscore/contexts/HighScore.context.tsx`   | Highscore context — fetches per-mode best scores from the API; provides `refresh()` and `isLoading`                          |
 | `web/components/GameSkeleton.tsx`                         | Skeleton loading state for the play page — mirrors Infobar + color block grid layout                                         |
-| `web/features/colorblocks/components/Colorblocks.tsx`     | Renders the 6 clickable color blocks                                                                                         |
+| `web/components/Toast.tsx`                                | Toast notification UI — auto-dismisses after 1500ms; `ok` (green) or `err` (red) variants                                    |
+| `web/components/Logo.tsx`                                 | 2×2 SVG logo with neon/violet/amber/hot tiles and glow filter                                                                |
+| `web/components/ShimmerBlock.tsx`                         | Inline shimmer skeleton rectangle — width/height/radius props                                                                |
+| `web/contexts/toast.context.tsx`                          | `ToastProvider` + `useToast` — manages a single active toast; replaces Chakra UI's `useToast`                                |
+| `web/features/colorblocks/components/Colorblocks.tsx`     | Renders the 6 clickable color swatches and `TargetReadout`                                                                   |
+| `web/features/colorblocks/components/TargetReadout.tsx`   | Terminal-bezel panel showing the target color function (e.g. `rgb(12, 34, 56)`) with CRT styling                             |
+| `web/lib/color.ts`                                        | `relativeLuminance(cssColor)` — parses `rgb()`/`hsl()` strings; cached; used to pick light/dark swatch labels                |
 | `web/features/Infobar/components/Infobar.tsx`             | Score / timer / tries bar                                                                                                    |
 | `web/features/GameoverModal/components/GameoverModal.tsx` | End-of-game overlay with stats and replay                                                                                    |
 | `web/lib/api/gameApi.ts`                                  | High-level API wrapper: `startGame`, `submitGuess`, `endGame`, `getHighscores`                                               |
@@ -24,6 +30,7 @@ Key files and their single responsibility. Read this before searching the codeba
 | `web/lib/api/generated/model/`                            | Orval-generated TypeScript types for all API request/response shapes                                                         |
 | `web/orval.config.ts`                                     | Orval config — reads `api/Client/ColorDash.Api.json`, writes to `web/lib/api/generated/`                                     |
 | `web/.env.example`                                        | Environment variable template — copy to `.env.local` and set `NEXT_PUBLIC_API_BASE_URL`                                      |
+| `web/tailwind.config.ts`                                  | Tailwind CSS config — design tokens, custom utilities, animation keyframes                                                   |
 | `web/next.config.js`                                      | Next.js configuration                                                                                                        |
 | `web/tsconfig.json`                                       | TypeScript config (strict, path aliases)                                                                                     |
 | `web/.eslintrc.js`                                        | ESLint config (Google style)                                                                                                 |

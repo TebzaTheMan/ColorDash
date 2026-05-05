@@ -91,6 +91,7 @@ interface IGameState {
   lastGuessResult?: {
     result: GuessResult; // "correct" | "wrong_but_continue" | "wrong_and_exhausted"
     id: number;
+    pointsAwarded: number; // delta from previous score.points; used by Colorblocks to render "+N · MATCH" toast
   };
 }
 ```

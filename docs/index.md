@@ -8,6 +8,7 @@
 | -------------------------------------------- | -------------------------------------------------------------------------- |
 | Understanding the project for the first time | All files                                                                  |
 | Frontend game logic, state, or components    | [architecture.md](architecture.md), [game-mechanics.md](game-mechanics.md) |
+| UI components, styling, or design tokens     | [../DESIGN.md](../DESIGN.md), [file-index.md](file-index.md)               |
 | Backend services, sessions, or data layer    | [architecture.md](architecture.md), [api-reference.md](api-reference.md)   |
 | Adding or debugging an API endpoint          | [api-reference.md](api-reference.md), [file-index.md](file-index.md)       |
 | Running, building, or testing the project    | [commands.md](commands.md)                                                 |
@@ -23,6 +24,7 @@
 - [commands.md](commands.md) — All development, build, and test commands
 - [file-index.md](file-index.md) — Critical files and their single responsibility
 - [game-mechanics.md](game-mechanics.md) — Game rules, modes, scoring system, and session lifecycle
+- [../DESIGN.md](../DESIGN.md) — UI design system: color tokens, typography, component specs, animations
 
 ## Development Guidelines
 

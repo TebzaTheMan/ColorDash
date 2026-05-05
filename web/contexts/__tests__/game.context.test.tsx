@@ -9,10 +9,6 @@ vi.mock("next/router", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-vi.mock("@chakra-ui/react", () => ({
-  useToast: () => () => {},
-}));
-
 const startGameMock = vi.fn();
 vi.mock("lib/api/gameApi", () => ({
   gameApi: {

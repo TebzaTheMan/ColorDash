@@ -1,16 +1,23 @@
-import { Flex, Heading } from "@chakra-ui/react";
-import { GameContext } from "contexts";
 import { useContext } from "react";
-import { Text } from "@chakra-ui/react";
+import { GameContext } from "contexts";
+import { DEFAULT_GAME_MODE } from "game/constants";
 
 export function Score() {
   const { state: gameData } = useContext(GameContext);
+  const mode = gameData.mode ?? DEFAULT_GAME_MODE;
+
   return (
-    <Flex direction={"column"} alignItems="center">
-      <Text fontSize="lg">Score</Text>
-      <Heading size="lg" as="h1">
-        {gameData.score.points} / {gameData.score.total}
-      </Heading>
-    </Flex>
+    <div className="min-w-0">
+      <div className="mono text-mono-xs tracking-mono-lg text-ink-3 uppercase mb-1">
+        {mode.toUpperCase()} · Score
+      </div>
+      <div className="text-[clamp(18px,5vw,22px)] font-bold tabular-nums tracking-[-0.01em]">
+        <span className="text-neon">{gameData.score.points}</span>
+        <span className="text-ink-3 font-medium">
+          {" / "}
+          {gameData.score.total}
+        </span>
+      </div>
+    </div>
   );
 }

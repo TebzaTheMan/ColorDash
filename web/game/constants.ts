@@ -1,4 +1,7 @@
 import { IGameState } from "types";
+import type { GameMode } from "lib/api/generated/model";
+
+export const DEFAULT_GAME_MODE: GameMode = "rgb";
 
 // needs to match with the backend
 export const SCORING_RULES: {

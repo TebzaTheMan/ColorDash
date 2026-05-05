@@ -1,21 +1,20 @@
-import { Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { GameContext } from "contexts";
 import { useContext } from "react";
+import { GameContext } from "contexts";
 
 export function CancelButton() {
   const router = useRouter();
   const { reset } = useContext(GameContext);
   return (
-    <Button
-      variant="solid"
-      size={["md", "lg"]}
+    <button
+      type="button"
+      className="btn-ghost focus-ring !px-3 !py-2 !text-mono-sm"
       onClick={() => {
         reset();
         router.push("/");
       }}
     >
-      Cancel
-    </Button>
+      ← Quit
+    </button>
   );
 }

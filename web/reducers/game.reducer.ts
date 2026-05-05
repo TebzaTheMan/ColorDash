@@ -25,6 +25,7 @@ export const GameReducer = (
       const { data, guessIndex } = action;
       const isCorrect = data.result === "correct";
       const isNewRound = data.nextColors != null;
+      const newPoints = Number(data.score.points);
 
       const clickedColors = [...state.clickedColors];
       clickedColors[guessIndex] = true;
@@ -32,7 +33,7 @@ export const GameReducer = (
       return {
         ...state,
         score: {
-          points: Number(data.score.points),
+          points: newPoints,
           total: Number(data.score.total),
         },
         triesLeft: Number(data.triesLeft),
@@ -49,7 +50,11 @@ export const GameReducer = (
           : isCorrect
             ? guessIndex
             : state.correctColorIndex,
-        lastGuessResult: { result: data.result, id: Date.now() },
+        lastGuessResult: {
+          result: data.result,
+          id: Date.now(),
+          pointsAwarded: newPoints - state.score.points,
+        },
       };
     }
 

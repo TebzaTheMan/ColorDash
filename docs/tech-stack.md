@@ -7,9 +7,8 @@
 | Framework     | Next.js                | 16.2.1              |
 | UI runtime    | React                  | 18.2.0              |
 | Language      | TypeScript             | 6.0.2 (strict mode) |
-| UI components | Chakra UI              | 2.3.6               |
-| CSS-in-JS     | Emotion                | (Chakra peer dep)   |
-| Animation     | Framer Motion          | 7.6.1               |
+| Styling       | Tailwind CSS           | 3.4.17              |
+| Accessible UI | @headlessui/react      | 2.2.0               |
 | Timer         | react-timer-hook       | 3.0.5               |
 | Testing       | Vitest                 | 4.1.2               |
 | Linting       | ESLint (Google config) | —                   |
@@ -21,14 +20,14 @@ TypeScript config: strict mode, `moduleResolution: node`, `jsx: react-jsx`, path
 
 ## Backend (`api/`)
 
-| Concern         | Technology               | Version                                     |
-| --------------- | ------------------------ | ------------------------------------------- |
-| Runtime         | .NET                     | 10.0                                        |
-| Framework       | ASP.NET Core Minimal API | 10.0                                        |
-| Language        | C#                       | (nullable enabled, implicit usings)         |
-| ORM             | Entity Framework Core    | 10.0.5                                      |
-| Database        | PostgreSQL 16            | via `Npgsql.EntityFrameworkCore.PostgreSQL` |
-| API docs        | ASP.NET Core OpenAPI     | 10.0                                        |
+| Concern   | Technology               | Version                                     |
+| --------- | ------------------------ | ------------------------------------------- |
+| Runtime   | .NET                     | 10.0                                        |
+| Framework | ASP.NET Core Minimal API | 10.0                                        |
+| Language  | C#                       | (nullable enabled, implicit usings)         |
+| ORM       | Entity Framework Core    | 10.0.5                                      |
+| Database  | PostgreSQL 16            | via `Npgsql.EntityFrameworkCore.PostgreSQL` |
+| API docs  | ASP.NET Core OpenAPI     | 10.0                                        |
 
 Local Postgres runs in Docker — see `docker-compose.yml` at the repo root.
 

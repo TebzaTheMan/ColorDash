@@ -1,12 +1,13 @@
-import { Box, Grid, useToast } from "@chakra-ui/react";
-import { Colorblock } from "./Colorblock";
-import { GameContext } from "contexts";
 import { useContext, useEffect, useState } from "react";
-import Header from "./Header";
+import { GameContext } from "contexts";
+import { useToast } from "contexts/toast.context";
+import { DEFAULT_GAME_MODE } from "game/constants";
+import { Colorblock, SwatchState } from "./Colorblock";
+import { TargetReadout } from "./TargetReadout";
 
 export function Colorblocks() {
   const { state: gameData, submitGuess } = useContext(GameContext);
-  const toast = useToast();
+  const { showToast } = useToast();
   const [pendingIndex, setPendingIndex] = useState<number | null>(null);
 
   const handleColorClick = async (index: number) => {
@@ -21,49 +22,52 @@ export function Colorblocks() {
 
   useEffect(() => {
     if (!gameData.lastGuessResult) return;
-
-    const { result } = gameData.lastGuessResult;
+    const { result, pointsAwarded } = gameData.lastGuessResult;
 
     if (result === "correct") {
-      toast({
-        title: "Correct color",
-        status: "success",
-        duration: 600,
-        position: "top",
-      });
+      showToast("ok", `+${Math.max(pointsAwarded, 0)} · MATCH`);
+    } else if (result === "wrong_and_exhausted") {
+      showToast("err", "OUT OF TRIES");
     } else {
-      toast({
-        title: "Incorrect color",
-        status: "error",
-        duration: 600,
-        position: "top",
-      });
+      showToast("err", "NO MATCH");
     }
-  }, [gameData.lastGuessResult, toast]);
+  }, [gameData.lastGuessResult, showToast]);
+
+  const swatchState = (index: number): SwatchState => {
+    if (pendingIndex === index) return "loading";
+    if (gameData.correctColorIndex === index) return "correct";
+    if (gameData.clickedColors[index]) return "wrong";
+    if (gameData.timeUp) return "revealed";
+    return "idle";
+  };
 
   return (
-    <Box>
-      <Header correctColor={gameData.targetColor} />
-      <Grid
-        templateColumns={["repeat(2, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]}
-        gap={6}
-        ml={["10", "32", "32", "72"]}
-        mr={["10", "32", "32", "72"]}
-      >
-        {gameData.colors.map((color, index) => {
-          return (
-            <Colorblock
-              color={color}
-              key={index}
-              index={index}
-              isCorrect={gameData.correctColorIndex === index}
-              isClicked={gameData.clickedColors[index]}
-              isLoading={pendingIndex === index}
-              handleColorClick={handleColorClick}
-            />
-          );
-        })}
-      </Grid>
-    </Box>
+    <>
+      <TargetReadout
+        target={gameData.targetColor}
+        mode={gameData.mode ?? DEFAULT_GAME_MODE}
+        status={gameData.triesLeft === 0 ? "lock" : "live"}
+      />
+      <div className="flex items-center justify-center gap-4 mt-3 mb-1">
+        <div className="mono text-mono-xs tracking-mono-xl text-ink-3 uppercase">
+          Round {gameData.correctColors + 1}
+        </div>
+        <div className="hidden sm:block h-px w-10 bg-line" />
+        <div className="hidden sm:block mono text-mono-xs tracking-mono-xl text-ink-3 uppercase">
+          Tap the swatch matching the readout
+        </div>
+      </div>
+      <div className="dash-grid mt-2">
+        {gameData.colors.map((color, index) => (
+          <Colorblock
+            key={`${gameData.sessionId}-${index}`}
+            color={color}
+            index={index}
+            state={swatchState(index)}
+            onClick={handleColorClick}
+          />
+        ))}
+      </div>
+    </>
   );
 }

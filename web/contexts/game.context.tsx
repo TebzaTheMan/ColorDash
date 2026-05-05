@@ -1,11 +1,11 @@
 import { createContext, ReactNode, useReducer, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { useToast } from "@chakra-ui/react";
 import { GameReducer } from "reducers";
 import { IGameState } from "types";
 import type { GameMode } from "lib/api/generated/model";
 import { DEFAULT_GAME_STATE } from "game/constants";
 import { gameApi } from "lib/api/gameApi";
+import { useToast } from "contexts/toast.context";
 
 const SESSION_GONE_STATUSES: readonly number[] = [403, 404, 410];
 
@@ -30,32 +30,11 @@ export const GameContext = createContext<IGameContext>({
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(GameReducer, DEFAULT_GAME_STATE);
   const [isStarting, setIsStarting] = useState(false);
-  // Concurrent callers share this promise so dedup doesn't look like a failure.
   const startPromiseRef = useRef<Promise<boolean> | null>(null);
   const startKeyRef = useRef<string | null>(null);
   const guessKeyRef = useRef<string | null>(null);
   const router = useRouter();
-  const toast = useToast();
-
-  const showSessionGone = () => {
-    toast({
-      title: "Session no longer valid",
-      description: "Returning to the home page.",
-      status: "warning",
-      duration: 4000,
-      isClosable: true,
-    });
-  };
-
-  const showNetworkError = () => {
-    toast({
-      title: "Network error",
-      description: "Please check your connection and try again.",
-      status: "error",
-      duration: 4000,
-      isClosable: true,
-    });
-  };
+  const { showToast } = useToast();
 
   const reset = () => {
     startKeyRef.current = null;
@@ -70,11 +49,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const handleSessionResponseError = (status: number) => {
     if (SESSION_GONE_STATUSES.includes(status)) {
-      showSessionGone();
+      showToast("err", "SESSION ENDED · RETURNING HOME");
       abandonSession();
       return;
     }
-    showNetworkError();
+    showToast("err", "NETWORK ERROR");
   };
 
   const startGame = (mode: GameMode): Promise<boolean> => {
