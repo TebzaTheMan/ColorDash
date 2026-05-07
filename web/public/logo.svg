@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Color Dash logo">
+  <defs>
+    <filter id="glow-neon" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-violet" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-amber" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-hot" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- top-left: neon (cyan-lime) -->
+  <rect x="3" y="3" width="27" height="27" rx="5" ry="5"
+        fill="oklch(0.90 0.19 168)" opacity="0.95" filter="url(#glow-neon)"/>
+
+  <!-- top-right: violet -->
+  <rect x="34" y="3" width="27" height="27" rx="5" ry="5"
+        fill="oklch(0.72 0.21 305)" opacity="0.95" filter="url(#glow-violet)"/>
+
+  <!-- bottom-left: amber -->
+  <rect x="3" y="34" width="27" height="27" rx="5" ry="5"
+        fill="oklch(0.84 0.16 78)" opacity="0.95" filter="url(#glow-amber)"/>
+
+  <!-- bottom-right: hot (red) -->
+  <rect x="34" y="34" width="27" height="27" rx="5" ry="5"
+        fill="oklch(0.72 0.24 18)" opacity="0.95" filter="url(#glow-hot)"/>
+</svg>

@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="web/images/logo.png" alt="Color Dash Logo" width="120" />
+  <img src="web/public/logo.svg" alt="Color Dash Logo" width="120" />
   <h1>Color Dash</h1>
   <p><strong>The ultimate color-matching challenge in RGB and HSL</strong></p>
 

@@ -2,7 +2,6 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import { HighScore } from "features/Highscore";
-import { Logo } from "components/Logo";
 import type { GameMode } from "lib/api/generated/model";
 
 const MODES: { id: GameMode; label: string; sub: string }[] = [
@@ -26,7 +25,7 @@ export default function Home() {
       <main className="relative z-content min-h-screen flex flex-col px-4 sm:px-8 pt-6 sm:pt-8 pb-8 sm:pb-12 max-w-[960px] mx-auto">
         <header className="flex items-center justify-between mb-10 sm:mb-16 gap-6">
           <div className="flex items-center gap-3">
-            <Logo size={28} />
+            <img src="/logo.svg" width={28} height={28} alt="Color Dash logo" className="inline-block shrink-0" />
             <span className="mono text-mono-sm tracking-mono-xl uppercase text-ink-2">
               Color Dash
             </span>
