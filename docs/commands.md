@@ -1,6 +1,24 @@
 # Commands
 
+## Running Locally (Docker Compose)
+
+Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+
+Starts three services:
+- **Postgres** on `localhost:5432`
+- **API** on `http://localhost:5043`
+- **Web** on `http://localhost:3000`
+
+```bash
+docker compose up                     # Start all services (postgres + api + web)
+docker compose up postgres -d         # Start Postgres only (for host-machine dev)
+docker compose down                   # Stop and remove containers
+docker compose down -v                # Also wipe the postgres data volume
+```
+
 ## Root Scripts (run from repo root)
+
+Convenience wrappers for running individual services without Docker.
 
 ```bash
 npm run dev:web        # Start frontend dev server on http://localhost:3000
@@ -8,15 +26,6 @@ npm run dev:api        # Start backend API server
 npm run check:web      # Full frontend validation: format + lint + types + build + test
 npm run format:web     # Format frontend code with Prettier
 npm run test:api       # Run backend xUnit test suite
-```
-
-## Docker Compose (local Postgres + API + Web)
-
-```bash
-docker compose up postgres -d         # Start Postgres only (host dev against it)
-docker compose up                     # Start postgres + api + web
-docker compose down                   # Stop and remove containers
-docker compose down -v                # Also remove the postgres data volume
 ```
 
 ## Frontend Scripts (`cd web` first, or use root `npm run` prefix)
