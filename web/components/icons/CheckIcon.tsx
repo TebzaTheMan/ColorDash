@@ -1,0 +1,24 @@
+import type { SVGProps } from "react";
+
+interface Props extends SVGProps<SVGSVGElement> {
+  size?: number;
+  strokeWidth?: number;
+}
+
+export function CheckIcon({ size = 16, strokeWidth = 2.5, ...rest }: Props) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...rest}
+    >
+      <polyline points="4 12 10 18 20 6" />
+    </svg>
+  );
+}

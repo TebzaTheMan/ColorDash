@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import NavBar from "components/NavBar";
+import { ArrowRightIcon } from "components/icons";
 import { HighScore } from "features/Highscore";
 import type { GameMode } from "lib/api/generated/model";
 
@@ -83,19 +84,7 @@ export default function Home() {
               className="btn-primary focus-ring inline-flex items-center gap-3.5 !px-7 !py-5 !text-[15px] no-underline"
             >
               <span>Start dash</span>
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-              </svg>
+              <ArrowRightIcon size={18} />
             </Link>
 
             <HighScore mode={gameMode} />
@@ -107,19 +96,7 @@ export default function Home() {
               className="focus-ring no-underline inline-flex items-center gap-2 text-ink-2 text-[13px] border-b border-dashed border-line pb-1 hover:text-ink-0"
             >
               New here? Read the rules
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-              </svg>
+              <ArrowRightIcon size={14} strokeWidth={2} />
             </Link>
           </div>
         </section>

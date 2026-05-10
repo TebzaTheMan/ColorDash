@@ -128,6 +128,10 @@ Bordered card showing a single numeric stat from the server config. Neon numeral
 
 Loading skeleton: `background-size: 200%` gradient animated via `background-position` over 1.6s. Applied to score display, swatch grid placeholders, and config tiles during simulated API loading.
 
+### Icons
+
+Outline-only line icons drawn on a 24-unit grid. Stroke ≈ 2.5 at the 16px default; round caps and joins throughout (no fills, no two-tone). Color always inherits from surrounding text — same icon flips green on a Toast pill, white on a dark swatch, neon on a button. In-button / inline link sizes: 12–18px. Overlay sizes (correct ✓ / wrong ✕ on a swatch): 44–56px.
+
 ---
 
 ## Animations

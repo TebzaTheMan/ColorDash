@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import NavBar from "components/NavBar";
+import { ArrowRightIcon, ExternalLinkIcon } from "components/icons";
 import {
   GAME_DURATION_SECONDS,
   NUM_COLORS,
@@ -186,19 +187,7 @@ export default function HowToPlay() {
             </p>
             <span className="mono inline-flex items-center gap-2 text-neon text-xs tracking-mono-sm font-semibold">
               Read the article
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="7" y1="17" x2="17" y2="7" />
-                <polyline points="7 7 17 7 17 17" />
-              </svg>
+              <ExternalLinkIcon size={14} />
             </span>
           </a>
         </section>
@@ -209,19 +198,7 @@ export default function HowToPlay() {
             className="btn-primary focus-ring inline-flex items-center gap-3 no-underline"
           >
             Got it · Start dash
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
+            <ArrowRightIcon />
           </Link>
         </div>
       </main>

@@ -18,6 +18,7 @@ Key files and their single responsibility. Read this before searching the codeba
 | `web/features/Highscore/contexts/HighScore.context.tsx`   | Highscore context — fetches per-mode best scores from the API; provides `refresh()` and `isLoading`                          |
 | `web/components/GameSkeleton.tsx`                         | Skeleton loading state for the play page — mirrors Infobar + color block grid layout                                         |
 | `web/components/Toast.tsx`                                | Toast notification UI — auto-dismisses after 1500ms; `ok` (green) or `err` (red) variants                                    |
+| `web/components/icons/`                                   | Reusable inline SVG icon components (`ArrowRightIcon`, `CheckIcon`, `XIcon`, `ExternalLinkIcon`, `ReplayIcon`) — `stroke="currentColor"`, `size`/`strokeWidth` props |
 | `web/public/logo.svg`                                     | 2×2 SVG logo with neon/violet/amber/hot tiles and per-tile glow;                                                             |
 | `web/components/ShimmerBlock.tsx`                         | Inline shimmer skeleton rectangle — width/height/radius props                                                                |
 | `web/contexts/toast.context.tsx`                          | `ToastProvider` + `useToast` — manages a single active toast; replaces Chakra UI's `useToast`                                |

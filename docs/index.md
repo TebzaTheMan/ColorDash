@@ -24,7 +24,7 @@
 - [commands.md](commands.md) — All development, build, and test commands
 - [file-index.md](file-index.md) — Critical files and their single responsibility
 - [game-mechanics.md](game-mechanics.md) — Game rules, modes, scoring system, and session lifecycle
-- [../DESIGN.md](../DESIGN.md) — UI design system: color tokens, typography, component specs, animations
+- [../DESIGN.md](../DESIGN.md) — UI design system: color tokens, typography, component visual specs, animations. Visual language only — no file paths, component names, or prop names (those go in `file-index.md`)
 
 ## Development Guidelines
 

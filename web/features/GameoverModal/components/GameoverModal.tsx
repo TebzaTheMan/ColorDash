@@ -6,6 +6,7 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
+import { ReplayIcon } from "components/icons";
 import { GameContext } from "contexts";
 import { DEFAULT_GAME_MODE } from "game/constants";
 
@@ -113,19 +114,7 @@ export function GameoverModal() {
                   onClick={onReplay}
                   className="btn-primary focus-ring flex-[2] !px-4 !py-3.5 inline-flex items-center justify-center gap-2.5"
                 >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="23 4 23 10 17 10" />
-                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-                  </svg>
+                  <ReplayIcon />
                   Replay
                 </button>
               </div>

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { CheckIcon, XIcon } from "components/icons";
 import { relativeLuminance } from "lib/color";
 
 export type SwatchState = "idle" | "loading" | "wrong" | "correct" | "revealed";
@@ -57,18 +58,7 @@ export function Colorblock({ index, color, state, onClick }: Props) {
 
       {isWrong && (
         <span className="absolute inset-0 z-swatch-label grid place-items-center text-ink-0">
-          <svg
-            width="44"
-            height="44"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          >
-            <line x1="6" y1="6" x2="18" y2="18" />
-            <line x1="18" y1="6" x2="6" y2="18" />
-          </svg>
+          <XIcon size={44} />
         </span>
       )}
 
@@ -78,18 +68,7 @@ export function Colorblock({ index, color, state, onClick }: Props) {
             isDark ? "text-white" : "text-black"
           }`}
         >
-          <svg
-            width="56"
-            height="56"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="4 12 10 18 20 6" />
-          </svg>
+          <CheckIcon size={56} />
         </span>
       )}
     </button>
