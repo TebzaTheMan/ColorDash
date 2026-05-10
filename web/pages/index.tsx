@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
+import NavBar from "components/NavBar";
 import { HighScore } from "features/Highscore";
 import type { GameMode } from "lib/api/generated/model";
 
@@ -23,18 +24,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="relative z-content min-h-screen flex flex-col px-4 sm:px-8 pt-6 sm:pt-8 pb-8 sm:pb-12 max-w-[960px] mx-auto">
-        <header className="flex items-center justify-between mb-10 sm:mb-16 gap-6">
-          <div className="flex items-center gap-3">
-            <img src="/logo.svg" width={28} height={28} alt="Color Dash logo" className="inline-block shrink-0" />
-            <span className="mono text-mono-sm tracking-mono-xl uppercase text-ink-2">
-              Color Dash
-            </span>
-          </div>
-          <div className="mono text-mono-sm tracking-[0.2em] text-ink-3 flex items-center gap-2 uppercase">
-            <span className="led inline-block w-1.5 h-1.5 rounded-full bg-neon shadow-led-neon-sm" />
-            Online
-          </div>
-        </header>
+        <NavBar active="home" />
 
         <section className="flex-1 flex flex-col justify-center max-w-[720px]">
           <h1 className="font-bold text-ink-0 text-display-hero m-0 mb-8 sm:mb-10">
@@ -109,6 +99,28 @@ export default function Home() {
             </Link>
 
             <HighScore mode={gameMode} />
+          </div>
+
+          <div className="mt-8">
+            <Link
+              href="/how-to-play"
+              className="focus-ring no-underline inline-flex items-center gap-2 text-ink-2 text-[13px] border-b border-dashed border-line pb-1 hover:text-ink-0"
+            >
+              New here? Read the rules
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </Link>
           </div>
         </section>
       </main>

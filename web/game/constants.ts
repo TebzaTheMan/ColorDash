@@ -3,6 +3,12 @@ import type { GameMode } from "lib/api/generated/model";
 
 export const DEFAULT_GAME_MODE: GameMode = "rgb";
 
+// needs to match with the backend (api/appsettings.json → GameSettings).
+// TODO: replace with a GET /config fetch once the endpoint exists.
+export const GAME_DURATION_SECONDS = 30;
+export const NUM_COLORS = 6;
+export const DEFAULT_TRIES = 3;
+
 // needs to match with the backend
 export const SCORING_RULES: {
   triesLeft: number;

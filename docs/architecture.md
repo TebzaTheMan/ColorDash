@@ -33,6 +33,10 @@ Each feature owns its components, context, and reducer. Keep feature-specific lo
 
 - `pages/index.tsx` — mode selection (RGB / HSL), routes to `/play/[mode]`
 - `pages/play/[mode].tsx` — active game page, wires together all features and the timer
+- `pages/how-to-play.tsx` — static rules / scoring / tips page (reads `GAME_DURATION_SECONDS`, `NUM_COLORS`, `DEFAULT_TRIES`, `SCORING_RULES` from `web/game/constants.ts`)
+- `pages/about.tsx` — static about / pitch page
+
+All pages render the shared `components/NavBar.tsx` (Home / How to Play / About) and pass an `active` prop so the current tab is highlighted.
 
 ## Backend Architecture
 

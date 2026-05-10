@@ -8,9 +8,12 @@ Key files and their single responsibility. Read this before searching the codeba
 | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `web/pages/index.tsx`                                     | Home page — mode selection (RGB / HSL)                                                                                       |
 | `web/pages/play/[mode].tsx`                               | Active game page — wires timer, color blocks, modals, context                                                                |
+| `web/pages/how-to-play.tsx`                               | Static rules / scoring / tips page; reads game constants from `web/game/constants.ts`                                        |
+| `web/pages/about.tsx`                                     | Static about / pitch page                                                                                                    |
+| `web/components/NavBar.tsx`                               | Shared top navigation (Home / How to Play / About) — takes an `active` prop so each page highlights its own tab              |
 | `web/contexts/game.context.tsx`                           | `GameContext` provider — holds active game state; exposes `startGame`, `submitGuess`, `endGame`, `reset`                     |
 | `web/reducers/game.reducer.ts`                            | Game state reducer — maps API-response actions (`GAME_STARTED`, `GUESS_RESULT`, `GAME_ENDED`) and `RESET` to state           |
-| `web/game/constants.ts`                                   | Shared game constants (`SCORING_RULES` array, default state) — `SCORING_RULES` must stay in sync with `api/appsettings.json` |
+| `web/game/constants.ts`                                   | Shared game constants (`SCORING_RULES`, `GAME_DURATION_SECONDS`, `NUM_COLORS`, `DEFAULT_TRIES`, default state) — must stay in sync with `api/appsettings.json` until a `/config` endpoint replaces them |
 | `web/types/index.ts`                                      | Frontend TypeScript types — `IGameState`, `IGameAction` (API shapes come from generated model)                               |
 | `web/features/Highscore/contexts/HighScore.context.tsx`   | Highscore context — fetches per-mode best scores from the API; provides `refresh()` and `isLoading`                          |
 | `web/components/GameSkeleton.tsx`                         | Skeleton loading state for the play page — mirrors Infobar + color block grid layout                                         |
